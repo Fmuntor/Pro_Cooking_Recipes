@@ -71,7 +71,7 @@ public class BusquedaFragmento extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        fab = requireActivity().findViewById(R.id.fab);
+        fab = requireActivity().findViewById(R.id.botonFlotante1);
         fab.setImageResource(R.drawable.ic_plus);
 
         fab.setOnClickListener(v -> {
