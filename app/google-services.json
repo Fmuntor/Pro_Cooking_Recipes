@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "811805757588",
+    "project_id": "pro-cooking-recipes-2ae6f",
+    "storage_bucket": "pro-cooking-recipes-2ae6f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:811805757588:android:1d129c849f0d20da85e481",
+        "android_client_info": {
+          "package_name": "com.pcr.procookingrecipes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "811805757588-5ed56r65dt1rvivnlb7vs4u6844u96pf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pcr.procookingrecipes",
+            "certificate_hash": "970a4c1849603fe986da58996bc69072807c2f1c"
+          }
+        },
+        {
+          "client_id": "811805757588-k974bt02555oh53alf77o4b0unag9ova.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAi43xynY24Xb-mZWSLhcYpaqovtrDbwkk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "811805757588-k974bt02555oh53alf77o4b0unag9ova.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

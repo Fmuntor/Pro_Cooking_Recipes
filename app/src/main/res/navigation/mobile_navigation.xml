@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/cabecera_inicio">
+
+    <fragment
+        android:id="@+id/cabecera_inicio"
+        android:name="com.pcr.procookingrecipes.ui.inicio.InicioFragmento"
+        android:label="@string/inicio"
+        tools:layout="@layout/fragmento_inicio" />
+
+    <fragment
+        android:id="@+id/cabecera_favoritos"
+        android:name="com.pcr.procookingrecipes.ui.favoritos.FavoritosFragmento"
+        android:label="@string/favoritos"
+        tools:layout="@layout/fragmento_favoritos" />
+
+    <fragment
+        android:id="@+id/cabecera_cuenta"
+        android:name="com.pcr.procookingrecipes.ui.cuenta.CuentaFragment"
+        android:label="@string/cuenta"
+        tools:layout="@layout/fragmento_cuenta" />
+</navigation>
