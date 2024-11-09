@@ -25,7 +25,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.databinding.ActivityMainBinding;
-import com.pcr.procookingrecipes.ui.busqueda.BusquedaFragmento;
 
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
