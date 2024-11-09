@@ -83,10 +83,7 @@ public class MainActivity extends AppCompatActivity {
             // Buscamos el fragmento hijo 'InicioFragmento' dentro del NavHostFragment
             Fragment fragment = navHostFragment.getChildFragmentManager().findFragmentById(R.id.busqueda_fragmento);
         }
-
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
