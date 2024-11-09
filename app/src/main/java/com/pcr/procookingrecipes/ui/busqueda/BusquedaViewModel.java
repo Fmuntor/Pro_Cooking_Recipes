@@ -1,16 +1,16 @@
-package com.pcr.procookingrecipes.ui.inicio;
+package com.pcr.procookingrecipes.ui.busqueda;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class InicioViewModel extends ViewModel {
+public class BusquedaViewModel extends ViewModel {
 
     private final MutableLiveData<String> mText;
 
-    public InicioViewModel() {
+    public BusquedaViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("Texto del fragmento Inicio");
+        mText.setValue("Texto del fragmento Busqueda");
     }
 
     public LiveData<String> getText() {

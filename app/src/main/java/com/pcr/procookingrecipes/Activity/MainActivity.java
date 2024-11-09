@@ -5,8 +5,13 @@ import android.view.View;
 import android.view.Menu;
 import android.widget.TextView;
 
-import com.google.android.material.snackbar.Snackbar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.navigation.NavigationView;
+import androidx.navigation.fragment.NavHostFragment;
 
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -17,25 +22,21 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.pcr.procookingrecipes.Adapters.BusquedaDataModel;
-import com.pcr.procookingrecipes.Adapters.SharedViewModel;
+
 import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.databinding.ActivityMainBinding;
-import com.pcr.procookingrecipes.ui.inicio.InicioFragmento;
+import com.pcr.procookingrecipes.ui.busqueda.BusquedaFragmento;
 
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
-public class MainActivity extends AppCompatActivity implements InicioFragmento.OnNewItemListener {
+public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
     private FirebaseFirestore db;
     private String userEmail;
     private String userName;
-    private SharedViewModel sharedViewModel;
-
-    private InicioFragmento inicioFragmento;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,15 +50,8 @@ public class MainActivity extends AppCompatActivity implements InicioFragmento.O
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
 
-        sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
-
-        binding.appBarMain.fab.setOnClickListener(view -> {
-            BusquedaDataModel newItem = new BusquedaDataModel("Campo1", "Campo2");
-            sharedViewModel.addItem(newItem);
-        });
-
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.cabecera_inicio, R.id.cabecera_favoritos, R.id.cabecera_cuenta)
+                R.id.cabecera_busqueda, R.id.cabecera_favoritos, R.id.cabecera_cuenta)
                 .setOpenableLayout(drawer)
                 .build();
 
@@ -87,30 +81,12 @@ public class MainActivity extends AppCompatActivity implements InicioFragmento.O
 
         if (navHostFragment != null) {
             // Buscamos el fragmento hijo 'InicioFragmento' dentro del NavHostFragment
-            Fragment fragment = navHostFragment.getChildFragmentManager().findFragmentById(R.id.inicioFragmento);
-
-            if (fragment != null && fragment instanceof InicioFragmento) {
-                inicioFragmento = (InicioFragmento) fragment;
-            }
+            Fragment fragment = navHostFragment.getChildFragmentManager().findFragmentById(R.id.busqueda_fragmento);
         }
 
-        // Configuración del botón flotante
-        binding.appBarMain.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (inicioFragmento != null) {
-                    // Agregar un nuevo elemento al fragmento `InicioFragmento`
-                    addItemToInicioFragmento("Campo1", "Campo2");
-                }
-            }
-        });
+
     }
 
-    private void addItemToInicioFragmento(String campo1, String campo2) {
-        if (inicioFragmento != null) {
-            inicioFragmento.addNewItemToRecycler(campo1, campo2);
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -126,13 +102,4 @@ public class MainActivity extends AppCompatActivity implements InicioFragmento.O
                 || super.onSupportNavigateUp();
     }
 
-    @Override
-    public void onAddNewItem() {
-        if (inicioFragmento != null) {
-            // Puedes abrir un diálogo para pedir valores o simplemente agregar valores de prueba
-            String nuevoCampo1 = "Nuevo valor 1";
-            String nuevoCampo2 = "Nuevo valor 2";
-            inicioFragmento.addNewItemToRecycler(nuevoCampo1, nuevoCampo2);
-        }
-    }
 }

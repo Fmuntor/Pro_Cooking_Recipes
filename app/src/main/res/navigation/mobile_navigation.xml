@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/cabecera_inicio">
+    app:startDestination="@+id/cabecera_busqueda">
 
     <fragment
-        android:id="@+id/cabecera_inicio"
-        android:name="com.pcr.procookingrecipes.ui.inicio.InicioFragmento"
-        android:label="@string/inicio"
-        tools:layout="@layout/fragmento_inicio" />
+        android:id="@+id/cabecera_busqueda"
+        android:name="com.pcr.procookingrecipes.ui.busqueda.BusquedaFragmento"
+        android:label="@string/busqueda"
+        tools:layout="@layout/fragmento_busqueda" />
 
     <fragment
         android:id="@+id/cabecera_favoritos"
