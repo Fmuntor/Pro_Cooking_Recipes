@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.favoritos.FavoritosFragmento">
+    tools:context=".ui.favoritos.FavoritosFragmento"
+    android:id="@+id/favoritos_fragmento">
 
     <TextView
         android:id="@+id/text_favoritos"

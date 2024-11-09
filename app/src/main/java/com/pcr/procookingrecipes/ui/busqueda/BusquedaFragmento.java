@@ -4,20 +4,24 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.pcr.procookingrecipes.Adapters.BusquedaDataModel;
 import com.pcr.procookingrecipes.Adapters.ItemBusquedaAdapter;
 import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.databinding.FragmentoBusquedaBinding;
+
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class BusquedaFragmento extends Fragment {
 
@@ -25,7 +29,10 @@ public class BusquedaFragmento extends Fragment {
     private RecyclerView recyclerView;
     private ItemBusquedaAdapter adapter;
     private List<BusquedaDataModel> itemList;
-//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    private FloatingActionButton fab;
+    private Button borrar;
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         BusquedaViewModel busquedaViewModel =
@@ -35,49 +42,18 @@ public class BusquedaFragmento extends Fragment {
         View root = binding.getRoot();
 
         inicializarRecyclerView(root);
-        // Crear la lista de elementos
         itemList = new ArrayList<>();
-
-        // Agregar elementos a la lista
         itemList.add(new BusquedaDataModel("Elemento 1", "Descripción 1"));
-        itemList.add(new BusquedaDataModel("Elemento 2", "Descripción 2"));
-        itemList.add(new BusquedaDataModel("Elemento 1", "Descripción 1"));
-        itemList.add(new BusquedaDataModel("Elemento 2", "Descripción 2"));
-        itemList.add(new BusquedaDataModel("Elemento 1", "Descripción 1"));
-        itemList.add(new BusquedaDataModel("Elemento 2", "Descripción 2"));
-        itemList.add(new BusquedaDataModel("Elemento 1", "Descripción 1"));
-        itemList.add(new BusquedaDataModel("Elemento 2", "Descripción 2"));
-        itemList.add(new BusquedaDataModel("Elemento 1", "Descripción 1"));
-        itemList.add(new BusquedaDataModel("Elemento 2", "Descripción 2"));
-        itemList.add(new BusquedaDataModel("Elemento 1", "Descripción 1"));
-        itemList.add(new BusquedaDataModel("Elemento 2", "Descripción 2"));
-        itemList.add(new BusquedaDataModel("Elemento 1", "Descripción 1"));
-        itemList.add(new BusquedaDataModel("Elemento 2", "Descripción 2"));itemList.add(new BusquedaDataModel("Elemento 1", "Descripción 1"));
-        itemList.add(new BusquedaDataModel("Elemento 2", "Descripción 2"));itemList.add(new BusquedaDataModel("Elemento 1", "Descripción 1"));
-        itemList.add(new BusquedaDataModel("Elemento 2", "Descripción 2"));itemList.add(new BusquedaDataModel("Elemento 1", "Descripción 1"));
-        itemList.add(new BusquedaDataModel("Elemento 2", "Descripción 2"));itemList.add(new BusquedaDataModel("Elemento 1", "Descripción 1"));
-        itemList.add(new BusquedaDataModel("Elemento 2", "Descripción 2"));itemList.add(new BusquedaDataModel("Elemento 1", "Descripción 1"));
-        itemList.add(new BusquedaDataModel("Elemento 2", "Descripción 2"));itemList.add(new BusquedaDataModel("Elemento 1", "Descripción 1"));
-        itemList.add(new BusquedaDataModel("Elemento 2", "Descripción 2"));itemList.add(new BusquedaDataModel("Elemento 1", "Descripción 1"));
-        itemList.add(new BusquedaDataModel("Elemento 2", "Descripción 2"));
 
-
-
-
-
-
-
-
-        // Inicializar el adaptador
         adapter = new ItemBusquedaAdapter(itemList);
         binding.recyclerView.setAdapter(adapter);
-
-        // Aquí puedes añadir elementos al RecyclerView
-        // Ejemplo: itemList.add(new BusquedaDataModel("Campo1", "Campo2"));
         adapter.notifyDataSetChanged();
 
         final TextView textView = binding.textBusqueda;
         busquedaViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+
+
+
         return root;
     }
 
@@ -91,4 +67,19 @@ public class BusquedaFragmento extends Fragment {
         super.onDestroyView();
         binding = null;
     }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        fab = requireActivity().findViewById(R.id.fab);
+        fab.setImageResource(R.drawable.ic_plus);
+
+        fab.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "Añadir nuevo fav", Toast.LENGTH_SHORT).show();
+            itemList.add(new BusquedaDataModel("Elemento 1", "Descripción 1"));
+            adapter.notifyDataSetChanged();
+
+        });
+    }
+
 }

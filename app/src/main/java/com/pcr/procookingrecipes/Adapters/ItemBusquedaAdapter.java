@@ -3,7 +3,12 @@ package com.pcr.procookingrecipes.Adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,9 +35,28 @@ public class ItemBusquedaAdapter extends RecyclerView.Adapter<ItemBusquedaAdapte
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         BusquedaDataModel item = dataList.get(position);
-        holder.textField1.setText(item.getCampo1());
-        holder.textField2.setText(item.getCampo2());
+
+        // Configura el Spinner si es necesario
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(holder.itemView.getContext(),
+                R.array.menu_options, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        holder.spinner.setAdapter(adapter);
+
+        // Establece el valor seleccionado en el spinner
+        holder.spinner.setSelection(((ArrayAdapter) holder.spinner.getAdapter()).getPosition(item.getCampo2()));
+
+        // Configura el botón "borrar" para este elemento
+        holder.borrar.setOnClickListener(v -> {
+            int currentPosition = holder.getAdapterPosition();
+            if (currentPosition != RecyclerView.NO_POSITION &&
+                dataList.size()>1) {
+                dataList.remove(currentPosition);
+                notifyItemRemoved(currentPosition);
+                Toast.makeText(v.getContext(), "Elemento eliminado", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
 
     @Override
     public int getItemCount() {
@@ -46,12 +70,19 @@ public class ItemBusquedaAdapter extends RecyclerView.Adapter<ItemBusquedaAdapte
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView textField1, textField2;
+
+        Spinner spinner;
+        EditText campo;
+        Button borrar;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            textField1 = itemView.findViewById(R.id.textField1);
-            textField2 = itemView.findViewById(R.id.textField2);
+            spinner = itemView.findViewById(R.id.spinnerMenu);
+            campo = itemView.findViewById(R.id.ETDatos);
+            borrar = itemView.findViewById(R.id.botonEliminar);
+
+
         }
     }
+
 }
