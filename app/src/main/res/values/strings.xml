@@ -19,9 +19,73 @@
     <string name="resultados">Resultados\n</string>
     <string name="busqueda">Búsqueda</string>
 
-    <string-array name="menu_options">
-        <item>Opción 1</item>
-        <item>Opción 2</item>
-        <item>Opción 3</item>
+    <string-array name="menu_busqueda">
+        <item>Ingredientes</item>
+        <item>Tipo de cocina</item>
+        <item>Nacionalidad</item>
+        <item>Tipo de dieta</item>
+        <item>Intolerancias</item>
+        <item>Carbohidratos(g)</item>
+        <item>Proteína(g)</item>
+        <item>Calorías(kcal)</item>
     </string-array>
+    <string-array name="menu_tipo">
+        <item>Plato principal</item>
+        <item>Guarnición</item>
+        <item>Postre</item>
+        <item>Desayuno</item>
+        <item>Aperitivo</item>
+        <item>Ensalada</item>
+        <item>Sopa</item>
+        <item>Bebida</item>
+        <item>Salsa</item>
+    </string-array>
+    <string-array name="menu_nacionalidad">
+        <item>Africana</item>
+        <item>Asiática</item>
+        <item>Americana</item>
+        <item>Británica</item>
+        <item>Cajún</item>
+        <item>Caribeña</item>
+        <item>China</item>
+        <item>Europa del Este</item>
+        <item>Europea</item>
+        <item>Francesa</item>
+        <item>Alemana</item>
+        <item>Griega</item>
+        <item>India</item>
+        <item>Irlandesa</item>
+        <item>Italiana</item>
+        <item>Japonesa</item>
+        <item>Judía</item>
+        <item>Coreana</item>
+        <item>Latinoamericana</item>
+        <item>Mediterránea</item>
+        <item>Mexicana</item>
+        <item>Oriente Medio</item>
+        <item>Nórdica</item>
+        <item>Sureña</item>
+        <item>Española</item>
+        <item>Tailandesa</item>
+        <item>Vietnamita</item>
+    </string-array>
+    <string-array name="menu_dietas">
+        <item>Sin gluten</item>
+        <item>Vegetariana</item>
+        <item>Ketogénica</item>
+        <item>Lacto-Vegetariana</item>
+        <item>Ovo-Vegetariana</item>
+        <item>Vegana</item>
+        <item>Paleo</item>
+    </string-array>
+    <string-array name="menu_intolerancias">
+        <item>Lácteos</item>
+        <item>Huevo</item>
+        <item>Gluten</item>
+        <item>Grano</item>
+        <item>Cacahuete</item>
+        <item>Mariscos</item>
+    </string-array>
+
+
 </resources>

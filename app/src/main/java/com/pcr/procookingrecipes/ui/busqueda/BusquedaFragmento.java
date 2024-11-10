@@ -1,4 +1,11 @@
 package com.pcr.procookingrecipes.ui.busqueda;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,6 +15,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -82,9 +91,9 @@ public class BusquedaFragmento extends Fragment {
         fab.setImageResource(R.drawable.ic_plus);
 
         fab.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Añadir nuevo fav", Toast.LENGTH_SHORT).show();
             itemList.add(new BusquedaDataModel("Elemento 1", "Descripción 1"));
-            adapter.notifyDataSetChanged();
+
+            adapter.notifyItemInserted(itemList.size());
         });
 
         buscar = requireActivity().findViewById(R.id.botonFlotante2);
@@ -92,7 +101,8 @@ public class BusquedaFragmento extends Fragment {
             // Realizar la conexión con la API en un hilo de fondo
             executor.execute(() -> {
                 APIResponse apiResponse = new APIResponse();
-                List<Receta> recipes = apiResponse.searchAppleRecipes();
+                //Verificar si se ha elegido ingredientes y hay datos
+                List<Receta> recipes = apiResponse.searchAppleRecipes(); // Se lee de la API
                 if (recipes != null) {
                     new Handler(Looper.getMainLooper()).post(() -> {
                         // Mostrar los resultados en el hilo principal

@@ -29,6 +29,36 @@
                 android:ems="10"
                 android:inputType="text"/>
 
+            <Spinner
+                android:id="@+id/spinnerExtra"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:visibility="gone" />
+
+            <!-- SeekBar con su configuración -->
+
+            <SeekBar
+                android:id="@+id/seekBar"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:max="100"
+                android:progress="0"
+                android:visibility="gone" />
+
+            <!-- TextView para mostrar el valor actual del SeekBar -->
+
+            <TextView
+                android:id="@+id/valorActualSeekBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:padding="8dp"
+                android:text="0"
+                android:visibility="gone" />
+
             <Button
                 android:id="@+id/botonEliminar"
                 android:layout_width="0dp"
