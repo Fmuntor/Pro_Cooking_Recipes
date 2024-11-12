@@ -1,13 +1,16 @@
 package com.pcr.procookingrecipes.Adapters;
 
+
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -219,24 +222,21 @@ public class ItemBusquedaAdapter extends RecyclerView.Adapter<ItemBusquedaAdapte
                 // Puedes agregar lógica aquí si lo deseas, por ejemplo, para hacer algo cuando el usuario deja de mover
             }
         });
+        // Configura el EditText de ingrediente para el autocompletado
 
     }
+
+
 
     @Override
     public int getItemCount() {
         return dataList.size();
     }
 
-    // Método para agregar un nuevo elemento a la lista y actualizar el RecyclerView
-    public void addItem(BusquedaDataModel newItem) {
-        dataList.add(newItem);
-        notifyItemInserted(dataList.size() - 1); // Notifica que se agregó un nuevo elemento al final
-    }
-
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         Spinner spinner;
         Spinner spinnerExtra;
-        EditText campo;
+        AutoCompleteTextView campo;
         Button borrar;
         SeekBar seekBar;  // SeekBar
         TextView valorActualSeekBar;

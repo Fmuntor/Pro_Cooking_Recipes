@@ -102,6 +102,10 @@ public class BusquedaFragmento extends Fragment {
             executor.execute(() -> {
                 APIResponse apiResponse = new APIResponse();
                 //Verificar si se ha elegido ingredientes y hay datos
+
+
+                // OBTENER 10 RECETAS CON MANZANA
+                /*
                 List<Receta> recipes = apiResponse.searchAppleRecipes(); // Se lee de la API
                 if (recipes != null) {
                     new Handler(Looper.getMainLooper()).post(() -> {
@@ -114,6 +118,25 @@ public class BusquedaFragmento extends Fragment {
                 } else {
                     new Handler(Looper.getMainLooper()).post(() -> {
                         Log.e("APIResponse", "No se pudieron obtener recetas.");
+                    });
+                }
+                 */
+
+                // Obtener todos los ingredientes
+                List<String> ingredients = apiResponse.getAllIngredients();
+
+                if (ingredients != null && !ingredients.isEmpty()) {
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        // Mostrar los ingredientes en el log
+                        for (String ingredient : ingredients) {
+                            Log.d("Ingredient", ingredient);
+                        }
+                        Toast.makeText(getContext(), "Ingredientes cargados en el log", Toast.LENGTH_SHORT).show();
+                    });
+                } else {
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        Log.e("APIResponse", "No se pudieron obtener los ingredientes.");
+                        Toast.makeText(getContext(), "Error al cargar ingredientes", Toast.LENGTH_SHORT).show();
                     });
                 }
             });
