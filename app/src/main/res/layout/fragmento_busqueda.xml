@@ -7,23 +7,158 @@
     tools:context=".ui.busqueda.BusquedaFragmento"
     android:id="@+id/busqueda_fragmento">
 
-    <TextView
-        android:id="@+id/text_busqueda"
-        android:layout_width="match_parent"
+    <CheckBox
+        android:id="@+id/checkCocina"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/tipo_de_cocina"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Spinner
+        android:id="@+id/spinnerCocina"
+        android:layout_width="177dp"
+        android:layout_height="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <CheckBox
+        android:id="@+id/checkNacionalidad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/nacionalidad"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/checkCocina" />
+
+    <Spinner
+        android:id="@+id/spinnerNacionalidad"
+        android:layout_width="177dp"
+        android:layout_height="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerCocina" />
+
+    <CheckBox
+        android:id="@+id/checkDieta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="96dp"
+        android:text="@string/tipo_de_dieta"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/spinnerDieta"
+        android:layout_width="177dp"
+        android:layout_height="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerNacionalidad" />
+
+    <CheckBox
+        android:id="@+id/checkIntolerancias"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="96dp"
+        android:text="@string/intolerancias"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/checkCocina" />
+
+    <Spinner
+        android:id="@+id/spinnerIntolerancias"
+        android:layout_width="177dp"
+        android:layout_height="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerDieta" />
+
+    <CheckBox
+        android:id="@+id/checkCarbo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="144dp"
+        android:text="@string/carbohidratos_g_plato"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/checkCocina" />
+
+    <TextView
+        android:id="@+id/textViewCarbo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="208dp"
+        app:layout_constraintStart_toEndOf="@+id/checkCarbo"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <SeekBar
+        android:id="@+id/seekBarCarbo"
+        android:layout_width="175dp"
+        android:layout_height="46dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerIntolerancias"
+        android:min="10"
+        android:max="100"/>
+
+    <CheckBox
+        android:id="@+id/checkProteina"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="240dp"
+        android:text="@string/proteina_g_plato"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewProteina"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="256dp"
+        app:layout_constraintStart_toEndOf="@+id/checkProteina"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <SeekBar
+        android:id="@+id/seekBarProteina"
+        android:layout_width="175dp"
+        android:layout_height="46dp"
+        android:layout_marginTop="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/seekBarCarbo"
+        android:min="10"
+        android:max="100"/>
+
+    <CheckBox
+        android:id="@+id/checkCalorias"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/calorias_kcal_plato"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/checkProteina" />
+
+    <TextView
+        android:id="@+id/textViewCalorias"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="300dp"
+        app:layout_constraintStart_toEndOf="@+id/checkCalorias"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <SeekBar
+        android:id="@+id/seekBarCalorias"
+        android:layout_width="175dp"
+        android:layout_height="46dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/seekBarProteina"
+        android:min="50"
+        android:max="800"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_width="411dp"
+        android:layout_height="394dp"
+        android:layout_marginTop="336dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

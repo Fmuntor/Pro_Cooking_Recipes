@@ -3,22 +3,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.CheckBox;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -33,7 +26,6 @@ import com.pcr.procookingrecipes.ConexionAPI.APIResponse;
 import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.Receta.Receta;
 import com.pcr.procookingrecipes.databinding.FragmentoBusquedaBinding;
-import com.pcr.procookingrecipes.ui.busqueda.BusquedaViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,14 +59,173 @@ public class BusquedaFragmento extends Fragment {
         binding.recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
-        final TextView textView = binding.textBusqueda;
-        busquedaViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        final CheckBox checkCocina = binding.checkCocina;
+        final Spinner spinnerCocina = binding.spinnerCocina;
+
+        final CheckBox checkNacionalidad = binding.checkNacionalidad;
+        final Spinner spinnerNacionalidad = binding.spinnerNacionalidad;
+
+        final CheckBox checkDieta = binding.checkDieta;
+        final Spinner spinnerDieta = binding.spinnerDieta;
+
+        final CheckBox checkIntolerancias = binding.checkIntolerancias;
+        final Spinner spinnerIntolerancias = binding.spinnerIntolerancias;
+
+        final CheckBox checkCarbo = binding.checkCarbo;
+        final TextView textViewCarbo = binding.textViewCarbo;
+        final SeekBar seekBarCarbo = binding.seekBarCarbo;
+
+        final CheckBox checkProteina = binding.checkProteina;
+        final TextView textViewProteina = binding.textViewProteina;
+        final SeekBar seekBarProteina = binding.seekBarProteina;
+
+        final CheckBox checkCalorias = binding.checkCalorias;
+        final TextView textViewCalorias = binding.textViewCalorias;
+        final SeekBar seekBarCalorias = binding.seekBarCalorias;
+
+        inicializarSpinners();
+        inicializarSeekBars();
+
+        spinnerCocina.setEnabled(false);
+        checkCocina.setOnClickListener(v -> {
+            //Desactivar el spinner si no esta activado el checkbox de tipo de cocina
+            spinnerCocina.setEnabled(checkCocina.isChecked());
+        });
+
+        spinnerNacionalidad.setEnabled(false);
+        checkNacionalidad.setOnClickListener(v -> {
+            //Desactivar el spinner si no esta activado el checkbox de nacionalidad
+            spinnerNacionalidad.setEnabled(checkNacionalidad.isChecked());
+        });
+
+        spinnerDieta.setEnabled(false);
+        checkDieta.setOnClickListener(v -> {
+            //Desactivar el spinner si no esta activado el checkbox de tipo de dieta
+            spinnerDieta.setEnabled(checkDieta.isChecked());
+        });
+
+        spinnerIntolerancias.setEnabled(false);
+        checkIntolerancias.setOnClickListener(v -> {
+            //Desactivar el spinner si no esta activado el checkbox de intolerancias
+            spinnerIntolerancias.setEnabled(checkIntolerancias.isChecked());
+        });
+
+        seekBarCarbo.setEnabled(false);
+        checkCarbo.setOnClickListener(v -> {
+            //Desactivar el spinner si no esta activado el checkbox de intolerancias
+            seekBarCarbo.setEnabled(checkCarbo.isChecked());
+        });
+
+        seekBarProteina.setEnabled(false);
+        checkProteina.setOnClickListener(v -> {
+            //Desactivar el spinner si no esta activado el checkbox de intolerancias
+            seekBarProteina.setEnabled(checkProteina.isChecked());
+        });
+
+        seekBarCalorias.setEnabled(false);
+        checkCalorias.setOnClickListener(v -> {
+            //Desactivar el spinner si no esta activado el checkbox de intolerancias
+            seekBarCalorias.setEnabled(checkCalorias.isChecked());
+        });
+
+
+
 
         return root;
+        //Toast.makeText(v.getContext(), "OK", Toast.LENGTH_SHORT).show();
+
+    }
+
+    private void inicializarSpinners() {
+        //Tipo de cocina
+        ArrayAdapter<CharSequence> adapterCocina = ArrayAdapter.createFromResource(getContext(),
+                R.array.menu_tipo, android.R.layout.simple_spinner_item);
+        adapterCocina.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.spinnerCocina.setAdapter(adapterCocina);
+
+        //Nacionalidad
+        ArrayAdapter<CharSequence> adapterNacionalidad = ArrayAdapter.createFromResource(getContext(),
+                R.array.menu_nacionalidad, android.R.layout.simple_spinner_item);
+        adapterNacionalidad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.spinnerNacionalidad.setAdapter(adapterNacionalidad);
+
+        //Dieta
+        ArrayAdapter<CharSequence> adapterDieta = ArrayAdapter.createFromResource(getContext(),
+                R.array.menu_dietas, android.R.layout.simple_spinner_item);
+        adapterDieta.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.spinnerDieta.setAdapter(adapterDieta);
+
+        //Intolerancias
+        ArrayAdapter<CharSequence> adapterIntolerancias = ArrayAdapter.createFromResource(getContext(),
+                R.array.menu_intolerancias, android.R.layout.simple_spinner_item);
+        adapterIntolerancias.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.spinnerIntolerancias.setAdapter(adapterIntolerancias);
+    }
+
+    private void inicializarSeekBars() {
+    // Inicializar el SeekBar de carbohidratos y su TextView, y luego crear el listener
+        binding.textViewCarbo.setText(String.valueOf(binding.seekBarCarbo.getProgress()));
+        // Agregar el listener para el SeekBar
+        binding.seekBarCarbo.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // Actualiza el TextView con el valor del SeekBar
+                binding.textViewCarbo.setText(String.valueOf(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // Opcionalmente, puedes hacer algo cuando el usuario empieza a mover el SeekBar
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // Opcionalmente, puedes hacer algo cuando el usuario deja de mover el SeekBar
+            }
+        });
+    // Inicializar el SeekBar de proteína y su TextView, y luego crear el listener
+        binding.textViewProteina.setText(String.valueOf(binding.seekBarProteina.getProgress()));
+        binding.seekBarProteina.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // Actualiza el TextView con el valor del SeekBar
+                binding.textViewProteina.setText(String.valueOf(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // Opcionalmente, puedes hacer algo cuando el usuario empieza a mover el SeekBar
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // Opcionalmente, puedes hacer algo cuando el usuario deja de mover el SeekBar
+            }
+        });
+
+    // Inicializar el SeekBar de calorías y su TextView, y luego crear el listener
+        binding.textViewCalorias.setText(String.valueOf(binding.seekBarCalorias.getProgress()));
+        binding.seekBarCalorias.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // Actualiza el TextView con el valor del SeekBar
+                binding.textViewCalorias.setText(String.valueOf(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // Opcionalmente, puedes hacer algo cuando el usuario empieza a mover el SeekBar
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // Opcionalmente, puedes hacer algo cuando el usuario deja de mover el SeekBar
+            }
+        });
     }
 
     private void inicializarRecyclerView(View root) {
-        recyclerView = root.findViewById(R.id.recyclerView);
+        recyclerView = binding.recyclerView;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 

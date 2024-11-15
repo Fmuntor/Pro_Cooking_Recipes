@@ -18,6 +18,13 @@
     <string name="cuenta">Cuenta</string>
     <string name="resultados">Resultados\n</string>
     <string name="busqueda">Búsqueda</string>
+    <string name="tipo_de_cocina">Tipo de cocina</string>
+    <string name="nacionalidad">Nacionalidad</string>
+    <string name="tipo_de_dieta">Tipo de dieta</string>
+    <string name="intolerancias">Intolerancias</string>
+    <string name="carbohidratos_g_plato">Carbohidratos (g/plato)</string>
+    <string name="proteina_g_plato">Proteína (g/plato)</string>
+    <string name="calorias_kcal_plato">Calorías (kcal/plato)</string>
 
     <string-array name="menu_busqueda">
         <item>Ingredientes</item>
