@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -256,7 +257,7 @@ public class BusquedaFragmento extends Fragment {
 
 
                 // OBTENER 10 RECETAS CON MANZANA
-                /*
+
                 List<Receta> recipes = apiResponse.searchAppleRecipes(); // Se lee de la API
                 if (recipes != null) {
                     new Handler(Looper.getMainLooper()).post(() -> {
@@ -271,25 +272,57 @@ public class BusquedaFragmento extends Fragment {
                         Log.e("APIResponse", "No se pudieron obtener recetas.");
                     });
                 }
-                 */
 
-                // Obtener todos los ingredientes
-                List<String> ingredients = apiResponse.getAllIngredients();
+                // Traducir al español cada ingrediente, catch del error en caso de haberlo
 
-                if (ingredients != null && !ingredients.isEmpty()) {
+                // Hacer una consulta por ingrediente, si devuelve 0 resultados, no encuentra recetas
+                // con ese ingrediente.
+
+                // En caso que los ingredientes esten ok, se concatenan para la consulta final
+                // En caso de que no, se pone en rojo el campo del ingrediente incorrecto
+
+                List<String> listaIngredientes = new ArrayList<>();
+                for(int i=0; i<itemList.size(); i++){
+                    listaIngredientes.add(itemList.get(i).getCampo2());
+                }
+                Toast.makeText(getContext(), listaIngredientes.get(0).toString(), Toast.LENGTH_SHORT).show();
+
+                if (apiResponse.comprobarIngredientes(listaIngredientes)){
+                    // Los ingredientes son correctos
+                }
+                if (recipes != null) {
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        // Mostrar los ingredientes en el log
-                        for (String ingredient : ingredients) {
-                            Log.d("Ingredient", ingredient);
+                        // Mostrar los resultados en el hilo principal
+                        for (Receta recipe : recipes) {
+                            Log.d("Recipe", "Title: " + recipe.getTitle());
+                            Log.d("Recipe", "Image URL: " + recipe.getImage());
                         }
-                        Toast.makeText(getContext(), "Ingredientes cargados en el log", Toast.LENGTH_SHORT).show();
                     });
                 } else {
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        Log.e("APIResponse", "No se pudieron obtener los ingredientes.");
-                        Toast.makeText(getContext(), "Error al cargar ingredientes", Toast.LENGTH_SHORT).show();
+                        Log.e("APIResponse", "No se pudieron obtener recetas.");
                     });
                 }
+
+
+                // Obtener todos los ingredientes
+
+//                List<String> ingredients = apiResponse.getAllIngredients();
+//
+//                if (ingredients != null && !ingredients.isEmpty()) {
+//                    new Handler(Looper.getMainLooper()).post(() -> {
+//                        // Mostrar los ingredientes en el log
+//                        for (String ingredient : ingredients) {
+//                            Log.d("Ingredient", ingredient);
+//                        }
+//                        Toast.makeText(getContext(), "Ingredientes cargados en el log", Toast.LENGTH_SHORT).show();
+//                    });
+//                } else {
+//                    new Handler(Looper.getMainLooper()).post(() -> {
+//                        Log.e("APIResponse", "No se pudieron obtener los ingredientes.");
+//                        Toast.makeText(getContext(), "Error al cargar ingredientes", Toast.LENGTH_SHORT).show();
+//                    });
+//                }
             });
         });
     }

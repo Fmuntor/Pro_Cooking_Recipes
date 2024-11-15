@@ -135,6 +135,10 @@ public class APIResponse {
         return ingredientNames;
     }
 
+    public boolean comprobarIngredientes(List<String> listaIngredientes) {
+        return true;
+    }
+
     // Clase interna que representa la respuesta de la API de recetas
     private class ApiResponse {
         private List<Receta> results;
