@@ -42,7 +42,7 @@ public class FavoritosFragmento extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        fab = requireActivity().findViewById(R.id.botonFlotante1);
+        fab = requireActivity().findViewById(R.id.botonIntroducirItem);
         Toast.makeText(getContext(), "Añadir nuevo fav", Toast.LENGTH_SHORT).show();
         fab.setImageResource(R.drawable.ic_menu_slideshow);
     }

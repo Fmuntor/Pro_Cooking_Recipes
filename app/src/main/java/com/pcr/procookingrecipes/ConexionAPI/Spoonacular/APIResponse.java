@@ -1,4 +1,4 @@
-package com.pcr.procookingrecipes.ConexionAPI;
+package com.pcr.procookingrecipes.ConexionAPI.Spoonacular;
 
 import android.util.Log;
 import com.google.gson.Gson;
@@ -14,7 +14,8 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class APIResponse {
-    private static final String API_KEY = "61adb1434eaa4266b233f21cc77d9931";
+    private static final String API_KEY1 = "61adb1434eaa4266b233f21cc77d9931";
+    private static final String API_KEY  = "30ccc31545e94349a94f95e9aa2578f8";
     private static final String INGREDIENT_SEARCH_URL = "https://api.spoonacular.com/food/ingredients/autocomplete";
     private static final String COMPLEX_SEARCH_URL = "https://api.spoonacular.com/recipes/complexSearch";
 
@@ -47,6 +48,44 @@ public class APIResponse {
         }
         return null;
     }
+
+    public boolean esIngredienteCorrecto(String ingrediente) {
+        String urlString = COMPLEX_SEARCH_URL + "?query=" + ingrediente + "&number=1&addRecipeInformation=false&apiKey=" + API_KEY;
+        HttpURLConnection urlConnection = null;
+        String response = "";
+
+        try {
+            URL url = new URL(urlString);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.connect();
+
+            // Leer la respuesta de la API
+            Scanner scanner = new Scanner(urlConnection.getInputStream());
+            while (scanner.hasNext()) {
+                response += scanner.nextLine();
+            }
+            scanner.close();
+
+            Log.d("APIResponse", "Respuesta de la API: " + response);
+
+            // Parsear la respuesta JSON
+            Gson gson = new Gson();
+            ApiResponse apiResponse = gson.fromJson(response, ApiResponse.class);
+
+            // Verificar si la lista de resultados no está vacía
+            return apiResponse.getResults() != null && !apiResponse.getResults().isEmpty();
+
+        } catch (IOException e) {
+            Log.e("APIResponse", "Error al conectar con la API: " + e.getMessage());
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+        }
+        return false; // Retornar falso en caso de error o sin resultados
+    }
+
 
     // Método para obtener todos los ingredientes posibles en Spoonacular
     public List<String> getAllIngredients() {
@@ -84,37 +123,6 @@ public class APIResponse {
             }
         }
         return new ArrayList<>(ingredients); // Convertir Set a List antes de retornar
-    }
-    // Método para autocompletar ingredientes
-    public List<String> autocompleteIngredient(String query) {
-        String urlString = INGREDIENT_SEARCH_URL + "?query=" + query + "&number=10&apiKey=" + API_KEY;
-        HttpURLConnection urlConnection = null;
-        String response = "";
-
-        try {
-            URL url = new URL(urlString);
-            urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("GET");
-            urlConnection.connect();
-
-            // Leer la respuesta
-            Scanner scanner = new Scanner(urlConnection.getInputStream());
-            while (scanner.hasNext()) {
-                response += scanner.nextLine();
-            }
-            scanner.close();
-
-            // Parsear la respuesta JSON
-            return parseIngredientResponse(response);
-
-        } catch (IOException e) {
-            Log.e("APIResponse", "Error al conectar con la API: " + e.getMessage());
-        } finally {
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-            }
-        }
-        return null;
     }
 
     // Método para convertir la respuesta JSON en una lista de recetas

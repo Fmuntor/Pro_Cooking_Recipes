@@ -33,6 +33,10 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    packagingOptions {
+        pickFirst("META-INF/INDEX.LIST")
+        exclude("META-INF/INDEX.LIST")
+    }
 }
 
 dependencies {
@@ -48,14 +52,30 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
 
-    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
-    implementation("com.google.firebase:firebase-analytics")
-    implementation(("com.google.firebase:firebase-auth:23.1.0"))
-    implementation("com.google.android.gms:play-services-auth:9.0.0")
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.play.services.auth)
+    implementation("com.google.cloud:google-cloud-translate:2.53.0") {
+        exclude(group = "com.google.api.grpc", module = "proto-google-common-protos")
+        exclude(group = "com.google.firebase", module = "protolite-well-known-types")
+        exclude(group = "com.google.protobuf", module = "protobuf-java")
+        exclude(group = "com.google.guava", module = "guava")
+        exclude(group = "org.apache.httpcomponents", module = "httpclient")
+    }
+
+    implementation("com.google.firebase:firebase-auth:23.1.0") {
+        exclude(group = "com.google.api.grpc", module = "proto-google-common-protos")
+        exclude(group = "com.google.firebase", module = "protolite-well-known-types")
+    }
 
     // Añade Firebase Firestore
-    implementation ("com.google.firebase:firebase-firestore:24.9.1")
+    implementation (libs.firebase.firestore)
+    // Añade Android Material
+    implementation (libs.material.v190)
+    implementation (libs.okhttp)
+
+
 }

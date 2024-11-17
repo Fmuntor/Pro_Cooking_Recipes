@@ -1,9 +1,7 @@
-package com.pcr.procookingrecipes.ConexionAPI;
+package com.pcr.procookingrecipes.ConexionAPI.Spoonacular;
 
 import retrofit2.Call;
-import retrofit2.http.Body;
 import retrofit2.http.GET;
-import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface SpoonacularAPI {
