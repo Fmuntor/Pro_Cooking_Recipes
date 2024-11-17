@@ -14,14 +14,16 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class APIResponse {
-    private static final String API_KEY1 = "61adb1434eaa4266b233f21cc77d9931";
-    private static final String API_KEY  = "30ccc31545e94349a94f95e9aa2578f8";
+    private static final String API_KEY_dam = "61adb1434eaa4266b233f21cc77d9931";
+    private static final String API_KEY_jue = "30ccc31545e94349a94f95e9aa2578f8";
+    private static final String API_KEY2_xew = "150217e73f7f43698b23de34401341c8";
+
     private static final String INGREDIENT_SEARCH_URL = "https://api.spoonacular.com/food/ingredients/autocomplete";
     private static final String COMPLEX_SEARCH_URL = "https://api.spoonacular.com/recipes/complexSearch";
 
     // Método para buscar recetas con "manzana" y limitar a 10 resultados
     public List<Receta> searchAppleRecipes() {
-        String urlString = COMPLEX_SEARCH_URL + "?query=apple&number=10&addRecipeInformation=true&apiKey=" + API_KEY;
+        String urlString = COMPLEX_SEARCH_URL + "?query=apple&number=10&addRecipeInformation=true&apiKey=" + API_KEY_jue;
         HttpURLConnection urlConnection = null;
         String response = "";
         try {
@@ -50,7 +52,7 @@ public class APIResponse {
     }
 
     public boolean esIngredienteCorrecto(String ingrediente) {
-        String urlString = COMPLEX_SEARCH_URL + "?query=" + ingrediente + "&number=1&addRecipeInformation=false&apiKey=" + API_KEY;
+        String urlString = COMPLEX_SEARCH_URL + "?query=" + ingrediente + "&number=1&addRecipeInformation=false&apiKey=" + API_KEY_jue;
         HttpURLConnection urlConnection = null;
         String response = "";
 
@@ -93,7 +95,7 @@ public class APIResponse {
         String letters = "abcdefghijklmnopqrstuvwxyz";
 
         for (char letter : letters.toCharArray()) {
-            String urlString = INGREDIENT_SEARCH_URL + "?query=" + letter + "&number=100&apiKey=" + API_KEY;
+            String urlString = INGREDIENT_SEARCH_URL + "?query=" + letter + "&number=100&apiKey=" + API_KEY_jue;
             HttpURLConnection urlConnection = null;
             String response = "";
 

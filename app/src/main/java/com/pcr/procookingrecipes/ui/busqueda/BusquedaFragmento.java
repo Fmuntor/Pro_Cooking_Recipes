@@ -1,5 +1,6 @@
 package com.pcr.procookingrecipes.ui.busqueda;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -24,6 +25,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.cloud.translate.Translate;
 import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;
+import com.pcr.procookingrecipes.Activity.BusquedaActivity;
+import com.pcr.procookingrecipes.Activity.MainActivity;
 import com.pcr.procookingrecipes.Adapters.BusquedaDataModel;
 import com.pcr.procookingrecipes.Adapters.ItemBusquedaAdapter;
 import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.APIResponse;
@@ -86,17 +89,24 @@ public class BusquedaFragmento extends Fragment {
         botonBuscar.setOnClickListener(v -> {
             executor.execute(() -> {
                 apiResponse = new APIResponse();
-
+                int errores=0;
                 // Realizar validación de los ingredientes y actualizar el adaptador
                 for (int i = 0; i < itemList.size(); i++) {
                     BusquedaDataModel item = itemList.get(i);
                     boolean esCorrecto = apiResponse.esIngredienteCorrecto(traducirPalabra(item.getEditText()));
-
+                    if(!esCorrecto){
+                        errores++;
+                    }
                     int finalI = i;
                     requireActivity().runOnUiThread(() -> {
                         adapter.setErrorAtPosition(finalI, !esCorrecto); // Marcar error si no es correcto
                     });
                 }
+                if(errores==0){
+                    abrirBusquedaActivity();
+                }
+
+
 
                 // Obtener la lista de ingredientes del RecyclerView (manteniendo los valores de los EditText)
                 List<String> listaIngredientes = new ArrayList<>();
@@ -210,5 +220,13 @@ public class BusquedaFragmento extends Fragment {
                 Log.e("APIResponse", "No se pudieron obtener recetas.");
             });
         }
+    }
+
+    private void abrirBusquedaActivity() {
+
+        Intent intent = new Intent(BusquedaFragmento.this, BusquedaActivity.class);
+        intent.putExtra("userEmail", mail);
+        intent.putExtra("userName", nombre);
+        startActivity(intent);
     }
 }
