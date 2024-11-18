@@ -1,10 +1,10 @@
-package com.pcr.procookingrecipes.Adapters;
+package com.pcr.procookingrecipes.Adapters.Ingrediente;
 
-public class BusquedaDataModel {
+public class IngredienteDataModel {
     private String editText;
     private boolean hasError; // Indica si hay error
 
-    public BusquedaDataModel(String editText) {
+    public IngredienteDataModel(String editText) {
 
         this.editText = editText;
     }
