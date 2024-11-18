@@ -2,6 +2,7 @@ package com.pcr.procookingrecipes.Activity;
 
 import android.os.Bundle;
 import android.view.Menu;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -10,18 +11,19 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
+import com.
+import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.APIResponse;
 import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.databinding.ActivityBusquedaBinding;
+import java.util.ArrayList;
 
 public class BusquedaActivity extends AppCompatActivity {
 
-    private AppBarConfiguration mAppBarConfiguration;
     private ActivityBusquedaBinding binding;
-    private String userEmail;
-    private String userName;
+    private int id;
+    ArrayList<String> listaIDs;
     private RecyclerView recyclerView;
-
+    private APIResponse apiResponse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,9 +32,16 @@ public class BusquedaActivity extends AppCompatActivity {
         binding = ActivityBusquedaBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Recupera el correo electrónico y nombre del usuario conectado desde el Intent
-        userEmail = getIntent().getStringExtra("userEmail");
-        userName = getIntent().getStringExtra("userName");
+        // Recupera la lista de IDs desde el Intent
+        listaIDs = getIntent().getStringArrayListExtra("listaIDs");
+
+        //Hacer una busqueda a la API con los IDs recuperando titulo, imagen, comensales y tiempo.
+        apiResponse = new APIResponse();
+        for(int i=0; i<listaIDs.size(); i++){
+            String respuesta = apiResponse.leerDeID(716429);
+            Toast.makeText(this, respuesta, Toast.LENGTH_SHORT).show();
+        }
+
 
         inicializarRecyclerView();
     }
@@ -45,12 +54,6 @@ public class BusquedaActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
-                || super.onSupportNavigateUp();
-    }
     private void inicializarRecyclerView() {
         recyclerView = binding.recyclerViewBusqueda;
         recyclerView.setLayoutManager(new LinearLayoutManager(this));;

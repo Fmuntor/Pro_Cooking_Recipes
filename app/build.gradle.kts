@@ -48,6 +48,7 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
+    implementation(libs.volley)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -76,6 +77,5 @@ dependencies {
     // Añade Android Material
     implementation (libs.material.v190)
     implementation (libs.okhttp)
-
-
+    implementation (libs.httpmime)
 }

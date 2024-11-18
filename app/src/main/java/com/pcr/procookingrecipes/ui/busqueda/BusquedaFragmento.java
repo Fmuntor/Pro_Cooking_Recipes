@@ -38,6 +38,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class BusquedaFragmento extends Fragment {
 
@@ -48,6 +50,7 @@ public class BusquedaFragmento extends Fragment {
     private FloatingActionButton botonIntroducirItem, botonBuscar;
     private APIResponse apiResponse;
     private final Executor executor = Executors.newSingleThreadExecutor();
+    private ArrayList<String> listaIDs;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -60,7 +63,7 @@ public class BusquedaFragmento extends Fragment {
         inicializarSeekBars();
 
         itemList = new ArrayList<>();
-        itemList.add(new BusquedaDataModel("EditText"));
+        itemList.add(new BusquedaDataModel("manzana"));
 
         adapter = new ItemBusquedaAdapter(itemList);
         binding.recyclerView.setAdapter(adapter);
@@ -90,19 +93,25 @@ public class BusquedaFragmento extends Fragment {
             executor.execute(() -> {
                 apiResponse = new APIResponse();
                 int errores=0;
+                listaIDs = new ArrayList<>();
                 // Realizar validación de los ingredientes y actualizar el adaptador
                 for (int i = 0; i < itemList.size(); i++) {
                     BusquedaDataModel item = itemList.get(i);
-                    boolean esCorrecto = apiResponse.esIngredienteCorrecto(traducirPalabra(item.getEditText()));
-                    if(!esCorrecto){
+                    String respuesta = apiResponse.esIngredienteCorrecto(traducirPalabra(item.getEditText()));
+                    if(respuesta.equals("Error")){
                         errores++;
+                        int finalI = i;
+                        requireActivity().runOnUiThread(() -> {
+                            adapter.setErrorAtPosition(finalI, true); // Marcar error
+                        });
+                    }else{
+                        String id=respuesta.substring(18, 24);
+                        listaIDs.add(id);
                     }
-                    int finalI = i;
-                    requireActivity().runOnUiThread(() -> {
-                        adapter.setErrorAtPosition(finalI, !esCorrecto); // Marcar error si no es correcto
-                    });
+
                 }
                 if(errores==0){
+                    // Si no hay errores, se realiza la busqueda
                     abrirBusquedaActivity();
                 }
 
@@ -224,9 +233,18 @@ public class BusquedaFragmento extends Fragment {
 
     private void abrirBusquedaActivity() {
 
-        Intent intent = new Intent(BusquedaFragmento.this, BusquedaActivity.class);
-        intent.putExtra("userEmail", mail);
-        intent.putExtra("userName", nombre);
+        Intent intent = new Intent(getActivity(), BusquedaActivity.class);
+        intent.putStringArrayListExtra("listaIDs", listaIDs);
         startActivity(intent);
+    }
+
+    public static String extraerIdDeResponse(String text) {
+        Pattern pattern = Pattern.compile("id:(\\d+)"); // Matches "id:" followed by one or more digits
+        Matcher matcher = pattern.matcher(text);
+        if (matcher.find()) {
+            return matcher.group(1); // Returns the captured group (digits after "id:")
+        } else {
+            return null; // Or handle the case where "id:" is not found
+        }
     }
 }

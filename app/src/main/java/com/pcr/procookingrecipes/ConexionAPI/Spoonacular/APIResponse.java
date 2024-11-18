@@ -20,6 +20,7 @@ public class APIResponse {
 
     private static final String INGREDIENT_SEARCH_URL = "https://api.spoonacular.com/food/ingredients/autocomplete";
     private static final String COMPLEX_SEARCH_URL = "https://api.spoonacular.com/recipes/complexSearch";
+    private static final String URL_INFORMACION = "https://api.spoonacular.com/recipes/";
 
     // Método para buscar recetas con "manzana" y limitar a 10 resultados
     public List<Receta> searchAppleRecipes() {
@@ -51,8 +52,8 @@ public class APIResponse {
         return null;
     }
 
-    public boolean esIngredienteCorrecto(String ingrediente) {
-        String urlString = COMPLEX_SEARCH_URL + "?query=" + ingrediente + "&number=1&addRecipeInformation=false&apiKey=" + API_KEY_jue;
+    public String esIngredienteCorrecto(String ingrediente) {
+        String urlString = COMPLEX_SEARCH_URL + "?query=" + ingrediente + "&number=1&addRecipeInstructions=true&apiKey=" + API_KEY_jue;
         HttpURLConnection urlConnection = null;
         String response = "";
 
@@ -76,7 +77,11 @@ public class APIResponse {
             ApiResponse apiResponse = gson.fromJson(response, ApiResponse.class);
 
             // Verificar si la lista de resultados no está vacía
-            return apiResponse.getResults() != null && !apiResponse.getResults().isEmpty();
+            if (apiResponse.getResults() != null && !apiResponse.getResults().isEmpty()) {
+                return response;
+            }else{
+                return "Error";
+            }
 
         } catch (IOException e) {
             Log.e("APIResponse", "Error al conectar con la API: " + e.getMessage());
@@ -85,7 +90,7 @@ public class APIResponse {
                 urlConnection.disconnect();
             }
         }
-        return false; // Retornar falso en caso de error o sin resultados
+        return null;
     }
 
 
@@ -145,8 +150,33 @@ public class APIResponse {
         return ingredientNames;
     }
 
-    public boolean comprobarIngredientes(List<String> listaIngredientes) {
-        return true;
+    public String leerDeID(int id) {
+        String urlString = URL_INFORMACION + id+"/information?includeNutrition=false&apiKey=" + API_KEY_jue;
+        HttpURLConnection urlConnection = null;
+        String response = "";
+        try {
+            URL url = new URL(urlString);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.connect();
+
+            // Leer la respuesta
+            Scanner scanner = new Scanner(urlConnection.getInputStream());
+            while (scanner.hasNext()) {
+                response += scanner.nextLine();
+            }
+            scanner.close();
+
+            // Convertir la respuesta JSON a objetos Java
+            return response;
+        } catch (IOException e) {
+            Log.e("APIResponse", "Error al conectar con la API: " + e.getMessage());
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+        }
+        return null;
     }
 
     // Clase interna que representa la respuesta de la API de recetas
