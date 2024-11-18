@@ -32,7 +32,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activity.BusquedaActivity"
+            android:name=".Activity.Busqueda.BusquedaActivity"
             android:exported="true"
             android:theme="@style/Theme.ProCookingRecipes.NoActionBar">
             <intent-filter>

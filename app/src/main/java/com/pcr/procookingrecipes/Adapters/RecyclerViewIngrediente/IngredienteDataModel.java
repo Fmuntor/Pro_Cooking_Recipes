@@ -1,12 +1,13 @@
-package com.pcr.procookingrecipes.Adapters.Ingrediente;
+package com.pcr.procookingrecipes.Adapters.RecyclerViewIngrediente;
 
 public class IngredienteDataModel {
-    private String editText;
+    private String editText, mensajeError;
     private boolean hasError; // Indica si hay error
 
     public IngredienteDataModel(String editText) {
 
         this.editText = editText;
+
     }
 
     public String getEditText() {
@@ -16,12 +17,21 @@ public class IngredienteDataModel {
     public void setEditText(String editText) {
         this.editText = editText;
     }
+
+    public String getMensajeError() {
+        return mensajeError;
+    }
+
+    public void setMensajeError(String mensajeError) {
+        this.mensajeError = mensajeError;
+    }
+
     public boolean hasError() {
         return hasError;
     }
 
     public void setError(boolean hasError) {
-        this.hasError = hasError;
+        this.hasError = hasError;;
     }
 
 }

@@ -1,4 +1,4 @@
-package com.pcr.procookingrecipes.Activity;
+package com.pcr.procookingrecipes.Activity.Busqueda;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -8,8 +8,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.pcr.procookingrecipes.Adapters.Busqueda.BusquedaActivityAdapter;
-import com.pcr.procookingrecipes.Adapters.Busqueda.BusquedaDataModel;
+import com.pcr.procookingrecipes.Adapters.ReciclerViewBusqueda.ItemBusquedaAdapter;
+import com.pcr.procookingrecipes.Adapters.ReciclerViewBusqueda.BusquedaDataModel;
 import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.APIResponse;
 import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.Receta.RecetaBusqueda;
@@ -23,12 +23,12 @@ import java.util.concurrent.Executors;
 public class BusquedaActivity extends AppCompatActivity {
 
     private ActivityBusquedaBinding binding;
-    private int id;
-    ArrayList<String> listaIDs;
+    private ArrayList<String> listaIDs;
+    private ArrayList<String> listaImagenes;
     private RecyclerView recyclerView;
     private APIResponse apiResponse;
-    private BusquedaActivityAdapter adapter;
-    private List<BusquedaDataModel> recetaList = new ArrayList<>();
+    private ItemBusquedaAdapter adapter;
+    private List<BusquedaDataModel> recetaList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,47 +38,50 @@ public class BusquedaActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         inicializarRecyclerView();
-        adapter = new BusquedaActivityAdapter(recetaList);
-        recyclerView.setAdapter(adapter);
+
+        recetaList = new ArrayList<>();
+        //recetaList.add(new BusquedaDataModel("titulo", "imagen", 1, 1));
+        adapter = new ItemBusquedaAdapter(recetaList);
+        binding.recyclerViewBusqueda.setAdapter(adapter);
 
         // Recupera la lista de IDs desde el Intent
         listaIDs = getIntent().getStringArrayListExtra("listaIDs");
+        listaImagenes = getIntent().getStringArrayListExtra("listaImagenes");
 
-        //Hacer una busqueda a la API con los IDs recuperando titulo, imagen, comensales y tiempo.
+        // Configura la conexión con la API
         apiResponse = new APIResponse();
         ExecutorService executor = Executors.newSingleThreadExecutor();
 
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                for(int i=0; i<listaIDs.size(); i++) {
+                for (int i = 0; i < listaIDs.size(); i++) {
                     int id = Integer.parseInt(listaIDs.get(i));
                     RecetaBusqueda recetaBusqueda = apiResponse.leerDeID(id);
+                    recetaBusqueda.setImage(listaImagenes.get(i));
 
                     if (recetaBusqueda != null) {
-                        Log.d("Respuesta", "Título: " + recetaBusqueda.getTitle());
-                        Log.d("Respuesta", "Imagen: " + recetaBusqueda.getImage());
-                        Log.d("Respuesta", "Comensales: " + recetaBusqueda.getServings());
-                        Log.d("Respuesta", "Tiempo de preparación: " + recetaBusqueda.getReadyInMinutes());
 
-                        // Aquí puedes agregar la receta a tu lista de resultados
-                        // itemList.add(new BusquedaDataModel(receta.getTitle(), receta.getImage(), receta.getServings(), receta.getPreparationMinutes()));
+                        // Agrega la receta a la lista de resultados
+                        recetaList.add(new BusquedaDataModel(
+                                recetaBusqueda.getTitle(),
+                                recetaBusqueda.getImage(),
+                                recetaBusqueda.getServings(),
+                                recetaBusqueda.getReadyInMinutes()
+                        ));
+
+                        // Actualiza el RecyclerView en el hilo principal
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.notifyDataSetChanged();
+                            }
+                        });
                     }
                 }
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Actualiza el RecyclerView con la lista de resultados
-                        // adapter.notifyDataSetChanged();
-                    }
-                });
             }
         });
-        //private List<BusquedaDataModel> itemList;
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -90,7 +93,5 @@ public class BusquedaActivity extends AppCompatActivity {
     private void inicializarRecyclerView() {
         recyclerView = binding.recyclerViewBusqueda;
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
     }
-
 }

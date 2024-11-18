@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class BusquedaViewModel extends ViewModel {
+public class BusquedaFragmentoViewModel extends ViewModel {
 
     private final MutableLiveData<String> mText;
 
-    public BusquedaViewModel() {
+    public BusquedaFragmentoViewModel() {
         mText = new MutableLiveData<>();
         mText.setValue("Texto del fragmento Busqueda");
     }

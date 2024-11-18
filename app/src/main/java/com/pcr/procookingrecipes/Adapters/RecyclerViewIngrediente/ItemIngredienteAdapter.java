@@ -1,4 +1,4 @@
-package com.pcr.procookingrecipes.Adapters.Ingrediente;
+package com.pcr.procookingrecipes.Adapters.RecyclerViewIngrediente;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -56,7 +56,7 @@ public class ItemIngredienteAdapter extends RecyclerView.Adapter<ItemIngrediente
 
         // Verificar si el ítem tiene error
         if (item.hasError()) {
-            holder.editText.setError("Ingrediente no válido");
+            holder.editText.setError(item.getMensajeError());
         } else {
             holder.editText.setError(null); // Limpiar error si no existe
         }
@@ -94,7 +94,12 @@ public class ItemIngredienteAdapter extends RecyclerView.Adapter<ItemIngrediente
         notifyDataSetChanged(); // Notificar que se ha actualizado la lista
     }
 
-    public void setErrorAtPosition(int position, boolean hasError) {
+    public void setErrorAtPosition(int position, boolean hasError, int tipoError) {
+        if(tipoError==1){
+            dataList.get(position).setMensajeError("Ingrediente no válido.");
+        }else{
+            dataList.get(position).setMensajeError("Ingrediente duplicado.");
+        }
         dataList.get(position).setError(hasError);
         notifyItemChanged(position); // Actualizar el ítem en el RecyclerView
     }

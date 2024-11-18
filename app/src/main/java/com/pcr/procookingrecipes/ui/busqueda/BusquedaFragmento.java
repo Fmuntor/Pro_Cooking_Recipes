@@ -25,9 +25,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.cloud.translate.Translate;
 import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;
-import com.pcr.procookingrecipes.Activity.BusquedaActivity;
-import com.pcr.procookingrecipes.Adapters.Ingrediente.IngredienteDataModel;
-import com.pcr.procookingrecipes.Adapters.Ingrediente.ItemIngredienteAdapter;
+import com.pcr.procookingrecipes.Activity.Busqueda.BusquedaActivity;
+import com.pcr.procookingrecipes.Adapters.RecyclerViewIngrediente.IngredienteDataModel;
+import com.pcr.procookingrecipes.Adapters.RecyclerViewIngrediente.ItemIngredienteAdapter;
 import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.APIResponse;
 import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.Receta.Receta;
@@ -35,6 +35,7 @@ import com.pcr.procookingrecipes.databinding.FragmentoBusquedaBinding;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
@@ -49,11 +50,11 @@ public class BusquedaFragmento extends Fragment {
     private FloatingActionButton botonIntroducirItem, botonBuscar;
     private APIResponse apiResponse;
     private final Executor executor = Executors.newSingleThreadExecutor();
-    private ArrayList<String> listaIDs;
+    private ArrayList<String> listaIDs,listaImagenes;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        BusquedaViewModel busquedaViewModel = new ViewModelProvider(this).get(BusquedaViewModel.class);
+        BusquedaFragmentoViewModel busquedaViewModel = new ViewModelProvider(this).get(BusquedaFragmentoViewModel.class);
         binding = FragmentoBusquedaBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
@@ -63,6 +64,8 @@ public class BusquedaFragmento extends Fragment {
 
         itemList = new ArrayList<>();
         itemList.add(new IngredienteDataModel("manzana"));
+        itemList.add(new IngredienteDataModel("uva"));
+
 
         adapter = new ItemIngredienteAdapter(itemList);
         binding.recyclerView.setAdapter(adapter);
@@ -93,43 +96,140 @@ public class BusquedaFragmento extends Fragment {
                 apiResponse = new APIResponse();
                 int errores=0;
                 listaIDs = new ArrayList<>();
+                listaImagenes = new ArrayList<>();
                 // Realizar validación de los ingredientes y actualizar el adaptador
                 for (int i = 0; i < itemList.size(); i++) {
+                    //Comprobar si ya existe el ingrediente en la lista
+                    for (int j = 0; j < i; j++) {
+                        if (itemList.get(i).getEditText().equals(itemList.get(j).getEditText())) {
+                            errores++;
+                            int finalI = i;
+                            requireActivity().runOnUiThread(() -> {
+                                adapter.setErrorAtPosition(finalI, true,2); // Marcar error
+                                return;
+                            });
+                        }
+                    }
                     IngredienteDataModel item = itemList.get(i);
-                    String respuesta = apiResponse.esIngredienteCorrecto(traducirPalabra(item.getEditText()));
+                    String respuesta = apiResponse.esIngredienteCorrecto(traducirPalabra(item.getEditText(), "ingles"));
                     if(respuesta.equals("Error")){
                         errores++;
                         int finalI = i;
                         requireActivity().runOnUiThread(() -> {
-                            adapter.setErrorAtPosition(finalI, true); // Marcar error
+                            adapter.setErrorAtPosition(finalI, true,1); // Marcar error
                         });
                     }else{
                         String id=respuesta.substring(18, 24);
                         listaIDs.add(id);
-                    }
 
+                        Pattern pattern = Pattern.compile("\"image\":\"([^\"]+)\"");
+                        Matcher matcher = pattern.matcher(respuesta);
+                        if (matcher.find()) {
+                            String imagen = matcher.group(1);
+                            listaImagenes.add(imagen);
+                        }
+                    }
                 }
                 if(errores==0){
-                    // Si no hay errores, se realiza la busqueda
+                    // Si no hay errores, se realiza la busqueda completa, con ingredientes y opciones seleccionadas
+
+                    List<Receta> recetas = apiResponse.busquedaCompleta(escribirConsultaFinal());
                     abrirBusquedaActivity();
                 }
-
-
-
-                // Obtener la lista de ingredientes del RecyclerView (manteniendo los valores de los EditText)
-                List<String> listaIngredientes = new ArrayList<>();
-                for (IngredienteDataModel item : itemList) {
-                    listaIngredientes.add(item.getEditText());
-                }
-                // Actualiza el adaptador con los nuevos datos
-                //adapter.updateDataList(nuevaListaDeDatos); // nuevaListaDeDatos contiene los resultados de la búsqueda
             });
         });
     }
 
-    private String traducirPalabra(String texto) {
+    private String escribirConsultaFinal() {
+        // Crear un StringBuilder para almacenar la consulta final
+        StringBuilder consultaFinal = new StringBuilder();
+
+        if(!itemList.isEmpty()){
+            for(int i=0;i<itemList.size();i++){
+                consultaFinal.append(traducirPalabra(itemList.get(i).getEditText(), "ingles")).append(",");
+            }
+        }
+
+        // Eliminar el último carácter "," si existe
+        if (consultaFinal.length() > 0 && consultaFinal.charAt(consultaFinal.length() - 1) == ',') {
+            consultaFinal.deleteCharAt(consultaFinal.length() - 1);
+        }
+
+        // CheckBox: Cocina
+        if (binding.checkCocina.isChecked()) {
+            consultaFinal.append("&type=");
+
+            String opcionSeleccionada = binding.spinnerCocina.getSelectedItem().toString();
+            consultaFinal.append(traducirPalabra(opcionSeleccionada, "ingles"));
+        }
+
+        // CheckBox: Nacionalidad
+        if (binding.checkNacionalidad.isChecked()) {
+            consultaFinal.append("&cuisine=");
+
+            String opcionSeleccionada = binding.spinnerNacionalidad.getSelectedItem().toString();
+            consultaFinal.append(traducirPalabra(opcionSeleccionada, "ingles"));
+        }
+
+        // CheckBox: Dieta
+        if (binding.checkDieta.isChecked()) {
+            consultaFinal.append("&diet=");
+
+            String opcionSeleccionada = binding.spinnerDieta.getSelectedItem().toString();
+            consultaFinal.append(traducirPalabra(opcionSeleccionada, "ingles"));
+        }
+
+        // CheckBox: Intolerancias
+        if (binding.checkIntolerancias.isChecked()) {
+            consultaFinal.append("&intolerances=");
+            String opcionSeleccionada = binding.spinnerIntolerancias.getSelectedItem().toString();
+            consultaFinal.append(traducirPalabra(opcionSeleccionada, "ingles"));
+        }
+
+        // CheckBox: Carbohidratos
+        if (binding.checkCarbo.isChecked()) {
+            consultaFinal.append("&minCarbs=");
+            int valorSeleccionado = binding.seekBarCarbo.getProgress();
+            consultaFinal.append(valorSeleccionado);
+        }
+
+        // CheckBox: Proteínas
+        if (binding.checkProteina.isChecked()) {
+            consultaFinal.append("&minProtein=");
+            int valorSeleccionado = binding.seekBarProteina.getProgress();
+            consultaFinal.append(valorSeleccionado);
+        }
+
+        // CheckBox: Calorías
+        if (binding.checkCalorias.isChecked()) {
+            consultaFinal.append("&maxCalories=");
+
+            int valorSeleccionado = binding.seekBarCalorias.getProgress();
+            consultaFinal.append(valorSeleccionado);
+        }
+
+
+
+        // Eliminar el último carácter "," si existe
+        if (consultaFinal.length() > 0 && consultaFinal.charAt(consultaFinal.length() - 1) == ',') {
+            consultaFinal.deleteCharAt(consultaFinal.length() - 1);
+        }
+
+
+        // Debug para comprobar la consulta generada
+        Log.d("ConsultaFinal", "Consulta generada: " + consultaFinal.toString());
+        return consultaFinal.toString();
+    }
+
+
+    private String traducirPalabra(String texto, String idioma) {
         Translate translate = TranslateOptions.newBuilder().setApiKey("AIzaSyAlF4NerB2lB0-SWaSSwnjzO7XEB8nSVCw").build().getService();
-        Translation translation = translate.translate(texto, Translate.TranslateOption.targetLanguage("en"));
+        Translation translation;
+        if(Objects.equals(idioma, "espanol")){
+            translation = translate.translate(texto, Translate.TranslateOption.sourceLanguage("en"), Translate.TranslateOption.targetLanguage("es"));
+        }else{
+            translation = translate.translate(texto, Translate.TranslateOption.sourceLanguage("es"), Translate.TranslateOption.targetLanguage("en"));
+        }
         String translatedText = translation.getTranslatedText();
         Log.d("Translation", "Texto traducido: " + translatedText);
         return translatedText;
@@ -197,54 +297,11 @@ public class BusquedaFragmento extends Fragment {
         binding = null;
     }
 
-    private void obtenerTodosIngredientes() {
-        List<String> ingredients = apiResponse.getAllIngredients();
-        if (ingredients != null && !ingredients.isEmpty()) {
-            new Handler(Looper.getMainLooper()).post(() -> {
-                for (String ingredient : ingredients) {
-                    Log.d("Ingredient", ingredient);
-                }
-                Toast.makeText(getContext(), "Ingredientes cargados en el log", Toast.LENGTH_SHORT).show();
-            });
-        } else {
-            new Handler(Looper.getMainLooper()).post(() -> {
-                Log.e("APIResponse", "No se pudieron obtener los ingredientes.");
-                Toast.makeText(getContext(), "Error al cargar ingredientes", Toast.LENGTH_SHORT).show();
-            });
-        }
-    }
-
-    private void obtener10RecetasManzana() {
-        List<Receta> recipes = apiResponse.searchAppleRecipes();
-        if (recipes != null) {
-            new Handler(Looper.getMainLooper()).post(() -> {
-                for (Receta recipe : recipes) {
-                    Log.d("Recipe", "Title: " + recipe.getTitle());
-                    Log.d("Recipe", "Image URL: " + recipe.getImage());
-                }
-            });
-        } else {
-            new Handler(Looper.getMainLooper()).post(() -> {
-                Log.e("APIResponse", "No se pudieron obtener recetas.");
-            });
-        }
-    }
-
     private void abrirBusquedaActivity() {
 
         Intent intent = new Intent(getActivity(), BusquedaActivity.class);
         intent.putStringArrayListExtra("listaIDs", listaIDs);
-        intent.putExtra("listaIDs", listaIDs);
+        intent.putExtra("listaImagenes", listaImagenes);
         startActivity(intent);
-    }
-
-    public static String extraerIdDeResponse(String text) {
-        Pattern pattern = Pattern.compile("id:(\\d+)"); // Matches "id:" followed by one or more digits
-        Matcher matcher = pattern.matcher(text);
-        if (matcher.find()) {
-            return matcher.group(1); // Returns the captured group (digits after "id:")
-        } else {
-            return null; // Or handle the case where "id:" is not found
-        }
     }
 }

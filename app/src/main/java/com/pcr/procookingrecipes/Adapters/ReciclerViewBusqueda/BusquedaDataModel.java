@@ -1,4 +1,4 @@
-package com.pcr.procookingrecipes.Adapters.Busqueda;
+package com.pcr.procookingrecipes.Adapters.ReciclerViewBusqueda;
 
 public class BusquedaDataModel {
     private String title;
