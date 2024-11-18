@@ -1,15 +1,16 @@
-package com.pcr.procookingrecipes.Adapters;
+package com.pcr.procookingrecipes.Adapters.Busqueda;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.pcr.procookingrecipes.Adapters.Busqueda.BusquedaDataModel;
 import com.pcr.procookingrecipes.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -24,19 +25,21 @@ public class BusquedaActivityAdapter extends RecyclerView.Adapter<BusquedaActivi
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_busqueda, parent, false);
-
-        MyViewHolder holder = new MyViewHolder(view);
-        addItem(new BusquedaDataModel("","",1,1));
-        notifyItemInserted(dataList.size() - 1);
-
-        return holder;
+                .inflate(R.layout.item_ingrediente, parent, false);
+        return new MyViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         BusquedaDataModel item = dataList.get(position);
 
+        // Asignar los datos al ViewHolder
+        holder.titleTextView.setText(item.getTitle());
+        holder.servingsTextView.setText("Servings: " + item.getServings());
+        holder.preparationTimeTextView.setText("Prep time: " + item.getPreparationMinutes() + " mins");
+
+        // Usar Picasso para cargar la imagen
+        Picasso.get().load(item.getImage()).into(holder.imageView);
     }
 
     @Override
@@ -58,12 +61,15 @@ public class BusquedaActivityAdapter extends RecyclerView.Adapter<BusquedaActivi
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        Button botonVerReceta;
-         // Definir el TextWatcher aquí para evitar duplicación
+        TextView titleTextView, servingsTextView, preparationTimeTextView;
+        ImageView imageView;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-
+            titleTextView = itemView.findViewById(R.id.tituloReceta);
+            servingsTextView = itemView.findViewById(R.id.comensalesReceta);
+            preparationTimeTextView = itemView.findViewById(R.id.tiempoReceta);
+            imageView = itemView.findViewById(R.id.imagenReceta);
         }
     }
 }

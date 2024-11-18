@@ -77,5 +77,5 @@ dependencies {
     // Añade Android Material
     implementation (libs.material.v190)
     implementation (libs.okhttp)
-    implementation (libs.httpmime)
+    implementation ("com.squareup.picasso:picasso:2.8")
 }

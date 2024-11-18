@@ -1,8 +1,10 @@
 package com.pcr.procookingrecipes.ConexionAPI.Spoonacular;
 
 import android.util.Log;
+
 import com.google.gson.Gson;
 import com.pcr.procookingrecipes.Receta.Receta;
+import com.pcr.procookingrecipes.Receta.RecetaBusqueda;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -150,10 +152,10 @@ public class APIResponse {
         return ingredientNames;
     }
 
-    public String leerDeID(int id) {
-        String urlString = URL_INFORMACION + id+"/information?includeNutrition=false&apiKey=" + API_KEY_jue;
+    public RecetaBusqueda leerDeID(int id) {
+        String urlString = URL_INFORMACION + id + "/information?includeNutrition=false&apiKey=" + API_KEY_jue;
         HttpURLConnection urlConnection = null;
-        String response = "";
+        StringBuilder response = new StringBuilder();
         try {
             URL url = new URL(urlString);
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -161,14 +163,20 @@ public class APIResponse {
             urlConnection.connect();
 
             // Leer la respuesta
-            Scanner scanner = new Scanner(urlConnection.getInputStream());
-            while (scanner.hasNext()) {
-                response += scanner.nextLine();
+            int statusCode = urlConnection.getResponseCode();
+            if (statusCode == HttpURLConnection.HTTP_OK) {
+                Scanner scanner = new Scanner(urlConnection.getInputStream(), "UTF-8");
+                while (scanner.hasNext()) {
+                    response.append(scanner.nextLine());
+                }
+                scanner.close();
+            } else {
+                Log.e("APIResponse", "Error en la conexión. Código de respuesta: " + statusCode);
             }
-            scanner.close();
 
-            // Convertir la respuesta JSON a objetos Java
-            return response;
+            Gson gson = new Gson();
+            return gson.fromJson(response.toString(), RecetaBusqueda.class);
+
         } catch (IOException e) {
             Log.e("APIResponse", "Error al conectar con la API: " + e.getMessage());
         } finally {
@@ -178,6 +186,9 @@ public class APIResponse {
         }
         return null;
     }
+
+
+
 
     // Clase interna que representa la respuesta de la API de recetas
     private class ApiResponse {

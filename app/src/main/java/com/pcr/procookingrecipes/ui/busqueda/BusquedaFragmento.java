@@ -26,9 +26,8 @@ import com.google.cloud.translate.Translate;
 import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;
 import com.pcr.procookingrecipes.Activity.BusquedaActivity;
-import com.pcr.procookingrecipes.Activity.MainActivity;
-import com.pcr.procookingrecipes.Adapters.BusquedaDataModel;
-import com.pcr.procookingrecipes.Adapters.ItemBusquedaAdapter;
+import com.pcr.procookingrecipes.Adapters.Ingrediente.IngredienteDataModel;
+import com.pcr.procookingrecipes.Adapters.Ingrediente.ItemIngredienteAdapter;
 import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.APIResponse;
 import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.Receta.Receta;
@@ -45,8 +44,8 @@ public class BusquedaFragmento extends Fragment {
 
     private FragmentoBusquedaBinding binding;
     private RecyclerView recyclerView;
-    private ItemBusquedaAdapter adapter;
-    private List<BusquedaDataModel> itemList;
+    private ItemIngredienteAdapter adapter;
+    private List<IngredienteDataModel> itemList;
     private FloatingActionButton botonIntroducirItem, botonBuscar;
     private APIResponse apiResponse;
     private final Executor executor = Executors.newSingleThreadExecutor();
@@ -63,9 +62,9 @@ public class BusquedaFragmento extends Fragment {
         inicializarSeekBars();
 
         itemList = new ArrayList<>();
-        itemList.add(new BusquedaDataModel("manzana"));
+        itemList.add(new IngredienteDataModel("manzana"));
 
-        adapter = new ItemBusquedaAdapter(itemList);
+        adapter = new ItemIngredienteAdapter(itemList);
         binding.recyclerView.setAdapter(adapter);
 
         configurarCheckBoxes();
@@ -83,7 +82,7 @@ public class BusquedaFragmento extends Fragment {
 
         botonIntroducirItem.setOnClickListener(v -> {
             // Añadir un nuevo ítem al RecyclerView
-            itemList.add(new BusquedaDataModel(""));
+            itemList.add(new IngredienteDataModel(""));
             adapter.notifyItemInserted(itemList.size() - 1); // Notificar al adaptador
         });
 
@@ -96,7 +95,7 @@ public class BusquedaFragmento extends Fragment {
                 listaIDs = new ArrayList<>();
                 // Realizar validación de los ingredientes y actualizar el adaptador
                 for (int i = 0; i < itemList.size(); i++) {
-                    BusquedaDataModel item = itemList.get(i);
+                    IngredienteDataModel item = itemList.get(i);
                     String respuesta = apiResponse.esIngredienteCorrecto(traducirPalabra(item.getEditText()));
                     if(respuesta.equals("Error")){
                         errores++;
@@ -119,7 +118,7 @@ public class BusquedaFragmento extends Fragment {
 
                 // Obtener la lista de ingredientes del RecyclerView (manteniendo los valores de los EditText)
                 List<String> listaIngredientes = new ArrayList<>();
-                for (BusquedaDataModel item : itemList) {
+                for (IngredienteDataModel item : itemList) {
                     listaIngredientes.add(item.getEditText());
                 }
                 // Actualiza el adaptador con los nuevos datos
@@ -235,6 +234,7 @@ public class BusquedaFragmento extends Fragment {
 
         Intent intent = new Intent(getActivity(), BusquedaActivity.class);
         intent.putStringArrayListExtra("listaIDs", listaIDs);
+        intent.putExtra("listaIDs", listaIDs);
         startActivity(intent);
     }
 
