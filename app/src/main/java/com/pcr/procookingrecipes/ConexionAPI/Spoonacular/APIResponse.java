@@ -17,9 +17,10 @@ import java.util.List;
 import java.util.Scanner;
 
 public class APIResponse {
-    //*dam*/ private static final String API_KEY = "61adb1434eaa4266b233f21cc77d9931";
+    //dam*/ private static final String API_KEY = "61adb1434eaa4266b233f21cc77d9931";
     //jue*/ private static final String API_KEY = "30ccc31545e94349a94f95e9aa2578f8";
-    /*xew*/ private static final String API_KEY = "150217e73f7f43698b23de34401341c8";
+    //xew*/ private static final String API_KEY = "150217e73f7f43698b23de34401341c8";
+    /*pan*/ private static final String API_KEY = "83a0e0c5b56948ca83dd4e3ffbaecdf4";
 
     private static final String INGREDIENT_SEARCH_URL = "https://api.spoonacular.com/food/ingredients/autocomplete";
     private static final String COMPLEX_SEARCH_URL = "https://api.spoonacular.com/recipes/complexSearch";

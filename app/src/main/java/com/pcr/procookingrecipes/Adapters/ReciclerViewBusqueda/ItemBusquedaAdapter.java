@@ -2,6 +2,7 @@ package com.pcr.procookingrecipes.Adapters.ReciclerViewBusqueda;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,21 +51,25 @@ public class ItemBusquedaAdapter extends RecyclerView.Adapter<ItemBusquedaAdapte
             holder.comensalesTextView.setText("Para " + item.getServings() + " personas.");
             holder.tiempoPreparacionTextView.setText("Listo en: " + item.getReadyInMinutes() + " minutos.");
 
+
+
             // Configurar el botón "ver receta" para abrir los detalles
             holder.verReceta.setOnClickListener(v -> {
                 int currentPosition = holder.getAdapterPosition();
                 if (currentPosition != RecyclerView.NO_POSITION) {
                     int id = dataList.get(currentPosition).getId();
-                    abrirDetallesReceta(holder.itemView.getContext(), id);
+                    Intent intent = new Intent(holder.itemView.getContext(), RecetaActivity.class);
+
+                    intent.putExtra("ID", id); // Pasar el ID de la receta a la nueva actividad
+                    intent.putExtra("Receta", item);
+                    holder.itemView.getContext().startActivity(intent);
                 }
             });
         }
     }
 
     private void abrirDetallesReceta(Context context, int id) {
-        Intent intent = new Intent(context, RecetaActivity.class);
-        intent.putExtra("ID", id); // Pasar el ID de la receta a la nueva actividad
-        context.startActivity(intent);
+
     }
 
     @Override

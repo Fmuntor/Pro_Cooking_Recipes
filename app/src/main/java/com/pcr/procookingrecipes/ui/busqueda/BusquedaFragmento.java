@@ -131,25 +131,6 @@ public class BusquedaFragmento extends Fragment {
 
                         recetasCompletas.add(apiResponse.getInformacionReceta(receta.getId()));
                     }
-                    List<Instruction> instrucciones = apiResponse.getInstrucciones(632631);
-
-                    if (instrucciones != null && !instrucciones.isEmpty()) {
-                        String recetaFormateada = formatearInstrucciones(instrucciones);
-                        Log.d("Receta", recetaFormateada); // Muestra en la consola
-                    } else {
-                        Log.d("Receta", "No se encontraron instrucciones.");
-                    }
-
-                    /*
-                    for (RecetaBusqueda receta : recetasCompletas) {
-                        Log.d("Receta",
-                                "ID: " + receta.getId() +
-                                    ", Título: " + receta.getTitle() +
-                                    ", URL Imagen: " + receta.getImage() +
-                                    ", Servings: " + receta.getServings() +
-                                    ", Ready In Minutes: " + receta.getReadyInMinutes());
-                    }
-                    */
                     abrirBusquedaActivity();
                 }
             });
@@ -306,41 +287,6 @@ public class BusquedaFragmento extends Fragment {
         startActivity(intent);
     }
 
-    public String formatearInstrucciones(List<Instruction> instrucciones) {
-        StringBuilder sb = new StringBuilder();
 
-        for (Instruction instruccion : instrucciones) {
-            sb.append("Receta: ").append(instruccion.getName().isEmpty() ? "Sin título" : instruccion.getName()).append("\n");
-
-            for (Step paso : instruccion.getSteps()) {
-                sb.append("Paso ").append(paso.getNumber()).append(": ").append(paso.getStep()).append("\n");
-
-                // Ingredientes
-                if (!paso.getIngredients().isEmpty()) {
-                    sb.append("   Ingredientes: ");
-                    for (Ingredient ingrediente : paso.getIngredients()) {
-                        sb.append(ingrediente.getName()).append(", ");
-                    }
-                    // Elimina la última coma
-                    sb.setLength(sb.length() - 2);
-                    sb.append("\n");
-                }
-
-                // Equipo
-                if (!paso.getEquipment().isEmpty()) {
-                    sb.append("   Equipo: ");
-                    for (Equipment equipo : paso.getEquipment()) {
-                        sb.append(equipo.getName()).append(", ");
-                    }
-                    // Elimina la última coma
-                    sb.setLength(sb.length() - 2);
-                    sb.append("\n");
-                }
-            }
-            sb.append("\n"); // Separador entre diferentes conjuntos de instrucciones
-        }
-
-        return sb.toString();
-    }
 
 }
