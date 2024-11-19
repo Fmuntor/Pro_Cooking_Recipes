@@ -12,14 +12,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pcr.procookingrecipes.R;
+import com.pcr.procookingrecipes.Receta.RecetaBusqueda;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class ItemBusquedaAdapter extends RecyclerView.Adapter<ItemBusquedaAdapter.MyViewHolder> {
-    private List<BusquedaDataModel> dataList;
+    private List<RecetaBusqueda> dataList;
 
-    public ItemBusquedaAdapter(List<BusquedaDataModel> dataList) {
+    public ItemBusquedaAdapter(List<RecetaBusqueda> dataList) {
         this.dataList = dataList;
     }
 
@@ -34,22 +35,27 @@ public class ItemBusquedaAdapter extends RecyclerView.Adapter<ItemBusquedaAdapte
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        BusquedaDataModel item = dataList.get(position);
+        RecetaBusqueda item = dataList.get(position);
 
         // Asignar los datos al ViewHolder
         holder.tituloTextView.setText(item.getTitle());
+        Picasso.get().load(item.getImage()).into(holder.imagenReceta);
         holder.comensalesTextView.setText("Para " + item.getServings()+" personas.");
-        holder.tiempoPreparacionTextView.setText("Tiempo de preparación: " + item.getPreparationMinutes() + " minutos.");
+        holder.tiempoPreparacionTextView.setText("Listo en: " + item.getReadyInMinutes() + " minutos.");
 
         // Usar Picasso para cargar la imagen
-        Picasso.get().load(item.getImage()).into(holder.imagenReceta);
         // Configura el botón "borrar" para eliminar el elemento
         holder.verReceta.setOnClickListener(v -> {
             int currentPosition = holder.getAdapterPosition();
             if (currentPosition != RecyclerView.NO_POSITION) {
-                Toast.makeText(v.getContext(), "Receta seleccionada", Toast.LENGTH_SHORT).show();
+                int id = dataList.get(currentPosition).getId();
+                abrirDetallesReceta(id);
             }
         });
+    }
+
+    private void abrirDetallesReceta(int id) {
+
     }
 
     @Override
@@ -58,7 +64,7 @@ public class ItemBusquedaAdapter extends RecyclerView.Adapter<ItemBusquedaAdapte
     }
 
     // Método para agregar un nuevo elemento a la lista y actualizar el RecyclerView
-    public void addItem(BusquedaDataModel newItem) {
+    public void addItem(RecetaBusqueda newItem) {
         dataList.add(newItem);
         notifyItemInserted(dataList.size() - 1); // Notifica que se agregó un nuevo elemento al final
     }

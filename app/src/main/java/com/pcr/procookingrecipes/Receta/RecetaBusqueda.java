@@ -1,8 +1,13 @@
 package com.pcr.procookingrecipes.Receta;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
-public class RecetaBusqueda {
+public class RecetaBusqueda implements Parcelable {
     private int id;
     private String title;
     private String image;
@@ -29,7 +34,13 @@ public class RecetaBusqueda {
     private boolean veryPopular;
 
     // Getters y setters para los campos de la receta
-
+    public RecetaBusqueda(int id, String titulo, String imagen, int servings, int readyInMinutes) {
+        this.id = id;
+        this.title = titulo;
+        this.image = imagen;
+        this.servings = servings;
+        this.readyInMinutes = readyInMinutes;
+    }
 
     public int getId() {
         return id;
@@ -41,10 +52,6 @@ public class RecetaBusqueda {
 
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getImage() {
@@ -59,16 +66,42 @@ public class RecetaBusqueda {
         return servings;
     }
 
-    public void setServings(int servings) {
-        this.servings = servings;
-    }
-
     public int getReadyInMinutes() {
         return readyInMinutes;
     }
 
-    public void setReadyInMinutes(int readyInMinutes) {
-        this.readyInMinutes = readyInMinutes;
+    // Métodos Parcelable
+    public RecetaBusqueda(Parcel in) {
+        id = in.readInt();
+        title = in.readString();
+        image = in.readString();
+        servings = in.readInt();
+        readyInMinutes = in.readInt();
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(title);
+        dest.writeString(image);
+        dest.writeInt(servings);
+        dest.writeInt(readyInMinutes);
+    }
+    public static final Creator<RecetaBusqueda> CREATOR = new Creator<RecetaBusqueda>() {
+        @Override
+        public RecetaBusqueda createFromParcel(Parcel in) {
+            return new RecetaBusqueda(in);
+        }
+
+        @Override
+        public RecetaBusqueda[] newArray(int size) {
+            return new RecetaBusqueda[size];
+        }
+    };
 }
 

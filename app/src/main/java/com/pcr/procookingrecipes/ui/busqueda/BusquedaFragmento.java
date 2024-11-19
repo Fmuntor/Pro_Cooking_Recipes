@@ -2,8 +2,7 @@ package com.pcr.procookingrecipes.ui.busqueda;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +12,6 @@ import android.widget.CheckBox;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -31,6 +29,7 @@ import com.pcr.procookingrecipes.Adapters.RecyclerViewIngrediente.ItemIngredient
 import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.APIResponse;
 import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.Receta.Receta;
+import com.pcr.procookingrecipes.Receta.RecetaBusqueda;
 import com.pcr.procookingrecipes.databinding.FragmentoBusquedaBinding;
 
 import java.util.ArrayList;
@@ -38,8 +37,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class BusquedaFragmento extends Fragment {
 
@@ -50,7 +47,7 @@ public class BusquedaFragmento extends Fragment {
     private FloatingActionButton botonIntroducirItem, botonBuscar;
     private APIResponse apiResponse;
     private final Executor executor = Executors.newSingleThreadExecutor();
-    private ArrayList<String> listaIDs,listaImagenes;
+    private List<RecetaBusqueda> recetasCompletas;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -95,8 +92,8 @@ public class BusquedaFragmento extends Fragment {
             executor.execute(() -> {
                 apiResponse = new APIResponse();
                 int errores=0;
-                listaIDs = new ArrayList<>();
-                listaImagenes = new ArrayList<>();
+                recetasCompletas = new ArrayList<>();
+
                 // Realizar validación de los ingredientes y actualizar el adaptador
                 for (int i = 0; i < itemList.size(); i++) {
                     //Comprobar si ya existe el ingrediente en la lista
@@ -106,7 +103,6 @@ public class BusquedaFragmento extends Fragment {
                             int finalI = i;
                             requireActivity().runOnUiThread(() -> {
                                 adapter.setErrorAtPosition(finalI, true,2); // Marcar error
-                                return;
                             });
                         }
                     }
@@ -118,22 +114,29 @@ public class BusquedaFragmento extends Fragment {
                         requireActivity().runOnUiThread(() -> {
                             adapter.setErrorAtPosition(finalI, true,1); // Marcar error
                         });
-                    }else{
-                        String id=respuesta.substring(18, 24);
-                        listaIDs.add(id);
-
-                        Pattern pattern = Pattern.compile("\"image\":\"([^\"]+)\"");
-                        Matcher matcher = pattern.matcher(respuesta);
-                        if (matcher.find()) {
-                            String imagen = matcher.group(1);
-                            listaImagenes.add(imagen);
-                        }
                     }
                 }
                 if(errores==0){
                     // Si no hay errores, se realiza la busqueda completa, con ingredientes y opciones seleccionadas
 
-                    List<Receta> recetas = apiResponse.busquedaCompleta(escribirConsultaFinal());
+                    List<Receta> idRecetas = apiResponse.busquedaCompleta(escribirConsultaFinal(),6);
+
+                    for (Receta receta : idRecetas) {
+
+                        recetasCompletas.add(apiResponse.getInformacionReceta(receta.getId()));
+                    }
+                    apiResponse.getInstrucciones(633105);
+
+
+                    for (RecetaBusqueda receta : recetasCompletas) {
+                        Log.d("Receta",
+                                "ID: " + receta.getId() +
+                                    ", Título: " + receta.getTitle() +
+                                    ", URL Imagen: " + receta.getImage() +
+                                    ", Servings: " + receta.getServings() +
+                                    ", Ready In Minutes: " + receta.getReadyInMinutes());
+                    }
+
                     abrirBusquedaActivity();
                 }
             });
@@ -221,7 +224,6 @@ public class BusquedaFragmento extends Fragment {
         return consultaFinal.toString();
     }
 
-
     private String traducirPalabra(String texto, String idioma) {
         Translate translate = TranslateOptions.newBuilder().setApiKey("AIzaSyAlF4NerB2lB0-SWaSSwnjzO7XEB8nSVCw").build().getService();
         Translation translation;
@@ -300,8 +302,7 @@ public class BusquedaFragmento extends Fragment {
     private void abrirBusquedaActivity() {
 
         Intent intent = new Intent(getActivity(), BusquedaActivity.class);
-        intent.putStringArrayListExtra("listaIDs", listaIDs);
-        intent.putExtra("listaImagenes", listaImagenes);
+        intent.putParcelableArrayListExtra("recetasCompletas", (ArrayList<? extends Parcelable>) recetasCompletas);
         startActivity(intent);
     }
 }

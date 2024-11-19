@@ -23,12 +23,10 @@ import java.util.concurrent.Executors;
 public class BusquedaActivity extends AppCompatActivity {
 
     private ActivityBusquedaBinding binding;
-    private ArrayList<String> listaIDs;
-    private ArrayList<String> listaImagenes;
     private RecyclerView recyclerView;
     private APIResponse apiResponse;
     private ItemBusquedaAdapter adapter;
-    private List<BusquedaDataModel> recetaList;
+    private List<RecetaBusqueda> recetasCompletas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,48 +37,11 @@ public class BusquedaActivity extends AppCompatActivity {
 
         inicializarRecyclerView();
 
-        recetaList = new ArrayList<>();
-        //recetaList.add(new BusquedaDataModel("titulo", "imagen", 1, 1));
-        adapter = new ItemBusquedaAdapter(recetaList);
+        recetasCompletas = getIntent().getParcelableArrayListExtra("recetasCompletas");
+
+        adapter = new ItemBusquedaAdapter(recetasCompletas);
         binding.recyclerViewBusqueda.setAdapter(adapter);
 
-        // Recupera la lista de IDs desde el Intent
-        listaIDs = getIntent().getStringArrayListExtra("listaIDs");
-        listaImagenes = getIntent().getStringArrayListExtra("listaImagenes");
-
-        // Configura la conexión con la API
-        apiResponse = new APIResponse();
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < listaIDs.size(); i++) {
-                    int id = Integer.parseInt(listaIDs.get(i));
-                    RecetaBusqueda recetaBusqueda = apiResponse.leerDeID(id);
-                    recetaBusqueda.setImage(listaImagenes.get(i));
-
-                    if (recetaBusqueda != null) {
-
-                        // Agrega la receta a la lista de resultados
-                        recetaList.add(new BusquedaDataModel(
-                                recetaBusqueda.getTitle(),
-                                recetaBusqueda.getImage(),
-                                recetaBusqueda.getServings(),
-                                recetaBusqueda.getReadyInMinutes()
-                        ));
-
-                        // Actualiza el RecyclerView en el hilo principal
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                adapter.notifyDataSetChanged();
-                            }
-                        });
-                    }
-                }
-            }
-        });
     }
 
     @Override
