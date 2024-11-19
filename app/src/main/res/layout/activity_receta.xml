@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <!-- Imagen de la receta -->
+    <ImageView
+        android:id="@+id/imagenReceta"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Título de la receta -->
+    <TextView
+        android:id="@+id/tituloReceta"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Título de la receta"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/imagenReceta"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Sección de Comensales y Tiempo (Horizontal) -->
+    <LinearLayout
+        android:id="@+id/seccionComensalesTiempo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/tituloReceta"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="8dp"
+        android:gravity="center_vertical">
+
+        <!-- Comensales -->
+        <TextView
+            android:id="@+id/comensalesReceta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Para 4 personas"
+            android:textSize="14sp"
+            android:layout_marginEnd="16dp"/>
+
+        <!-- Sección de TextViews (3 campos) -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_marginEnd="16dp">
+
+            <TextView
+                android:id="@+id/tiempoPreparacion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tiempo de preparación: "
+                android:textSize="14sp"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:id="@+id/tiempoCocinado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tiempo de cocina: "
+                android:textSize="14sp"
+                android:layout_marginBottom="8dp"/>
+
+        </LinearLayout>
+
+        <!-- Nuevo botón a la derecha -->
+        <Button
+            android:id="@+id/botonCrearCarta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="carta" />
+    </LinearLayout>
+
+    <!-- Sección de Ingredientes y Equipo (Horizontal) -->
+    <LinearLayout
+        android:id="@+id/seccionIngredientesEquipo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/seccionComensalesTiempo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="16dp">
+
+        <!-- Sección de Ingredientes -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginEnd="16dp"
+            android:layout_weight="1">
+
+            <!-- Título de Ingredientes -->
+            <TextView
+                android:id="@+id/ingredientesTitulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ingredientes:"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <!-- RecyclerView para Ingredientes -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerIngredientes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginBottom="16dp" />
+        </LinearLayout>
+
+        <!-- Sección de Equipo -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <!-- Título de Equipo -->
+            <TextView
+                android:id="@+id/equipoTitulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Equipo necesario:"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <!-- RecyclerView para Equipo -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerEquipo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginBottom="16dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Sección de Instrucciones -->
+
+    <TextView
+        android:id="@+id/instruccionesReceta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Instrucciones:"
+        android:lineSpacingExtra="4dp"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/seccionIngredientesEquipo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="16dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerInstrucciones"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/instruccionesReceta"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

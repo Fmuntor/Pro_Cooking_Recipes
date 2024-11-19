@@ -1,5 +1,7 @@
 package com.pcr.procookingrecipes.ui.busqueda;
 
+import static com.pcr.procookingrecipes.ConexionAPI.Traductor.Traductor.traducir;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -27,6 +29,10 @@ import com.pcr.procookingrecipes.Activity.Busqueda.BusquedaActivity;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewIngrediente.IngredienteDataModel;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewIngrediente.ItemIngredienteAdapter;
 import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.APIResponse;
+import com.pcr.procookingrecipes.InstruccionesReceta.Equipment;
+import com.pcr.procookingrecipes.InstruccionesReceta.Ingredient;
+import com.pcr.procookingrecipes.InstruccionesReceta.Instruction;
+import com.pcr.procookingrecipes.InstruccionesReceta.Step;
 import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.Receta.Receta;
 import com.pcr.procookingrecipes.Receta.RecetaBusqueda;
@@ -107,7 +113,7 @@ public class BusquedaFragmento extends Fragment {
                         }
                     }
                     IngredienteDataModel item = itemList.get(i);
-                    String respuesta = apiResponse.esIngredienteCorrecto(traducirPalabra(item.getEditText(), "ingles"));
+                    String respuesta = apiResponse.esIngredienteCorrecto(traducir(item.getEditText(), "ingles"));
                     if(respuesta.equals("Error")){
                         errores++;
                         int finalI = i;
@@ -125,9 +131,16 @@ public class BusquedaFragmento extends Fragment {
 
                         recetasCompletas.add(apiResponse.getInformacionReceta(receta.getId()));
                     }
-                    apiResponse.getInstrucciones(633105);
+                    List<Instruction> instrucciones = apiResponse.getInstrucciones(632631);
 
+                    if (instrucciones != null && !instrucciones.isEmpty()) {
+                        String recetaFormateada = formatearInstrucciones(instrucciones);
+                        Log.d("Receta", recetaFormateada); // Muestra en la consola
+                    } else {
+                        Log.d("Receta", "No se encontraron instrucciones.");
+                    }
 
+                    /*
                     for (RecetaBusqueda receta : recetasCompletas) {
                         Log.d("Receta",
                                 "ID: " + receta.getId() +
@@ -136,7 +149,7 @@ public class BusquedaFragmento extends Fragment {
                                     ", Servings: " + receta.getServings() +
                                     ", Ready In Minutes: " + receta.getReadyInMinutes());
                     }
-
+                    */
                     abrirBusquedaActivity();
                 }
             });
@@ -149,7 +162,7 @@ public class BusquedaFragmento extends Fragment {
 
         if(!itemList.isEmpty()){
             for(int i=0;i<itemList.size();i++){
-                consultaFinal.append(traducirPalabra(itemList.get(i).getEditText(), "ingles")).append(",");
+                consultaFinal.append(traducir(itemList.get(i).getEditText(), "ingles")).append(",");
             }
         }
 
@@ -163,7 +176,7 @@ public class BusquedaFragmento extends Fragment {
             consultaFinal.append("&type=");
 
             String opcionSeleccionada = binding.spinnerCocina.getSelectedItem().toString();
-            consultaFinal.append(traducirPalabra(opcionSeleccionada, "ingles"));
+            consultaFinal.append(traducir(opcionSeleccionada, "ingles"));
         }
 
         // CheckBox: Nacionalidad
@@ -171,7 +184,7 @@ public class BusquedaFragmento extends Fragment {
             consultaFinal.append("&cuisine=");
 
             String opcionSeleccionada = binding.spinnerNacionalidad.getSelectedItem().toString();
-            consultaFinal.append(traducirPalabra(opcionSeleccionada, "ingles"));
+            consultaFinal.append(traducir(opcionSeleccionada, "ingles"));
         }
 
         // CheckBox: Dieta
@@ -179,14 +192,14 @@ public class BusquedaFragmento extends Fragment {
             consultaFinal.append("&diet=");
 
             String opcionSeleccionada = binding.spinnerDieta.getSelectedItem().toString();
-            consultaFinal.append(traducirPalabra(opcionSeleccionada, "ingles"));
+            consultaFinal.append(traducir(opcionSeleccionada, "ingles"));
         }
 
         // CheckBox: Intolerancias
         if (binding.checkIntolerancias.isChecked()) {
             consultaFinal.append("&intolerances=");
             String opcionSeleccionada = binding.spinnerIntolerancias.getSelectedItem().toString();
-            consultaFinal.append(traducirPalabra(opcionSeleccionada, "ingles"));
+            consultaFinal.append(traducir(opcionSeleccionada, "ingles"));
         }
 
         // CheckBox: Carbohidratos
@@ -222,19 +235,6 @@ public class BusquedaFragmento extends Fragment {
         // Debug para comprobar la consulta generada
         Log.d("ConsultaFinal", "Consulta generada: " + consultaFinal.toString());
         return consultaFinal.toString();
-    }
-
-    private String traducirPalabra(String texto, String idioma) {
-        Translate translate = TranslateOptions.newBuilder().setApiKey("AIzaSyAlF4NerB2lB0-SWaSSwnjzO7XEB8nSVCw").build().getService();
-        Translation translation;
-        if(Objects.equals(idioma, "espanol")){
-            translation = translate.translate(texto, Translate.TranslateOption.sourceLanguage("en"), Translate.TranslateOption.targetLanguage("es"));
-        }else{
-            translation = translate.translate(texto, Translate.TranslateOption.sourceLanguage("es"), Translate.TranslateOption.targetLanguage("en"));
-        }
-        String translatedText = translation.getTranslatedText();
-        Log.d("Translation", "Texto traducido: " + translatedText);
-        return translatedText;
     }
 
     private void inicializarRecyclerView() {
@@ -305,4 +305,42 @@ public class BusquedaFragmento extends Fragment {
         intent.putParcelableArrayListExtra("recetasCompletas", (ArrayList<? extends Parcelable>) recetasCompletas);
         startActivity(intent);
     }
+
+    public String formatearInstrucciones(List<Instruction> instrucciones) {
+        StringBuilder sb = new StringBuilder();
+
+        for (Instruction instruccion : instrucciones) {
+            sb.append("Receta: ").append(instruccion.getName().isEmpty() ? "Sin título" : instruccion.getName()).append("\n");
+
+            for (Step paso : instruccion.getSteps()) {
+                sb.append("Paso ").append(paso.getNumber()).append(": ").append(paso.getStep()).append("\n");
+
+                // Ingredientes
+                if (!paso.getIngredients().isEmpty()) {
+                    sb.append("   Ingredientes: ");
+                    for (Ingredient ingrediente : paso.getIngredients()) {
+                        sb.append(ingrediente.getName()).append(", ");
+                    }
+                    // Elimina la última coma
+                    sb.setLength(sb.length() - 2);
+                    sb.append("\n");
+                }
+
+                // Equipo
+                if (!paso.getEquipment().isEmpty()) {
+                    sb.append("   Equipo: ");
+                    for (Equipment equipo : paso.getEquipment()) {
+                        sb.append(equipo.getName()).append(", ");
+                    }
+                    // Elimina la última coma
+                    sb.setLength(sb.length() - 2);
+                    sb.append("\n");
+                }
+            }
+            sb.append("\n"); // Separador entre diferentes conjuntos de instrucciones
+        }
+
+        return sb.toString();
+    }
+
 }

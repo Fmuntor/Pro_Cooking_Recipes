@@ -2,12 +2,14 @@ package com.pcr.procookingrecipes.ConexionAPI.Spoonacular;
 
 import android.util.Log;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import com.pcr.procookingrecipes.InstruccionesReceta.Instruccion;
+import com.pcr.procookingrecipes.InstruccionesReceta.Instruction;
 import com.pcr.procookingrecipes.Receta.Receta;
 import com.pcr.procookingrecipes.Receta.RecetaBusqueda;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -16,8 +18,8 @@ import java.util.Scanner;
 
 public class APIResponse {
     //*dam*/ private static final String API_KEY = "61adb1434eaa4266b233f21cc77d9931";
-    /*jue*/ private static final String API_KEY = "30ccc31545e94349a94f95e9aa2578f8";
-    //xew*/ private static final String API_KEY = "150217e73f7f43698b23de34401341c8";
+    //jue*/ private static final String API_KEY = "30ccc31545e94349a94f95e9aa2578f8";
+    /*xew*/ private static final String API_KEY = "150217e73f7f43698b23de34401341c8";
 
     private static final String INGREDIENT_SEARCH_URL = "https://api.spoonacular.com/food/ingredients/autocomplete";
     private static final String COMPLEX_SEARCH_URL = "https://api.spoonacular.com/recipes/complexSearch";
@@ -142,7 +144,7 @@ public class APIResponse {
         return null;
     }
 
-    public List<Instruccion> getInstrucciones(int id) {
+    public List<Instruction> getInstrucciones(int id) {
         String urlString = URL_INFORMACION + id + "/analyzedInstructions?apiKey=" + API_KEY;
         HttpURLConnection urlConnection = null;
         StringBuilder response = new StringBuilder();
@@ -166,8 +168,9 @@ public class APIResponse {
             Gson gson = new Gson();
             Log.d("APIResponse", "Instrucciones: " + response.toString());
 
-            // Aquí se deserializa el JSON como una lista de instrucciones
-            return gson.fromJson(response.toString(), List.class);
+            // Usa TypeToken para especificar el tipo genérico
+            Type listType = new TypeToken<List<Instruction>>() {}.getType();
+            return gson.fromJson(response.toString(), listType);
 
         } catch (IOException e) {
             Log.e("APIResponse", "Error al conectar con la API: " + e.getMessage());
@@ -178,6 +181,7 @@ public class APIResponse {
         }
         return new ArrayList<>(); // Retornar lista vacía en caso de error
     }
+
 
 
     // Clase interna que representa la respuesta de la API de recetas
