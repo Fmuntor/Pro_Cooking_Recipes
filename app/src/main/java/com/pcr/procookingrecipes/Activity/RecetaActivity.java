@@ -1,5 +1,6 @@
 package com.pcr.procookingrecipes.Activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,13 +26,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class RecetaActivity extends AppCompatActivity {
     private ActivityRecetaBinding binding;
     private APIResponse apiResponse;
     private final Executor executor = Executors.newSingleThreadExecutor();
     private List<Instruction> instruccionesCompletas;
-    private ArrayList<String> listaPasos, listaIngredientes, listaEquipo;;  // Usamos ArrayList para poder agregar dinámicamente
+    private ArrayList<String> listaPasos, listaIngredientes, listaEquipo;
+    ;  // Usamos ArrayList para poder agregar dinámicamente
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,7 +101,29 @@ public class RecetaActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 executor.execute(() -> {
-                    apiResponse.generarCarta(id);
+                    String carta = apiResponse.generarCarta(id);
+                    // Extraer la url y estado de la carta con expresiones regulares
+                    String regex = "\"url\":\\s*\"([^\"]*)\".*?\"status\":\\s*\"([^\"]*)\"";
+
+                    // Crear el patrón y el matcher
+                    Pattern pattern = Pattern.compile(regex);
+                    Matcher matcher = pattern.matcher(carta);
+                    // Buscar y extraer los valores de "url" y "status"
+                    String url = "";
+                    String status = "";
+                    if (matcher.find()) {
+                        url = matcher.group(1);  // El primer grupo es la URL
+                        status = matcher.group(2);  // El segundo grupo es el status
+                    }
+                    if (!matcher.find() || !status.equals("success")){
+                        runOnUiThread(() -> {
+                            Toast.makeText(RecetaActivity.this, "Error al generar la carta", Toast.LENGTH_SHORT).show();
+                        });
+                    }
+
+                    Intent intent = new Intent(RecetaActivity.this, CardActivity.class);
+                    intent.putExtra("Carta", url);
+                    startActivity(intent);
                 });
             }
         });
@@ -131,12 +157,14 @@ public class RecetaActivity extends AppCompatActivity {
                 // Equipo
                 if (!paso.getEquipment().isEmpty()) {
                     for (Equipment equipo : paso.getEquipment()) {
-                        listaEquipo.add(equipo.getName());;
+                        listaEquipo.add(equipo.getName());
+                        ;
                     }
                 }
             }
         }
     }
+
     public String formatearInstrucciones(List<Instruction> instrucciones) {
         StringBuilder sb = new StringBuilder();
 

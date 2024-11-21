@@ -24,7 +24,8 @@ public class InstruccionesAdapter extends RecyclerView.Adapter<InstruccionesAdap
             // Añadir dos elementos iguales al final si solo hay uno
             this.instrucciones = new ArrayList<>(instrucciones);
             if (instrucciones.size() < 2) {
-                this.instrucciones.add(instrucciones.get(0));  // Duplicamos el primer ítem
+                this.instrucciones.add(instrucciones.get(0));
+                // Duplicamos el primer ítem
             }
         }
     }
