@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:padding="16dp">
 
     <!-- Imagen de la receta -->
@@ -101,60 +101,59 @@
         <!-- Sección de Ingredientes -->
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_height="174dp"
             android:layout_marginEnd="16dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <!-- Título de Ingredientes -->
             <TextView
                 android:id="@+id/ingredientesTitulo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:text="Ingredientes:"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
+                android:textStyle="bold" />
 
             <!-- RecyclerView para Ingredientes -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerIngredientes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="16dp"
+                app:layout_constraintTop_toTopOf="parent" />
         </LinearLayout>
 
         <!-- Sección de Equipo -->
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="1">
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <!-- Título de Equipo -->
             <TextView
                 android:id="@+id/equipoTitulo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:text="Equipo necesario:"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
+                android:textStyle="bold" />
 
             <!-- RecyclerView para Equipo -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerEquipo"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginBottom="16dp" />
+                android:layout_height="128dp"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintTop_toTopOf="parent" />
         </LinearLayout>
 
     </LinearLayout>
 
     <!-- Sección de Instrucciones -->
-
     <TextView
         android:id="@+id/instruccionesReceta"
         android:layout_width="match_parent"
@@ -170,11 +169,10 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerInstrucciones"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/instruccionesReceta"
+        android:layout_width="381dp"
+        android:layout_height="235dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
+        app:layout_constraintTop_toBottomOf="@id/instruccionesReceta" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
