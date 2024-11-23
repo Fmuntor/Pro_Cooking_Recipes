@@ -9,12 +9,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.pcr.procookingrecipes.R;
 
-public class IngredientesAdapter extends RecyclerView.Adapter<IngredientesAdapter.IngredientesViewHolder> {
-    private String[] ingredientes;
+import java.util.ArrayList;
 
-    public IngredientesAdapter(String[] ingredientes) {
-        this.ingredientes = ingredientes;
-    }
+public class IngredientesAdapter extends RecyclerView.Adapter<IngredientesAdapter.IngredientesViewHolder> {
+    private ArrayList<String> ingredientes;
+
+    public IngredientesAdapter(ArrayList<String> ingredientes) {
+        if (ingredientes == null) {
+            this.ingredientes = new ArrayList<>();
+        } else {
+            // Añadir dos elementos iguales al final si solo hay uno
+            this.ingredientes = new ArrayList<>(ingredientes);
+            if (ingredientes.size() < 2) {
+                this.ingredientes.add(ingredientes.get(0));  // Duplicamos el primer ítem
+            }
+        }    }
 
     @Override
     public IngredientesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -24,25 +33,13 @@ public class IngredientesAdapter extends RecyclerView.Adapter<IngredientesAdapte
 
     @Override
     public void onBindViewHolder(IngredientesViewHolder holder, int position) {
-        holder.ingredienteTextView.setText(ingredientes[position]);
+        String ingredienteItem = ingredientes.get(position);
+        holder.ingredienteTextView.setText(ingredienteItem);
     }
 
     @Override
     public int getItemCount() {
-        return ingredientes.length;
-    }
-
-    public void addItem(String ingredientesInsertar) {
-        // Crear una nueva lista con un elemento extra
-        String[] nuevaLista = new String[ingredientes.length + 1];
-        System.arraycopy(ingredientes, 0, nuevaLista, 0, ingredientes.length);
-        nuevaLista[ingredientes.length] = ingredientesInsertar;  // Agregar el nuevo ingrediente
-
-        // Actualizar la lista de ingredientes
-        ingredientes = nuevaLista;
-
-        // Notificar que el item fue insertado
-        notifyItemInserted(ingredientes.length - 1);
+        return ingredientes.size();
     }
 
     public static class IngredientesViewHolder extends RecyclerView.ViewHolder {

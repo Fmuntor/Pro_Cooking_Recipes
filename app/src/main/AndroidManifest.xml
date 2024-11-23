@@ -13,6 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ProCookingRecipes"
         tools:targetApi="31">
+
         <activity
             android:name=".Activity.LoginActivity"
             android:exported="true"
@@ -37,6 +38,15 @@
             android:name=".Activity.RecetaActivity"
             android:exported="true"
             android:theme="@style/Theme.ProCookingRecipes.NoActionBar">
+        </activity>
+        <activity
+            android:name=".Activity.CardActivity"
+            android:exported="true"
+            android:theme="@style/Theme.ProCookingRecipes.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 </manifest>

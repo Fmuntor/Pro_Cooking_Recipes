@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -69,11 +70,22 @@ public class ItemIngredienteAdapter extends RecyclerView.Adapter<ItemIngrediente
         // Configura el botón "borrar" para eliminar el elemento
         holder.borrar.setOnClickListener(v -> {
             int currentPosition = holder.getAdapterPosition();
-            if (currentPosition != RecyclerView.NO_POSITION && dataList.size() > 1) {
+            if (currentPosition != RecyclerView.NO_POSITION) {
                 dataList.remove(currentPosition);
                 notifyItemRemoved(currentPosition);
             }
+            if (dataList.isEmpty()) {
+                // Mostrar el TextView si la lista está vacía
+                // Puedes acceder a tu TextView desde el Fragment y actualizar su visibilidad
+                TextView tvRecyclerSinDatos = holder.itemView.getRootView().findViewById(R.id.tvRecyclerSinDatos);
+                tvRecyclerSinDatos.setVisibility(View.VISIBLE);
+            } else {
+                // Ocultar el TextView si la lista no está vacía
+                TextView tvRecyclerSinDatos = holder.itemView.getRootView().findViewById(R.id.tvRecyclerSinDatos);
+                tvRecyclerSinDatos.setVisibility(View.GONE);
+            }
         });
+
     }
 
     @Override
@@ -97,8 +109,10 @@ public class ItemIngredienteAdapter extends RecyclerView.Adapter<ItemIngrediente
     public void setErrorAtPosition(int position, boolean hasError, int tipoError) {
         if(tipoError==1){
             dataList.get(position).setMensajeError("Ingrediente no válido.");
-        }else{
+        }else if(tipoError==2){
             dataList.get(position).setMensajeError("Ingrediente duplicado.");
+        }else if(tipoError==3){
+            dataList.get(position).setMensajeError("Ingrediente vacío.");
         }
         dataList.get(position).setError(hasError);
         notifyItemChanged(position); // Actualizar el ítem en el RecyclerView
@@ -108,7 +122,6 @@ public class ItemIngredienteAdapter extends RecyclerView.Adapter<ItemIngrediente
         Button borrar;
         EditText editText;
         TextWatcher textWatcher; // Definir el TextWatcher aquí para evitar duplicación
-
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             borrar = itemView.findViewById(R.id.botonEliminar);

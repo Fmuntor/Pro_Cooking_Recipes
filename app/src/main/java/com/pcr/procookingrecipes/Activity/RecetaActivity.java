@@ -1,5 +1,6 @@
 package com.pcr.procookingrecipes.Activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.pcr.procookingrecipes.Adapters.RecyclerViewReceta.RecetaEquipo.EquipoAdapter;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewReceta.RecetaIngredientes.IngredientesAdapter;
@@ -20,15 +22,20 @@ import com.pcr.procookingrecipes.Receta.RecetaBusqueda;
 import com.pcr.procookingrecipes.databinding.ActivityRecetaBinding;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class RecetaActivity extends AppCompatActivity {
     private ActivityRecetaBinding binding;
     private APIResponse apiResponse;
     private final Executor executor = Executors.newSingleThreadExecutor();
     private List<Instruction> instruccionesCompletas;
+    private ArrayList<String> listaPasos, listaIngredientes, listaEquipo;
+    ;  // Usamos ArrayList para poder agregar dinámicamente
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,68 +55,114 @@ public class RecetaActivity extends AppCompatActivity {
 
             // Verificar que las instrucciones no son nulas ni vacías
             if (instruccionesCompletas != null && !instruccionesCompletas.isEmpty()) {
-                String recetaFormateada = formatearInstrucciones(instruccionesCompletas);
-                Log.d("Receta", recetaFormateada); // Muestra en la consola
+                // Actualizamos la UI en el hilo principal después de la ejecución en segundo plano
+                runOnUiThread(() -> {
+                    // Establecer valores en los TextViews
+                    binding.tituloReceta.setText(receta.getTitle());
+                    Picasso.get().load(receta.getImage()).into(binding.imagenReceta);
+                    binding.comensalesReceta.setText("Para " + receta.getServings() + " personas.");
+
+                    // Parsear las instrucciones
+                    parseInstrucciones(instruccionesCompletas);
+
+                    // Verificar que la lista no esté vacía
+                    if (listaPasos != null && !listaPasos.isEmpty()) {
+                        // Crear el adaptador con los pasos procesados
+                        InstruccionesAdapter instruccionesAdapter = new InstruccionesAdapter(listaPasos);
+
+                        // Inicializar el RecyclerView
+                        binding.recyclerInstrucciones.setAdapter(instruccionesAdapter);
+                        binding.recyclerInstrucciones.setLayoutManager(new LinearLayoutManager(this));
+                        if (listaIngredientes != null) {
+                            // Crear el adaptador con los ingredientes procesados
+                            IngredientesAdapter ingredientesAdapter = new IngredientesAdapter(listaIngredientes);
+                            // Inicializar el RecyclerView
+                            binding.recyclerIngredientes.setAdapter(ingredientesAdapter);
+                            binding.recyclerIngredientes.setLayoutManager(new LinearLayoutManager(this));
+
+                        }
+                        if (listaEquipo != null) {
+                            // Crear el adaptador con los ingredientes
+                            EquipoAdapter equipoAdapter = new EquipoAdapter(listaEquipo);
+                            // Inicializar el RecyclerView
+                            binding.recyclerEquipo.setAdapter(equipoAdapter);
+                            binding.recyclerEquipo.setLayoutManager(new LinearLayoutManager(this));
+                        }
+                    } else {
+                        Log.e("Receta", "La lista de pasos está vacía");
+                    }
+                });
             } else {
-                Log.d("Receta", "No se encontraron instrucciones.");
+                Log.e("Receta", "No se han encontrado instrucciones");
             }
-
-            // Actualizar UI en el hilo principal después de la ejecución en el background
-            runOnUiThread(() -> {
-                // Establecer valores en los TextViews
-                binding.tituloReceta.setText(receta.getTitle());
-                Picasso.get().load(receta.getImage()).into(binding.imagenReceta);
-                binding.comensalesReceta.setText("Para " + receta.getServings() + " personas.");
-
-                // Asignar los pasos (instrucciones) al RecyclerView
-                if (instruccionesCompletas != null && !instruccionesCompletas.isEmpty()) {
-                    List<Step> listaPasos = instruccionesCompletas.get(0).getSteps();
-
-                    // Extraer los pasos como un arreglo de Strings
-                    String[] arrayPasos = new String[listaPasos.size()];
-                    for (int i = 0; i < listaPasos.size(); i++) {
-                        arrayPasos[i] = listaPasos.get(i).getStep(); // Suponiendo que getStep() devuelve un String con la descripción del paso
-                    }
-
-                    // Configurar el RecyclerView para las instrucciones
-                    InstruccionesAdapter instruccionesAdapter = new InstruccionesAdapter(arrayPasos);
-                    binding.recyclerInstrucciones.setAdapter(instruccionesAdapter);
-
-                    // Obtener los ingredientes del primer paso y configurar su RecyclerView
-                    List<Ingredient> listaIngredientes = listaPasos.get(0).getIngredients();
-                    String[] arrayIngredientes = new String[listaIngredientes.size()];
-                    for (int i = 0; i < listaIngredientes.size(); i++) {
-                        arrayIngredientes[i] = listaIngredientes.get(i).getName();
-                    }
-
-                    IngredientesAdapter ingredientesAdapter = new IngredientesAdapter(arrayIngredientes);
-                    binding.recyclerIngredientes.setAdapter(ingredientesAdapter);
-
-                    // Obtener el equipo del primer paso y configurar su RecyclerView
-                    List<Equipment> listaEquipo = listaPasos.get(0).getEquipment();
-                    String[] arrayEquipo = new String[listaEquipo.size()];
-                    for (int i = 0; i < listaEquipo.size(); i++) {
-                        arrayEquipo[i] = listaEquipo.get(i).getName();
-                    }
-
-                    EquipoAdapter equipoAdapter = new EquipoAdapter(arrayEquipo);
-                    binding.recyclerEquipo.setAdapter(equipoAdapter);
-                }
-            });
         });
 
-        // Configurar el botón para guardar y volver
-        binding.botonCrearCarta.setOnClickListener(v -> {
-            // Aquí puedes manejar la acción del botón, por ejemplo, guardar los datos de la receta
-            Toast.makeText(RecetaActivity.this, "Receta guardada", Toast.LENGTH_SHORT).show();
+        binding.botonCrearCarta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                executor.execute(() -> {
+                    String carta = apiResponse.generarCarta(id);
+                    // Extraer la url y estado de la carta con expresiones regulares
+                    String regex = "\"url\":\\s*\"([^\"]*)\".*?\"status\":\\s*\"([^\"]*)\"";
+
+                    // Crear el patrón y el matcher
+                    Pattern pattern = Pattern.compile(regex);
+                    Matcher matcher = pattern.matcher(carta);
+                    // Buscar y extraer los valores de "url" y "status"
+                    String url = "";
+                    String status = "";
+                    if (matcher.find()) {
+                        url = matcher.group(1);  // El primer grupo es la URL
+                        status = matcher.group(2);  // El segundo grupo es el status
+                    }
+                    if (!matcher.find() || !status.equals("success")){
+                        runOnUiThread(() -> {
+                            Toast.makeText(RecetaActivity.this, "Error al generar la carta", Toast.LENGTH_SHORT).show();
+                        });
+                    }
+
+                    Intent intent = new Intent(RecetaActivity.this, CardActivity.class);
+                    intent.putExtra("Carta", url);
+                    startActivity(intent);
+                });
+            }
         });
     }
+
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         // Liberar el binding cuando la actividad se destruye
         binding = null;
+    }
+
+    // Método que parsea las instrucciones
+    public void parseInstrucciones(List<Instruction> instrucciones) {
+        listaPasos = new ArrayList<>(); // Creamos la lista de pasos
+        listaIngredientes = new ArrayList<>(); // Creamos la lista de ingredientes
+        listaEquipo = new ArrayList<>(); // Creamos la lista de equipo
+
+        for (Instruction instruccion : instrucciones) {
+            for (Step paso : instruccion.getSteps()) {
+                // Añadimos cada paso de forma segura a la lista
+                listaPasos.add("Paso " + paso.getNumber() + ": " + paso.getStep());
+                // Ingredientes
+                if (!paso.getIngredients().isEmpty()) {
+                    for (Ingredient ingrediente : paso.getIngredients()) {
+                        listaIngredientes.add(ingrediente.getName());
+                    }
+                }
+
+                // Equipo
+                if (!paso.getEquipment().isEmpty()) {
+                    for (Equipment equipo : paso.getEquipment()) {
+                        listaEquipo.add(equipo.getName());
+                        ;
+                    }
+                }
+            }
+        }
     }
 
     public String formatearInstrucciones(List<Instruction> instrucciones) {

@@ -54,7 +54,7 @@ public class BusquedaFragmento extends Fragment {
     private APIResponse apiResponse;
     private final Executor executor = Executors.newSingleThreadExecutor();
     private List<RecetaBusqueda> recetasCompletas;
-
+    TextView tvRecyclerSinDatos;
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         BusquedaFragmentoViewModel busquedaViewModel = new ViewModelProvider(this).get(BusquedaFragmentoViewModel.class);
@@ -73,6 +73,13 @@ public class BusquedaFragmento extends Fragment {
         adapter = new ItemIngredienteAdapter(itemList);
         binding.recyclerView.setAdapter(adapter);
 
+        tvRecyclerSinDatos = root.findViewById(R.id.tvRecyclerSinDatos);
+        if (itemList.isEmpty()) {
+            tvRecyclerSinDatos.setVisibility(View.VISIBLE);
+        }else{
+            tvRecyclerSinDatos.setVisibility(View.GONE);
+        }
+
         configurarCheckBoxes();
 
         return root;
@@ -88,6 +95,9 @@ public class BusquedaFragmento extends Fragment {
 
         botonIntroducirItem.setOnClickListener(v -> {
             // Añadir un nuevo ítem al RecyclerView
+            if(itemList.isEmpty()){
+                tvRecyclerSinDatos.setVisibility(View.GONE);
+            }
             itemList.add(new IngredienteDataModel(""));
             adapter.notifyItemInserted(itemList.size() - 1); // Notificar al adaptador
         });
@@ -102,6 +112,14 @@ public class BusquedaFragmento extends Fragment {
 
                 // Realizar validación de los ingredientes y actualizar el adaptador
                 for (int i = 0; i < itemList.size(); i++) {
+                    //Comprobar si el ingrediente está vacío
+                    if(itemList.get(i).getEditText().equals("")){
+                        errores++;
+                        int finalI = i;
+                        requireActivity().runOnUiThread(() -> {
+                            adapter.setErrorAtPosition(finalI, true,3); // Marcar error
+                        });
+                    }
                     //Comprobar si ya existe el ingrediente en la lista
                     for (int j = 0; j < i; j++) {
                         if (itemList.get(i).getEditText().equals(itemList.get(j).getEditText())) {

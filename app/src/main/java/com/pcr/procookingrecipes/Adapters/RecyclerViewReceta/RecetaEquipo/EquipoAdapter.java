@@ -9,42 +9,42 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.pcr.procookingrecipes.R;
 
-public class EquipoAdapter extends RecyclerView.Adapter<EquipoAdapter.EquipoViewHolder> {
-    private String[] equipo;
+import java.util.ArrayList;
 
-    public EquipoAdapter(String[] equipo) {
-        this.equipo = equipo;
+public class EquipoAdapter extends RecyclerView.Adapter<EquipoAdapter.EquipoViewHolder> {
+    private ArrayList<String> equipo;
+
+    public EquipoAdapter(ArrayList<String> equipo) {
+        // Si el equipo es nulo o tiene menos de 2 elementos, lo llenamos con los mismos ítems.
+        if (equipo == null) {
+            this.equipo = new ArrayList<>();
+        } else {
+            // Añadir dos elementos iguales al final si solo hay uno
+            this.equipo = new ArrayList<>(equipo);
+            if (equipo.size() < 2) {
+                this.equipo.add(equipo.get(0));  // Duplicamos el primer ítem
+            }
+        }
     }
 
     @Override
     public EquipoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // Inflamos el layout del item
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_receta_equipo, parent, false);
         return new EquipoViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(EquipoViewHolder holder, int position) {
-        holder.ingredienteTextView.setText(equipo[position]);
+        // Asignamos el texto del equipo a cada item
+        String equipoItem = equipo.get(position);
+        holder.ingredienteTextView.setText(equipoItem);
     }
 
     @Override
     public int getItemCount() {
-        return equipo.length;
-    }
-
-    public void addItem(String equipoInsertar) {
-
-        // Crear una nueva lista con un elemento extra
-        String[] nuevaLista = new String[equipo.length + 1];
-        System.arraycopy(equipo, 0, nuevaLista, 0, equipo.length);
-        nuevaLista[equipo.length] = equipoInsertar;  // Agregar el nuevo ingrediente
-
-        // Actualizar la lista de equipo
-        equipo = nuevaLista;
-
-        // Notificar que el item fue insertado
-        notifyItemInserted(equipo.length - 1);
-        
+        // Devolvemos el tamaño de la lista (2 si estamos duplicando elementos)
+        return equipo.size();
     }
 
     public static class EquipoViewHolder extends RecyclerView.ViewHolder {

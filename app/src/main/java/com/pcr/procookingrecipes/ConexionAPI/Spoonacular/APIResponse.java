@@ -20,9 +20,9 @@ public class APIResponse {
     //dam*/ private static final String API_KEY = "61adb1434eaa4266b233f21cc77d9931";
     //jue*/ private static final String API_KEY = "30ccc31545e94349a94f95e9aa2578f8";
     //xew*/ private static final String API_KEY = "150217e73f7f43698b23de34401341c8";
-    /*pan*/ private static final String API_KEY = "83a0e0c5b56948ca83dd4e3ffbaecdf4";
+    //pan*/ private static final String API_KEY = "83a0e0c5b56948ca83dd4e3ffbaecdf4";
 
-    private static final String INGREDIENT_SEARCH_URL = "https://api.spoonacular.com/food/ingredients/autocomplete";
+    /*cap*/ private static final String API_KEY = "2d4bff60f9ab44aaa8b90f9b7293a23b";
     private static final String COMPLEX_SEARCH_URL = "https://api.spoonacular.com/recipes/complexSearch";
     private static final String URL_INFORMACION = "https://api.spoonacular.com/recipes/";
 
@@ -183,16 +183,56 @@ public class APIResponse {
         return new ArrayList<>(); // Retornar lista vacía en caso de error
     }
 
+    public String generarCarta(int id){
+        String urlString = URL_INFORMACION + 4632 +"/card?apiKey=" + API_KEY;
+        HttpURLConnection urlConnection = null;
+        String response = "";
+        Log.d("APIResponse CONSULTA FINAL", "Consulta final: " + urlString);
+
+        try {
+            URL url = new URL(urlString);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.connect();
+
+            // Leer la respuesta de la API
+            Scanner scanner = new Scanner(urlConnection.getInputStream());
+            while (scanner.hasNext()) {
+                response += scanner.nextLine();
+            }
+            scanner.close();
+
+            Log.d("APIResponse Crear Carta", "Respuesta de la API: " + response);
+
+            // Parsear la respuesta JSON
+            Gson gson = new Gson();
+            ApiResponse apiResponse = gson.fromJson(response, ApiResponse.class);
+
+            // Verificar si la lista de resultados no está vacía y devolver las recetas
+            if (response != null) {
+                return response; // Retornar la lista de recetas
+            } else {
+                return ""; // Retornar una lista vacía si no hay resultados
+            }
+
+        } catch (IOException e) {
+            Log.e("APIResponse", "Error al conectar con la API: " + e.getMessage());
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+        }
+        return ""; // Retornar una lista vacía si hubo un error
+    }
+
 
 
     // Clase interna que representa la respuesta de la API de recetas
     private class ApiResponse {
         private List<Receta> results;
+
         public List<Receta> getResults() {
             return results;
-        }
-        public void setResults(List<Receta> results) {
-            this.results = results;
         }
     }
 
