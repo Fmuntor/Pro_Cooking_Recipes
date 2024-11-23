@@ -51,8 +51,6 @@ public class ItemBusquedaAdapter extends RecyclerView.Adapter<ItemBusquedaAdapte
             holder.comensalesTextView.setText("Para " + item.getServings() + " personas.");
             holder.tiempoPreparacionTextView.setText("Listo en: " + item.getReadyInMinutes() + " minutos.");
 
-
-
             // Configurar el botón "ver receta" para abrir los detalles
             holder.verReceta.setOnClickListener(v -> {
                 int currentPosition = holder.getAdapterPosition();

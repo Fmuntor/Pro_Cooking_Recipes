@@ -24,6 +24,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
@@ -45,13 +46,24 @@ public class RecetaActivity extends AppCompatActivity {
         binding = ActivityRecetaBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+
         apiResponse = new APIResponse();
         int id = getIntent().getIntExtra("ID", -1);
         RecetaBusqueda receta = getIntent().getParcelableExtra("Receta");
 
+        binding.valoracion.setText("Valoración: "+(Math.round((receta.getSpoonacularScore()/10) * 100.0) / 100.0));
+
+        if(Objects.equals(receta.getGlutenFree(), "true")){
+            binding.sinGluten.setText("Sin Gluten.");
+        }else{
+            binding.sinGluten.setText("Con Gluten.");
+        }
+
+        binding.precioReceta.setText("Precio: "+(Math.round(receta.getPricePerServing()/10)+"€"));
+
+
         executor.execute(() -> {
             instruccionesCompletas = apiResponse.getInstrucciones(id);
-            Log.d("Receta", "Instrucciones: " + instruccionesCompletas);
 
             // Verificar que las instrucciones no son nulas ni vacías
             if (instruccionesCompletas != null && !instruccionesCompletas.isEmpty()) {
@@ -63,7 +75,7 @@ public class RecetaActivity extends AppCompatActivity {
                     binding.comensalesReceta.setText("Para " + receta.getServings() + " personas.");
 
                     // Parsear las instrucciones
-                    parseInstrucciones(instruccionesCompletas);
+                    parsearInstrucciones(instruccionesCompletas);
 
                     // Verificar que la lista no esté vacía
                     if (listaPasos != null && !listaPasos.isEmpty()) {
@@ -138,7 +150,7 @@ public class RecetaActivity extends AppCompatActivity {
     }
 
     // Método que parsea las instrucciones
-    public void parseInstrucciones(List<Instruction> instrucciones) {
+    public void parsearInstrucciones(List<Instruction> instrucciones) {
         listaPasos = new ArrayList<>(); // Creamos la lista de pasos
         listaIngredientes = new ArrayList<>(); // Creamos la lista de ingredientes
         listaEquipo = new ArrayList<>(); // Creamos la lista de equipo
@@ -148,17 +160,22 @@ public class RecetaActivity extends AppCompatActivity {
                 // Añadimos cada paso de forma segura a la lista
                 listaPasos.add("Paso " + paso.getNumber() + ": " + paso.getStep());
                 // Ingredientes
+
                 if (!paso.getIngredients().isEmpty()) {
                     for (Ingredient ingrediente : paso.getIngredients()) {
-                        listaIngredientes.add(ingrediente.getName());
+                        if (!listaIngredientes.contains(paso.getIngredients())) {
+                            listaIngredientes.add(ingrediente.getName());
+                        }
                     }
                 }
 
                 // Equipo
                 if (!paso.getEquipment().isEmpty()) {
                     for (Equipment equipo : paso.getEquipment()) {
-                        listaEquipo.add(equipo.getName());
-                        ;
+                        if (!listaEquipo.contains(equipo.getName())){
+                            listaEquipo.add(equipo.getName());
+                        }
+
                     }
                 }
             }

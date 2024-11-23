@@ -3,36 +3,35 @@ package com.pcr.procookingrecipes.Receta;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import androidx.annotation.NonNull;
-
-import java.util.List;
-
 public class RecetaBusqueda implements Parcelable {
     private int id;
     private String title;
     private String image;
     private int servings;
     private int readyInMinutes;
-    private int cookingMinutes;
-    private int preparationMinutes;
+    private String glutenFree;
+    private double spoonacularScore;
+    private double pricePerServing;
 
-    public int getPreparationMinutes() {
-        return preparationMinutes;
+    public double getSpoonacularScore() {
+        return spoonacularScore;
     }
 
-    public void setPreparationMinutes(int preparationMinutes) {
-        this.preparationMinutes = preparationMinutes;
+    public String getGlutenFree() {
+        return glutenFree;
     }
 
     // Getters y setters para los campos de la receta
-    public RecetaBusqueda(int id, String titulo, String imagen, int servings, int readyInMinutes, int cookingMinutes, int preparationMinutes) {
+    public RecetaBusqueda(int id, String titulo, String imagen, int servings, int readyInMinutes, String glutenFree, double spoonacularScore, double pricePerServing) {
         this.id = id;
         this.title = titulo;
         this.image = imagen;
         this.servings = servings;
         this.readyInMinutes = readyInMinutes;
-        this.cookingMinutes = cookingMinutes;
-        this.preparationMinutes = preparationMinutes;
+        this.glutenFree = glutenFree;
+        this.spoonacularScore = spoonacularScore;
+        this.pricePerServing = pricePerServing;
+
     }
 
     public int getId() {
@@ -59,16 +58,12 @@ public class RecetaBusqueda implements Parcelable {
         return servings;
     }
 
+    public double getPricePerServing() {
+        return pricePerServing;
+    }
+
     public void setReadyInMinutes(int readyInMinutes) {
         this.readyInMinutes = readyInMinutes;
-    }
-
-    public int getCookingMinutes() {
-        return cookingMinutes;
-    }
-
-    public void setCookingMinutes(int cookingMinutes) {
-        this.cookingMinutes = cookingMinutes;
     }
 
     public int getReadyInMinutes() {
@@ -82,8 +77,9 @@ public class RecetaBusqueda implements Parcelable {
         image = in.readString();
         servings = in.readInt();
         readyInMinutes = in.readInt();
-        cookingMinutes = in.readInt();
-        preparationMinutes = in.readInt();
+        glutenFree = in.readString();
+        spoonacularScore = in.readDouble();
+        pricePerServing = in.readDouble();
     }
 
     @Override
@@ -98,8 +94,9 @@ public class RecetaBusqueda implements Parcelable {
         dest.writeString(image);
         dest.writeInt(servings);
         dest.writeInt(readyInMinutes);
-        dest.writeInt(cookingMinutes);
-        dest.writeInt(preparationMinutes);
+        dest.writeString(glutenFree);
+        dest.writeDouble(spoonacularScore);
+        dest.writeDouble(pricePerServing);
 
     }
     public static final Creator<RecetaBusqueda> CREATOR = new Creator<RecetaBusqueda>() {

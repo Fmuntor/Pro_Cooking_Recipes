@@ -66,7 +66,6 @@ public class BusquedaFragmento extends Fragment {
         inicializarSeekBars();
 
         itemList = new ArrayList<>();
-        itemList.add(new IngredienteDataModel("manzana"));
         itemList.add(new IngredienteDataModel("uva"));
 
 

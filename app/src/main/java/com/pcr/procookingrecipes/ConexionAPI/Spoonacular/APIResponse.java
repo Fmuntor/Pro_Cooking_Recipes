@@ -18,11 +18,11 @@ import java.util.Scanner;
 
 public class APIResponse {
     //dam*/ private static final String API_KEY = "61adb1434eaa4266b233f21cc77d9931";
-    //jue*/ private static final String API_KEY = "30ccc31545e94349a94f95e9aa2578f8";
+    /*jue*/ private static final String API_KEY = "30ccc31545e94349a94f95e9aa2578f8";
     //xew*/ private static final String API_KEY = "150217e73f7f43698b23de34401341c8";
     //pan*/ private static final String API_KEY = "83a0e0c5b56948ca83dd4e3ffbaecdf4";
 
-    /*cap*/ private static final String API_KEY = "2d4bff60f9ab44aaa8b90f9b7293a23b";
+    //cap*/ private static final String API_KEY = "2d4bff60f9ab44aaa8b90f9b7293a23b";
     private static final String COMPLEX_SEARCH_URL = "https://api.spoonacular.com/recipes/complexSearch";
     private static final String URL_INFORMACION = "https://api.spoonacular.com/recipes/";
 
@@ -110,7 +110,7 @@ public class APIResponse {
     }
 
     public RecetaBusqueda getInformacionReceta(int id) {
-        String urlString = URL_INFORMACION + id + "/information?includeNutrition=true&apiKey=" + API_KEY;
+        String urlString = URL_INFORMACION + id + "/information?includeNutrition=false&apiKey=" + API_KEY;
         HttpURLConnection urlConnection = null;
         StringBuilder response = new StringBuilder();
         try {
@@ -126,13 +126,14 @@ public class APIResponse {
                 while (scanner.hasNext()) {
                     response.append(scanner.nextLine());
                 }
+                Log.e("INFO_RECETA", "Informacion de la receta: " + response.toString());
+
                 scanner.close();
             } else {
                 Log.e("APIResponse", "Error en la conexión. Código de respuesta: " + statusCode);
             }
 
             Gson gson = new Gson();
-            Log.d("APIResponse", "Informacion de la receta: " + response.toString());
             return gson.fromJson(response.toString(), RecetaBusqueda.class);
 
         } catch (IOException e) {
