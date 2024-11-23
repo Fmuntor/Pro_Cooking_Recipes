@@ -25,6 +25,7 @@
     <string name="carbohidratos_g_plato">Carbohidratos (g/plato)</string>
     <string name="proteina_g_plato">Proteína (g/plato)</string>
     <string name="calorias_kcal_plato">Calorías (kcal/plato)</string>
+    <string name="sign_in_with_google">Iniciar sesión con Google</string>
 
     <string-array name="menu_busqueda">
         <item>Ingredientes</item>

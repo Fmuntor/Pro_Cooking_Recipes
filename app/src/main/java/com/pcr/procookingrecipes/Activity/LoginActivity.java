@@ -1,11 +1,11 @@
 package com.pcr.procookingrecipes.Activity;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.TextUtils;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,130 +16,145 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.pcr.procookingrecipes.databinding.ActivityLoginBinding;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.pcr.procookingrecipes.Activity.MainActivity;
+import com.pcr.procookingrecipes.R;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class LoginActivity extends AppCompatActivity{
-    private static final String BD_URL = "jdbc:mysql://localhost:3306/MySQLPCR";
-
-    private ActivityLoginBinding binding;
-    private GoogleSignInClient mGoogleSignInClient;
-    Button logInButton;
-    TextView textView;
-    private FirebaseFirestore db;
-    private boolean usuarioExiste = false;
-    String mail;
-    String nombre;
+public class LoginActivity extends AppCompatActivity {
+    private static final int RC_SIGN_IN = 9001;
+    private EditText usuarioEditText, passEditText;
+    private Button botonEntrar, botonRegistrar;
+    private ImageButton botonGoogle;
+    private TextView olvideContrasenaTextView;
+    private FirebaseAuth auth;
+    private GoogleSignInClient googleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityLoginBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-        textView = binding.C;
-        // Inicializa Firestore
-        db = FirebaseFirestore.getInstance();
-        // Configura Google Sign-In
+        setContentView(R.layout.activity_login);
+
+        // Inicializar Firebase Auth
+        auth = FirebaseAuth.getInstance();
+
+        // Configurar Google Sign-In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id)) // Asegúrate de tener este ID en tu archivo `google-services.json`
                 .requestEmail()
                 .build();
+        googleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        // Referencias a vistas
+        usuarioEditText = findViewById(R.id.usuarioEditText);
+        passEditText = findViewById(R.id.passEditText);
+        botonEntrar = findViewById(R.id.botonEntrar);
+        botonRegistrar = findViewById(R.id.botonRegistrar);
+        botonGoogle = findViewById(R.id.botonGoogle);
+        olvideContrasenaTextView = findViewById(R.id.olvideContrasenaTextView);
 
-        binding.button.setOnClickListener(view -> signIn());
+        // Manejo de botones
+        botonEntrar.setOnClickListener(view -> iniciarSesion());
+        botonRegistrar.setOnClickListener(view -> registrarUsuario());
+        botonGoogle.setOnClickListener(view -> iniciarSesionConGoogle());
+        olvideContrasenaTextView.setOnClickListener(view -> recuperarContrasena());
     }
 
-    private void signIn() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, 9001);
+    private void iniciarSesion() {
+        String email = usuarioEditText.getText().toString().trim();
+        String password = passEditText.getText().toString().trim();
+
+        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+            Toast.makeText(this, "Por favor completa todos los campos", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        abrirMainActivity();
+                    } else {
+                        Toast.makeText(this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void registrarUsuario() {
+        String email = usuarioEditText.getText().toString().trim();
+        String password = passEditText.getText().toString().trim();
+
+        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+            Toast.makeText(this, "Por favor completa todos los campos", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        abrirMainActivity();
+                    } else {
+                        Toast.makeText(this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void recuperarContrasena() {
+        String email = usuarioEditText.getText().toString().trim();
+
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(this, "Ingresa tu correo para recuperar la contraseña", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        auth.sendPasswordResetEmail(email)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(this, "Correo de recuperación enviado", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void iniciarSesionConGoogle() {
+        Intent signInIntent = googleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 9001) {
+        if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            handleSignInResult(task);
-        }
-    }
-
-    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
-        try {
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            if (account != null) {
-                textView.setText("OLE");
-                mail = account.getEmail();
-                nombre = account.getDisplayName();
-
-
-                Map<String, Object> user = new HashMap<>();
-                user.put("mail", mail);
-                user.put("nombre", nombre);
-
-                //Leer de la base de datos si existe el usuario
-                db.collection("usuarios")
-                        .get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                        // comparar el mail con los mail de la bbdd
-                                        if (document.getString("mail").equals(account.getEmail())) {
-                                            usuarioExiste = true;
-                                            abrirMainActivity();
-                                        }
-                                    }
-                                    if (!usuarioExiste){
-                                        db.collection("usuarios")
-                                                .add(user)
-                                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                    @Override
-                                                    public void onSuccess(DocumentReference documentReference) {
-                                                        abrirMainActivity();
-                                                    }
-                                                })
-                                                .addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        Log.w(TAG, "Error añadiendo registro de usuario.", e);
-                                                    }
-                                                });
-                                    }
+            try {
+                GoogleSignInAccount account = task.getResult(Exception.class);
+                if (account != null) {
+                    AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+                    auth.signInWithCredential(credential)
+                            .addOnCompleteListener(this, authTask -> {
+                                if (authTask.isSuccessful()) {
+                                    abrirMainActivity();
                                 } else {
-                                    Log.w(TAG, "Error leyendo de la base de datos.", task.getException());
+                                    Toast.makeText(this, "Error: " + authTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 }
-                            }
-                        });
+                            });
+                }
+            } catch (Exception e) {
+                Toast.makeText(this, "Inicio de sesión con Google fallido", Toast.LENGTH_SHORT).show();
             }
-        } catch (ApiException e) {
-            textView.setText("Falló el inicio de sesión con Google");
         }
     }
 
     private void abrirMainActivity() {
-
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        intent.putExtra("userEmail", mail);
-        intent.putExtra("userName", nombre);
-        startActivity(intent);
-        finish();
+        FirebaseUser user = auth.getCurrentUser();
+        if (user != null) {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
-
-
 }
-
-
