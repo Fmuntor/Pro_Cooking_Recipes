@@ -60,28 +60,17 @@ public class ItemBusquedaAdapter extends RecyclerView.Adapter<ItemBusquedaAdapte
 
                     intent.putExtra("ID", id); // Pasar el ID de la receta a la nueva actividad
                     intent.putExtra("Receta", item);
+                    intent.putExtra("RecetasCompletas", (ArrayList<RecetaBusqueda>) dataList);
                     holder.itemView.getContext().startActivity(intent);
                 }
             });
         }
     }
 
-    private void abrirDetallesReceta(Context context, int id) {
-
-    }
-
     @Override
     public int getItemCount() {
         // Verificar si dataList es null antes de acceder a su tamaño
         return (dataList != null) ? dataList.size() : 0;
-    }
-
-    // Método para agregar un nuevo elemento a la lista y actualizar el RecyclerView
-    public void addItem(RecetaBusqueda newItem) {
-        if (dataList != null) {
-            dataList.add(newItem);
-            notifyItemInserted(dataList.size() - 1); // Notificar que se agregó un nuevo elemento
-        }
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {

@@ -91,11 +91,11 @@
 
         <!-- Nuevo botón a la derecha -->
         <Button
-            android:id="@+id/botonCrearCarta"
+            android:id="@+id/boton_fav"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="end"
-            android:text="carta" />
+            android:text="Favorito" />
     </LinearLayout>
 
     <!-- Sección de Ingredientes y Equipo (Horizontal) -->

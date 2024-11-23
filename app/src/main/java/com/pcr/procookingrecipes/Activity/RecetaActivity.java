@@ -3,13 +3,20 @@ package com.pcr.procookingrecipes.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewReceta.RecetaEquipo.EquipoAdapter;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewReceta.RecetaIngredientes.IngredientesAdapter;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewReceta.RecetaInstrucciones.InstruccionesAdapter;
@@ -18,12 +25,15 @@ import com.pcr.procookingrecipes.InstruccionesReceta.Equipment;
 import com.pcr.procookingrecipes.InstruccionesReceta.Ingredient;
 import com.pcr.procookingrecipes.InstruccionesReceta.Instruction;
 import com.pcr.procookingrecipes.InstruccionesReceta.Step;
+import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.Receta.RecetaBusqueda;
 import com.pcr.procookingrecipes.databinding.ActivityRecetaBinding;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -36,30 +46,31 @@ public class RecetaActivity extends AppCompatActivity {
     private final Executor executor = Executors.newSingleThreadExecutor();
     private List<Instruction> instruccionesCompletas;
     private ArrayList<String> listaPasos, listaIngredientes, listaEquipo;
+
     ;  // Usamos ArrayList para poder agregar dinámicamente
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FirebaseApp.initializeApp(this);
 
         // Inflar el layout usando ViewBinding
         binding = ActivityRecetaBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-
         apiResponse = new APIResponse();
         int id = getIntent().getIntExtra("ID", -1);
         RecetaBusqueda receta = getIntent().getParcelableExtra("Receta");
 
-        binding.valoracion.setText("Valoración: "+(Math.round((receta.getSpoonacularScore()/10) * 100.0) / 100.0));
+        binding.valoracion.setText("Valoración: " + (Math.round((receta.getSpoonacularScore() / 10) * 100.0) / 100.0));
 
-        if(Objects.equals(receta.getGlutenFree(), "true")){
+        if (Objects.equals(receta.getGlutenFree(), "true")) {
             binding.sinGluten.setText("Sin Gluten.");
-        }else{
+        } else {
             binding.sinGluten.setText("Con Gluten.");
         }
 
-        binding.precioReceta.setText("Precio: "+(Math.round(receta.getPricePerServing()/10)+"€"));
+        binding.precioReceta.setText("Precio: " + (Math.round(receta.getPricePerServing() / 10) + "€"));
 
 
         executor.execute(() -> {
@@ -109,38 +120,82 @@ public class RecetaActivity extends AppCompatActivity {
             }
         });
 
-        binding.botonCrearCarta.setOnClickListener(new View.OnClickListener() {
+
+        binding.botonFav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                List<RecetaBusqueda> recetasCompletas = getIntent().getParcelableArrayListExtra("RecetasCompletas");
+
+                FirebaseAuth auth = FirebaseAuth.getInstance();
+
+                String userId = auth.getCurrentUser().getUid();
+
+                Map<String, Object> userData = new HashMap<>();
+                userData.put("UID", userId);
+                userData.put("IDReceta", receta.getId());
+
+                // leer datos de firestore
                 executor.execute(() -> {
-                    String carta = apiResponse.generarCarta(id);
-                    // Extraer la url y estado de la carta con expresiones regulares
-                    String regex = "\"url\":\\s*\"([^\"]*)\".*?\"status\":\\s*\"([^\"]*)\"";
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    db.collection("favoritos")
+                            .get()
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    Log.d("Firestore", "Lectura exitosa");
 
-                    // Crear el patrón y el matcher
-                    Pattern pattern = Pattern.compile(regex);
-                    Matcher matcher = pattern.matcher(carta);
-                    // Buscar y extraer los valores de "url" y "status"
-                    String url = "";
-                    String status = "";
-                    if (matcher.find()) {
-                        url = matcher.group(1);  // El primer grupo es la URL
-                        status = matcher.group(2);  // El segundo grupo es el status
-                    }
-                    if (!matcher.find() || !status.equals("success")){
-                        runOnUiThread(() -> {
-                            Toast.makeText(RecetaActivity.this, "Error al generar la carta", Toast.LENGTH_SHORT).show();
-                        });
-                    }
-
-                    Intent intent = new Intent(RecetaActivity.this, CardActivity.class);
-                    intent.putExtra("Carta", url);
-                    startActivity(intent);
+                                } else {
+                                    Log.e("Firestore", "Error al leer los documentos", task.getException());
+                                }
+                            });
                 });
+
+
             }
         });
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        // Identificar el elemento de menú seleccionado
+        if (item.getItemId() == R.id.action_carta) {
+            executor.execute(() -> {
+                // Generar la carta
+                String carta = apiResponse.generarCarta(getIntent().getIntExtra("ID", -1)); // ID de la receta
+                String regex = "\"url\":\\s*\"([^\"]*)\".*?\"status\":\\s*\"([^\"]*)\"";
+                Pattern pattern = Pattern.compile(regex);
+                Matcher matcher = pattern.matcher(carta);
+
+                String url = "";
+                String status = "";
+
+                if (matcher.find()) {
+                    url = matcher.group(1);  // Extraer la URL
+                    status = matcher.group(2);  // Extraer el estado
+                }
+
+                if (!status.equals("success")) {
+                    runOnUiThread(() ->
+                            Toast.makeText(RecetaActivity.this, "Error al generar la carta", Toast.LENGTH_SHORT).show()
+                    );
+                    return;
+                }
+
+                // Abrir una nueva actividad para mostrar la carta
+                Intent intent = new Intent(RecetaActivity.this, CardActivity.class);
+                intent.putExtra("Carta", url);
+                startActivity(intent);
+            });
+        }
+        return true;
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflar el menú; esto agrega elementos a la barra de acción si está presente
+        getMenuInflater().inflate(R.menu.main_receta, menu);
+        return true;
+    }
 
     @Override
     protected void onDestroy() {
@@ -172,7 +227,7 @@ public class RecetaActivity extends AppCompatActivity {
                 // Equipo
                 if (!paso.getEquipment().isEmpty()) {
                     for (Equipment equipo : paso.getEquipment()) {
-                        if (!listaEquipo.contains(equipo.getName())){
+                        if (!listaEquipo.contains(equipo.getName())) {
                             listaEquipo.add(equipo.getName());
                         }
 

@@ -21,8 +21,6 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.firestore.FirebaseFirestore;
-
 import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.databinding.ActivityMainBinding;
 
@@ -33,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
-    private FirebaseFirestore db;
     private String userEmail;
     private String userName;
 
@@ -62,9 +59,6 @@ public class MainActivity extends AppCompatActivity {
         View headerView = navigationView.getHeaderView(0);
         TextView nombreCabecera = headerView.findViewById(R.id.nombreCabecera);
         TextView mailCabecera = headerView.findViewById(R.id.mailCabecera);
-
-        // Obtén la instancia de Firestore
-        db = FirebaseFirestore.getInstance();
 
         // Recupera el correo electrónico y nombre del usuario conectado desde el Intent
         userEmail = getIntent().getStringExtra("userEmail");
