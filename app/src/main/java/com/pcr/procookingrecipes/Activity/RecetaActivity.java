@@ -133,7 +133,7 @@ public class RecetaActivity extends AppCompatActivity {
                 DatabaseReference referencia = database.getReference("favoritos");
 
                 Map<String, String> datos = new HashMap<>();
-                datos.put("ID Receta", String.valueOf(id));
+                datos.put("ID", String.valueOf(id));
 
                 referencia.child(userId).push().setValue(datos);
             }

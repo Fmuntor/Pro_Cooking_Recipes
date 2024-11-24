@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = binding.navView;
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.cabecera_busqueda, R.id.cabecera_favoritos, R.id.cabecera_cuenta)
+                R.id.cabecera_busqueda, R.id.cabecera_favoritos, R.id.cabecera_cuenta, R.id.cabecera_historial)
                 .setOpenableLayout(drawer)
                 .build();
 

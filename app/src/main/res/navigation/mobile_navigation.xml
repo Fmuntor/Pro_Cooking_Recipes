@@ -16,6 +16,11 @@
         android:name="com.pcr.procookingrecipes.ui.favoritos.FavoritosFragmento"
         android:label="@string/favoritos"
         tools:layout="@layout/fragmento_favoritos" />
+    <fragment
+        android:id="@+id/cabecera_historial"
+        android:name="com.pcr.procookingrecipes.ui.historial.HistorialFragmento"
+        android:label="@string/historial"
+        tools:layout="@layout/fragmento_historial" />
 
     <fragment
         android:id="@+id/cabecera_cuenta"

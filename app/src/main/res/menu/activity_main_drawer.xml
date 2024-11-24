@@ -14,6 +14,10 @@
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/favoritos" />
         <item
+            android:id="@+id/cabecera_historial"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="@string/historial" />
+        <item
             android:id="@+id/cabecera_cuenta"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="@string/cuenta" />
