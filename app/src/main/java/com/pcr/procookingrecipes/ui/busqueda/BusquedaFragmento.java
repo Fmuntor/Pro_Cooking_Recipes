@@ -25,6 +25,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.cloud.translate.Translate;
 import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.pcr.procookingrecipes.Activity.Busqueda.BusquedaActivity;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewIngrediente.IngredienteDataModel;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewIngrediente.ItemIngredienteAdapter;
@@ -38,8 +41,13 @@ import com.pcr.procookingrecipes.Receta.Receta;
 import com.pcr.procookingrecipes.Receta.RecetaBusqueda;
 import com.pcr.procookingrecipes.databinding.FragmentoBusquedaBinding;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -148,6 +156,21 @@ public class BusquedaFragmento extends Fragment {
 
                         recetasCompletas.add(apiResponse.getInformacionReceta(receta.getId()));
                     }
+                    List<String> listaID = new ArrayList<>();
+                    for (Receta receta : idRecetas) {
+
+                        listaID.add(String.valueOf(receta.getId()));
+                    }
+                    // Guardar en la base de datos
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference referenciaHistorial = database.getReference("historial");
+
+                    Map<String, Object> historialData = new HashMap<>();
+                    historialData.put("fecha", new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date()));
+                    historialData.put("recetas", listaID);
+
+                    referenciaHistorial.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).push().setValue(historialData);
+
                     abrirBusquedaActivity();
                 }
             });

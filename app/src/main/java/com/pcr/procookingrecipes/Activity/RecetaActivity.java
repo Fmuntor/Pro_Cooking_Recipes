@@ -15,8 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewReceta.RecetaEquipo.EquipoAdapter;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewReceta.RecetaIngredientes.IngredientesAdapter;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewReceta.RecetaInstrucciones.InstruccionesAdapter;
@@ -129,27 +129,13 @@ public class RecetaActivity extends AppCompatActivity {
                 FirebaseAuth auth = FirebaseAuth.getInstance();
 
                 String userId = auth.getCurrentUser().getUid();
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference referencia = database.getReference("favoritos");
 
-                Map<String, Object> userData = new HashMap<>();
-                userData.put("UID", userId);
-                userData.put("IDReceta", receta.getId());
+                Map<String, String> datos = new HashMap<>();
+                datos.put("ID Receta", String.valueOf(id));
 
-                // leer datos de firestore
-                executor.execute(() -> {
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    db.collection("favoritos")
-                            .get()
-                            .addOnCompleteListener(task -> {
-                                if (task.isSuccessful()) {
-                                    Log.d("Firestore", "Lectura exitosa");
-
-                                } else {
-                                    Log.e("Firestore", "Error al leer los documentos", task.getException());
-                                }
-                            });
-                });
-
-
+                referencia.child(userId).push().setValue(datos);
             }
         });
     }

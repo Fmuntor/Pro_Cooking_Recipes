@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation("com.google.firebase:firebase-analytics")
     implementation(libs.firebase.firestore)
+    implementation ("com.google.firebase:firebase-database:20.0.5")
 
     implementation("com.google.cloud:google-cloud-translate:2.53.0") {
         exclude(group = "com.google.api.grpc", module = "proto-google-common-protos")
