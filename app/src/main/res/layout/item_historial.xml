@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:gravity="center_vertical">
+
+    <!-- LinearLayout para los tres TextViews -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:paddingEnd="8dp">
+
+        <!-- Primer TextView -->
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fecha:"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:maxLines="1"/>
+
+        <!-- Segundo TextView -->
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Numero de búsquedas"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:maxLines="1"/>
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Parámetros:"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:maxLines="1"/>
+
+    </LinearLayout>
+
+    <!-- Botón a la derecha -->
+    <Button
+        android:id="@+id/botonDerecha"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Botón"
+        android:padding="8dp"
+        android:contentDescription="Botón a la derecha"
+        android:layout_marginStart="8dp"/>
+
+</LinearLayout>

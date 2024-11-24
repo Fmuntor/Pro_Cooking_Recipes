@@ -24,8 +24,8 @@ public class HistorialFragmento extends Fragment {
         binding = FragmentoHistorialBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textHistorial;
-        slideshowViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+
+
         return root;
     }
 

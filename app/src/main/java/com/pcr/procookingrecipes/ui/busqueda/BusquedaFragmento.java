@@ -43,6 +43,7 @@ import com.pcr.procookingrecipes.databinding.FragmentoBusquedaBinding;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +63,7 @@ public class BusquedaFragmento extends Fragment {
     private APIResponse apiResponse;
     private final Executor executor = Executors.newSingleThreadExecutor();
     private List<RecetaBusqueda> recetasCompletas;
+    private String[] listaParametros;
     TextView tvRecyclerSinDatos;
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -161,12 +163,26 @@ public class BusquedaFragmento extends Fragment {
 
                         listaID.add(String.valueOf(receta.getId()));
                     }
+
                     // Guardar en la base de datos
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference referenciaHistorial = database.getReference("historial");
 
+                    Log.d("Firebase", "ID de la receta: " + listaParametros[0]);
+                    Log.d("Firebase", "ID de la receta: " + listaParametros[1]);
+                    Log.d("Firebase", "ID de la receta: " + listaParametros[2]);
+
+                    Log.d("Firebase", "ID de la receta: " + listaParametros[3]);
+                    Log.d("Firebase", "ID de la receta: " + listaParametros[4]);
+
+                    Log.d("Firebase", "ID de la receta: " + listaParametros[5]);
+                    Log.d("Firebase", "ID de la receta: " + listaParametros[6]);
+
+                    Log.d("Firebase", "ID de la receta: " + listaParametros[7]);
+
                     Map<String, Object> historialData = new HashMap<>();
                     historialData.put("fecha", new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date()));
+                    historialData.put("parametros", new ArrayList<>(Arrays.asList(listaParametros)));
                     historialData.put("recetas", listaID);
 
                     referenciaHistorial.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).push().setValue(historialData);
@@ -180,11 +196,21 @@ public class BusquedaFragmento extends Fragment {
     private String escribirConsultaFinal() {
         // Crear un StringBuilder para almacenar la consulta final
         StringBuilder consultaFinal = new StringBuilder();
+        listaParametros = new String[8];
 
         if(!itemList.isEmpty()){
-            for(int i=0;i<itemList.size();i++){
-                consultaFinal.append(traducir(itemList.get(i).getEditText(), "ingles")).append(",");
+            StringBuilder ingredientesFinal = new StringBuilder();  // Usar StringBuilder para eficiencia en concatenación
+            for (int i = 0; i < itemList.size(); i++) {
+                String ingrediente = itemList.get(i).getEditText();  // Obtener el ingrediente
+                ingredientesFinal.append(ingrediente).append(",");  // Agregar el ingrediente a ingredientesFinal
+                consultaFinal.append(traducir(ingrediente, "ingles")).append(",");  // Traducir y agregar a consultaFinal
+
             }
+            //eliminar la ultima coma
+            ingredientesFinal.deleteCharAt(ingredientesFinal.length() - 1);
+            listaParametros[7] = ingredientesFinal.toString();
+        }else{
+            listaParametros[7] = "";
         }
 
         // Eliminar el último carácter "," si existe
@@ -197,7 +223,10 @@ public class BusquedaFragmento extends Fragment {
             consultaFinal.append("&type=");
 
             String opcionSeleccionada = binding.spinnerCocina.getSelectedItem().toString();
+            listaParametros[0] = opcionSeleccionada;
             consultaFinal.append(traducir(opcionSeleccionada, "ingles"));
+        }else{
+            listaParametros[0] = "";
         }
 
         // CheckBox: Nacionalidad
@@ -205,7 +234,11 @@ public class BusquedaFragmento extends Fragment {
             consultaFinal.append("&cuisine=");
 
             String opcionSeleccionada = binding.spinnerNacionalidad.getSelectedItem().toString();
+            listaParametros[1] = opcionSeleccionada;
+
             consultaFinal.append(traducir(opcionSeleccionada, "ingles"));
+        }else{
+            listaParametros[1] = "";
         }
 
         // CheckBox: Dieta
@@ -213,28 +246,42 @@ public class BusquedaFragmento extends Fragment {
             consultaFinal.append("&diet=");
 
             String opcionSeleccionada = binding.spinnerDieta.getSelectedItem().toString();
+            listaParametros[2] = opcionSeleccionada;
+
             consultaFinal.append(traducir(opcionSeleccionada, "ingles"));
+        }else{
+            listaParametros[2] = "";
         }
 
         // CheckBox: Intolerancias
         if (binding.checkIntolerancias.isChecked()) {
             consultaFinal.append("&intolerances=");
             String opcionSeleccionada = binding.spinnerIntolerancias.getSelectedItem().toString();
+            listaParametros[3] = opcionSeleccionada;
+
             consultaFinal.append(traducir(opcionSeleccionada, "ingles"));
+        }else{
+            listaParametros[3] = "";
         }
 
         // CheckBox: Carbohidratos
         if (binding.checkCarbo.isChecked()) {
             consultaFinal.append("&minCarbs=");
             int valorSeleccionado = binding.seekBarCarbo.getProgress();
+            listaParametros[4] = String.valueOf(valorSeleccionado);
             consultaFinal.append(valorSeleccionado);
+        }else{
+            listaParametros[4] = "";
         }
 
         // CheckBox: Proteínas
         if (binding.checkProteina.isChecked()) {
             consultaFinal.append("&minProtein=");
             int valorSeleccionado = binding.seekBarProteina.getProgress();
+            listaParametros[5] = String.valueOf(valorSeleccionado);
             consultaFinal.append(valorSeleccionado);
+        }else{
+            listaParametros[5] = "";
         }
 
         // CheckBox: Calorías
@@ -242,7 +289,10 @@ public class BusquedaFragmento extends Fragment {
             consultaFinal.append("&maxCalories=");
 
             int valorSeleccionado = binding.seekBarCalorias.getProgress();
+            listaParametros[6] = String.valueOf(valorSeleccionado);
             consultaFinal.append(valorSeleccionado);
+        }else{
+            listaParametros[6] = "";
         }
 
 
