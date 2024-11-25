@@ -168,24 +168,19 @@ public class BusquedaFragmento extends Fragment {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference referenciaHistorial = database.getReference("historial");
 
-                    Log.d("Firebase", "ID de la receta: " + listaParametros[0]);
-                    Log.d("Firebase", "ID de la receta: " + listaParametros[1]);
-                    Log.d("Firebase", "ID de la receta: " + listaParametros[2]);
-
-                    Log.d("Firebase", "ID de la receta: " + listaParametros[3]);
-                    Log.d("Firebase", "ID de la receta: " + listaParametros[4]);
-
-                    Log.d("Firebase", "ID de la receta: " + listaParametros[5]);
-                    Log.d("Firebase", "ID de la receta: " + listaParametros[6]);
-
-                    Log.d("Firebase", "ID de la receta: " + listaParametros[7]);
-
                     Map<String, Object> historialData = new HashMap<>();
                     historialData.put("fecha", new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date()));
                     historialData.put("parametros", new ArrayList<>(Arrays.asList(listaParametros)));
                     historialData.put("recetas", listaID);
 
-                    referenciaHistorial.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).push().setValue(historialData);
+                    String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                    //Eliminar el punto
+                    if (email.contains(".")){
+                        email = email.replace(".","·");
+                    }
+                    String etiquetaCompleta =email+" - "+FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                    referenciaHistorial.child(etiquetaCompleta).push().setValue(historialData);
 
                     abrirBusquedaActivity();
                 }

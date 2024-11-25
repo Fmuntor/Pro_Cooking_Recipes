@@ -68,9 +68,13 @@ public class FavoritosFragmento extends Fragment {
             Toast.makeText(getContext(), "No estás autenticado", Toast.LENGTH_SHORT).show();
             return;
         }
-
+        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        //Eliminar el punto
+        if (email.contains(".")){
+            email = email.replace(".","·");
+        }
         // Referencia al nodo del usuario
-        DatabaseReference usuarioFavoritos = referenciaFavoritos.child(userId);
+        DatabaseReference usuarioFavoritos = referenciaFavoritos.child(email+" - "+userId);
 
         usuarioFavoritos.addValueEventListener(new ValueEventListener() {
             @Override

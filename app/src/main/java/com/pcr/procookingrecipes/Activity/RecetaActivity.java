@@ -135,7 +135,13 @@ public class RecetaActivity extends AppCompatActivity {
                 Map<String, String> datos = new HashMap<>();
                 datos.put("ID", String.valueOf(id));
 
-                referencia.child(userId).push().setValue(datos);
+                String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                //Eliminar el punto
+                if (email.contains(".")){
+                    email = email.replace(".","·");
+                }
+
+                referencia.child(email + " - " +userId).push().setValue(datos);
             }
         });
     }
