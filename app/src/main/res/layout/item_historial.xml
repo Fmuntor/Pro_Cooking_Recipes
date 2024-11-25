@@ -7,6 +7,15 @@
     android:gravity="center_vertical">
 
     <!-- LinearLayout para los tres TextViews -->
+    <Button
+        android:id="@+id/botonHistorialBorrar"
+        android:layout_width="24dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:contentDescription="Botón a la izquierda"
+        android:padding="8dp"
+        android:text="X" />
+
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -16,7 +25,7 @@
 
         <!-- Primer TextView -->
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/fechaTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Fecha:"
@@ -26,7 +35,7 @@
 
         <!-- Segundo TextView -->
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/numBusquedasTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Numero de búsquedas"
@@ -35,7 +44,7 @@
             android:maxLines="1"/>
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/parametrosTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Parámetros:"
@@ -45,14 +54,15 @@
 
     </LinearLayout>
 
+    <!-- Botón a la izquierda -->
+
     <!-- Botón a la derecha -->
     <Button
-        android:id="@+id/botonDerecha"
+        android:id="@+id/botonHistorialVer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Botón"
+        android:layout_marginStart="8dp"
         android:padding="8dp"
-        android:contentDescription="Botón a la derecha"
-        android:layout_marginStart="8dp"/>
+        android:text="Ver" />
 
 </LinearLayout>
