@@ -28,6 +28,10 @@
     <string name="sign_in_with_google">Iniciar sesión con Google</string>
     <string name="no_ingredientes">No se han seleccionado ingredientes</string>
     <string name="historial">Historial</string>
+    <string name="cerrar_sesion">Cerrar sesión</string>
+    <string name="telefono">Teléfono</string>
+    <string name="correo_electronico">Correo Electrónico</string>
+    <string name="nombre">Nombre</string>
 
 
     <string-array name="menu_busqueda">

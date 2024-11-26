@@ -24,7 +24,7 @@
 
     <fragment
         android:id="@+id/cabecera_cuenta"
-        android:name="com.pcr.procookingrecipes.ui.cuenta.CuentaFragment"
+        android:name="com.pcr.procookingrecipes.ui.cuenta.CuentaFragmento"
         android:label="@string/cuenta"
         tools:layout="@layout/fragmento_cuenta" />
 </navigation>
