@@ -10,7 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -65,6 +67,8 @@ public class BusquedaFragmento extends Fragment {
     private List<RecetaBusqueda> recetasCompletas;
     private String[] listaParametros;
     TextView tvRecyclerSinDatos;
+    private EditText numeroRecetas;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         BusquedaFragmentoViewModel busquedaViewModel = new ViewModelProvider(this).get(BusquedaFragmentoViewModel.class);
@@ -85,7 +89,7 @@ public class BusquedaFragmento extends Fragment {
         tvRecyclerSinDatos = root.findViewById(R.id.tvRecyclerSinDatos);
         if (itemList.isEmpty()) {
             tvRecyclerSinDatos.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             tvRecyclerSinDatos.setVisibility(View.GONE);
         }
 
@@ -104,7 +108,7 @@ public class BusquedaFragmento extends Fragment {
 
         botonIntroducirItem.setOnClickListener(v -> {
             // Añadir un nuevo ítem al RecyclerView
-            if(itemList.isEmpty()){
+            if (itemList.isEmpty()) {
                 tvRecyclerSinDatos.setVisibility(View.GONE);
             }
             itemList.add(new IngredienteDataModel(""));
@@ -116,17 +120,17 @@ public class BusquedaFragmento extends Fragment {
         botonBuscar.setOnClickListener(v -> {
             executor.execute(() -> {
                 apiResponse = new APIResponse();
-                int errores=0;
+                int errores = 0;
                 recetasCompletas = new ArrayList<>();
 
                 // Realizar validación de los ingredientes y actualizar el adaptador
                 for (int i = 0; i < itemList.size(); i++) {
                     //Comprobar si el ingrediente está vacío
-                    if(itemList.get(i).getEditText().equals("")){
+                    if (itemList.get(i).getEditText().equals("")) {
                         errores++;
                         int finalI = i;
                         requireActivity().runOnUiThread(() -> {
-                            adapter.setErrorAtPosition(finalI, true,3); // Marcar error
+                            adapter.setErrorAtPosition(finalI, true, 3); // Marcar error
                         });
                     }
                     //Comprobar si ya existe el ingrediente en la lista
@@ -135,57 +139,78 @@ public class BusquedaFragmento extends Fragment {
                             errores++;
                             int finalI = i;
                             requireActivity().runOnUiThread(() -> {
-                                adapter.setErrorAtPosition(finalI, true,2); // Marcar error
+                                adapter.setErrorAtPosition(finalI, true, 2); // Marcar error
                             });
                         }
                     }
                     IngredienteDataModel item = itemList.get(i);
                     String respuesta = apiResponse.esIngredienteCorrecto(traducir(item.getEditText(), "ingles"));
-                    if(respuesta.equals("Error")){
-                        errores++;
-                        int finalI = i;
-                        requireActivity().runOnUiThread(() -> {
-                            adapter.setErrorAtPosition(finalI, true,1); // Marcar error
-                        });
+                    if (respuesta != null) {
+                        if (respuesta.equals("Error")) {
+                            errores++;
+                            int finalI = i;
+                            requireActivity().runOnUiThread(() -> {
+                                adapter.setErrorAtPosition(finalI, true, 1); // Marcar error
+                            });
+                        }
                     }
                 }
-                if(errores==0){
-                    // Si no hay errores, se realiza la busqueda completa, con ingredientes y opciones seleccionadas
 
-                    List<Receta> idRecetas = apiResponse.busquedaCompleta(escribirConsultaFinal(),6);
+                if (errores == 0) {
+                    // Validación para el número de recetas
+                    numeroRecetas = requireActivity().findViewById(R.id.numeroRecetas);
+                    String numRecetasText = numeroRecetas.getText().toString();
 
-                    for (Receta receta : idRecetas) {
+                    try {
+                        int numRecetas = Integer.parseInt(numRecetasText);
+                        if (numRecetas < 1 || numRecetas > 12) {
+                            requireActivity().runOnUiThread(() -> {
+                                numeroRecetas.setError("El número de recetas debe estar entre 1 y 12");
+                            });
+                            return;
+                        }
 
-                        recetasCompletas.add(apiResponse.getInformacionReceta(receta.getId()));
+                        // Si la validación pasa, realizar la búsqueda
+                        List<Receta> idRecetas = apiResponse.busquedaCompleta(escribirConsultaFinal(), numRecetas);
+
+                        for (Receta receta : idRecetas) {
+                            recetasCompletas.add(apiResponse.getInformacionReceta(receta.getId()));
+                        }
+
+                        List<String> listaID = new ArrayList<>();
+                        for (Receta receta : idRecetas) {
+                            listaID.add(String.valueOf(receta.getId()));
+                        }
+
+                        // Guardar en la base de datos
+                        FirebaseDatabase database = FirebaseDatabase.getInstance();
+                        DatabaseReference referenciaHistorial = database.getReference("historial");
+
+                        Map<String, Object> historialData = new HashMap<>();
+                        historialData.put("fecha", new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date()));
+                        historialData.put("parametros", new ArrayList<>(Arrays.asList(listaParametros)));
+                        historialData.put("recetas", listaID);
+
+                        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                        //Eliminar el punto
+                        if (email.contains(".")) {
+                            email = email.replace(".", "·");
+                        }
+                        String etiquetaCompleta = email + " - " + FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                        referenciaHistorial.child(etiquetaCompleta).push().setValue(historialData);
+
+                        abrirBusquedaActivity();
+
+                    } catch (NumberFormatException e) {
+                        // Manejo de error si el valor no es un número válido
+                        numeroRecetas.setError("Por favor ingresa un número válido");
                     }
-                    List<String> listaID = new ArrayList<>();
-                    for (Receta receta : idRecetas) {
-
-                        listaID.add(String.valueOf(receta.getId()));
-                    }
-
-                    // Guardar en la base de datos
-                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference referenciaHistorial = database.getReference("historial");
-
-                    Map<String, Object> historialData = new HashMap<>();
-                    historialData.put("fecha", new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date()));
-                    historialData.put("parametros", new ArrayList<>(Arrays.asList(listaParametros)));
-                    historialData.put("recetas", listaID);
-
-                    String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-                    //Eliminar el punto
-                    if (email.contains(".")){
-                        email = email.replace(".","·");
-                    }
-                    String etiquetaCompleta =email+" - "+FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-                    referenciaHistorial.child(etiquetaCompleta).push().setValue(historialData);
-
-                    abrirBusquedaActivity();
                 }
             });
         });
+
+
     }
 
     private String escribirConsultaFinal() {
@@ -193,7 +218,7 @@ public class BusquedaFragmento extends Fragment {
         StringBuilder consultaFinal = new StringBuilder();
         listaParametros = new String[8];
 
-        if(!itemList.isEmpty()){
+        if (!itemList.isEmpty()) {
             StringBuilder ingredientesFinal = new StringBuilder();  // Usar StringBuilder para eficiencia en concatenación
             for (int i = 0; i < itemList.size(); i++) {
                 String ingrediente = itemList.get(i).getEditText();  // Obtener el ingrediente
@@ -204,7 +229,7 @@ public class BusquedaFragmento extends Fragment {
             //eliminar la ultima coma
             ingredientesFinal.deleteCharAt(ingredientesFinal.length() - 1);
             listaParametros[7] = ingredientesFinal.toString();
-        }else{
+        } else {
             listaParametros[7] = "";
         }
 
@@ -220,7 +245,7 @@ public class BusquedaFragmento extends Fragment {
             String opcionSeleccionada = binding.spinnerCocina.getSelectedItem().toString();
             listaParametros[0] = opcionSeleccionada;
             consultaFinal.append(traducir(opcionSeleccionada, "ingles"));
-        }else{
+        } else {
             listaParametros[0] = "";
         }
 
@@ -232,7 +257,7 @@ public class BusquedaFragmento extends Fragment {
             listaParametros[1] = opcionSeleccionada;
 
             consultaFinal.append(traducir(opcionSeleccionada, "ingles"));
-        }else{
+        } else {
             listaParametros[1] = "";
         }
 
@@ -244,7 +269,7 @@ public class BusquedaFragmento extends Fragment {
             listaParametros[2] = opcionSeleccionada;
 
             consultaFinal.append(traducir(opcionSeleccionada, "ingles"));
-        }else{
+        } else {
             listaParametros[2] = "";
         }
 
@@ -255,7 +280,7 @@ public class BusquedaFragmento extends Fragment {
             listaParametros[3] = opcionSeleccionada;
 
             consultaFinal.append(traducir(opcionSeleccionada, "ingles"));
-        }else{
+        } else {
             listaParametros[3] = "";
         }
 
@@ -265,7 +290,7 @@ public class BusquedaFragmento extends Fragment {
             int valorSeleccionado = binding.seekBarCarbo.getProgress();
             listaParametros[4] = String.valueOf(valorSeleccionado);
             consultaFinal.append(valorSeleccionado);
-        }else{
+        } else {
             listaParametros[4] = "";
         }
 
@@ -275,7 +300,7 @@ public class BusquedaFragmento extends Fragment {
             int valorSeleccionado = binding.seekBarProteina.getProgress();
             listaParametros[5] = String.valueOf(valorSeleccionado);
             consultaFinal.append(valorSeleccionado);
-        }else{
+        } else {
             listaParametros[5] = "";
         }
 
@@ -286,10 +311,9 @@ public class BusquedaFragmento extends Fragment {
             int valorSeleccionado = binding.seekBarCalorias.getProgress();
             listaParametros[6] = String.valueOf(valorSeleccionado);
             consultaFinal.append(valorSeleccionado);
-        }else{
+        } else {
             listaParametros[6] = "";
         }
-
 
 
         // Eliminar el último carácter "," si existe
@@ -337,10 +361,12 @@ public class BusquedaFragmento extends Fragment {
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
         });
     }
 
@@ -371,7 +397,6 @@ public class BusquedaFragmento extends Fragment {
         intent.putParcelableArrayListExtra("recetasCompletas", (ArrayList<? extends Parcelable>) recetasCompletas);
         startActivity(intent);
     }
-
 
 
 }
