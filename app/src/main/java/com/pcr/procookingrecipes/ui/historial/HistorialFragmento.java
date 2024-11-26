@@ -36,7 +36,6 @@ public class HistorialFragmento extends Fragment {
 
     private FragmentoHistorialBinding binding;
     private final Executor executor = Executors.newSingleThreadExecutor();
-    private APIResponse apiResponse;
     private ItemHistorialAdapter adapter;
     private List<RecetaHistorial> listaHistorial = new ArrayList<>();
     private FirebaseDatabase database;
@@ -49,9 +48,6 @@ public class HistorialFragmento extends Fragment {
 
         binding = FragmentoHistorialBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
-        // Instanciar APIResponse
-        apiResponse = new APIResponse();
 
         // Configurar RecyclerView
         adapter = new ItemHistorialAdapter(listaHistorial);

@@ -1,5 +1,9 @@
 package com.pcr.procookingrecipes.Adapters;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
+import android.content.Intent;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,14 +17,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.pcr.procookingrecipes.Activity.Busqueda.BusquedaActivity;
+import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.APIResponse;
 import com.pcr.procookingrecipes.R;
+import com.pcr.procookingrecipes.Receta.RecetaBusqueda;
 import com.pcr.procookingrecipes.Receta.RecetaHistorial;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class ItemHistorialAdapter extends RecyclerView.Adapter<ItemHistorialAdapter.MyViewHolder> {
     private List<RecetaHistorial> dataList;
+    private final Executor executor = Executors.newSingleThreadExecutor();
 
     // Constructor
     public ItemHistorialAdapter(List<RecetaHistorial> dataList) {
@@ -84,6 +94,21 @@ public class ItemHistorialAdapter extends RecyclerView.Adapter<ItemHistorialAdap
                                 Toast.makeText(v.getContext(), "Error al eliminar el elemento.", Toast.LENGTH_SHORT).show();
                             }
                         });
+            });
+
+            holder.botonHistorialVer.setOnClickListener(v -> {
+                // Pasar de listaIDS a objetos tipo RecetaBusqueda
+                List<RecetaBusqueda> recetasBusqueda = new ArrayList<>();
+                APIResponse apiResponse = new APIResponse();
+                for (RecetaHistorial historial : dataList) {
+                    executor.execute(() -> {
+                        recetasBusqueda.add(apiResponse.getInformacionReceta(Integer.parseInt(historial.getRecetas().get(0))));
+
+                    });
+                }
+                Intent intent = new Intent(v.getContext(), BusquedaActivity.class);
+                intent.putParcelableArrayListExtra("recetasCompletas", (ArrayList<? extends Parcelable>) recetasBusqueda);
+                holder.itemView.getContext().startActivity(intent);
             });
         }
     }
