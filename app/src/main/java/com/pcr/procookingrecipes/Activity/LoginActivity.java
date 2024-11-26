@@ -57,7 +57,9 @@ public class LoginActivity extends AppCompatActivity {
 
         // Referencias a vistas
         usuarioEditText = findViewById(R.id.usuarioEditText);
+        usuarioEditText.setText("pepe@gmail.com");
         passEditText = findViewById(R.id.passEditText);
+        passEditText.setText("pepepepe");
         botonEntrar = findViewById(R.id.botonEntrar);
         botonRegistrar = findViewById(R.id.botonRegistrar);
         botonGoogle = findViewById(R.id.botonGoogle);

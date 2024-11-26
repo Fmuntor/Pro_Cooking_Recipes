@@ -1,20 +1,16 @@
 package com.pcr.procookingrecipes.Activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewReceta.RecetaEquipo.EquipoAdapter;
@@ -37,232 +33,223 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class RecetaActivity extends AppCompatActivity {
+
     private ActivityRecetaBinding binding;
     private APIResponse apiResponse;
     private final Executor executor = Executors.newSingleThreadExecutor();
     private List<Instruction> instruccionesCompletas;
     private ArrayList<String> listaPasos, listaIngredientes, listaEquipo;
-
-    ;  // Usamos ArrayList para poder agregar dinámicamente
+    private int id;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FirebaseApp.initializeApp(this);
 
-        // Inflar el layout usando ViewBinding
         binding = ActivityRecetaBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // Inicialización de datos
         apiResponse = new APIResponse();
-        int id = getIntent().getIntExtra("ID", -1);
+        id = getIntent().getIntExtra("ID", -1);
         RecetaBusqueda receta = getIntent().getParcelableExtra("Receta");
 
+        // Inicializar UI con los datos de la receta
+        initializeUI(receta);
+
+        // Cargar instrucciones de la receta en segundo plano
+        loadRecetaInstrucciones();
+
+        // Comprobar si la receta está en favoritos y actualizar el botón
+        comprobarFavorito(this::actualizarBotonFavorito);
+
+        // Configurar el botón de favoritos
+        setupFavoritoButton();
+    }
+
+    // Inicializar UI con los datos de la receta
+    private void initializeUI(RecetaBusqueda receta) {
         binding.valoracion.setText("Valoración: " + (Math.round((receta.getSpoonacularScore() / 10) * 100.0) / 100.0));
-
-        if (Objects.equals(receta.getGlutenFree(), "true")) {
-            binding.sinGluten.setText("Sin Gluten.");
-        } else {
-            binding.sinGluten.setText("Con Gluten.");
-        }
-
+        binding.sinGluten.setText(Objects.equals(receta.getGlutenFree(), "true") ? "Sin Gluten." : "Con Gluten.");
         binding.precioReceta.setText("Precio: " + (Math.round(receta.getPricePerServing() / 10) + "€"));
+        binding.tituloReceta.setText(receta.getTitle());
+        Picasso.get().load(receta.getImage()).into(binding.imagenReceta);
+        binding.comensalesReceta.setText("Para " + receta.getServings() + " personas.");
+    }
 
-
+    // Cargar instrucciones de la receta de manera asincrónica
+    private void loadRecetaInstrucciones() {
         executor.execute(() -> {
             instruccionesCompletas = apiResponse.getInstrucciones(id);
 
-            // Verificar que las instrucciones no son nulas ni vacías
-            if (instruccionesCompletas != null && !instruccionesCompletas.isEmpty()) {
-                // Actualizamos la UI en el hilo principal después de la ejecución en segundo plano
-                runOnUiThread(() -> {
-                    // Establecer valores en los TextViews
-                    binding.tituloReceta.setText(receta.getTitle());
-                    Picasso.get().load(receta.getImage()).into(binding.imagenReceta);
-                    binding.comensalesReceta.setText("Para " + receta.getServings() + " personas.");
+            runOnUiThread(() -> {
+                parsearInstrucciones(instruccionesCompletas);
+                setupRecyclerViews();
+            });
+        });
+    }
 
-                    // Parsear las instrucciones
-                    parsearInstrucciones(instruccionesCompletas);
+    // Configurar los adaptadores de los RecyclerViews
+    private void setupRecyclerViews() {
+        if (listaPasos != null && !listaPasos.isEmpty()) {
+            InstruccionesAdapter instruccionesAdapter = new InstruccionesAdapter(listaPasos);
+            binding.recyclerInstrucciones.setAdapter(instruccionesAdapter);
+            binding.recyclerInstrucciones.setLayoutManager(new LinearLayoutManager(this));
+        }
 
-                    // Verificar que la lista no esté vacía
-                    if (listaPasos != null && !listaPasos.isEmpty()) {
-                        // Crear el adaptador con los pasos procesados
-                        InstruccionesAdapter instruccionesAdapter = new InstruccionesAdapter(listaPasos);
+        if (listaIngredientes != null) {
+            IngredientesAdapter ingredientesAdapter = new IngredientesAdapter(listaIngredientes);
+            binding.recyclerIngredientes.setAdapter(ingredientesAdapter);
+            binding.recyclerIngredientes.setLayoutManager(new LinearLayoutManager(this));
+        }
 
-                        // Inicializar el RecyclerView
-                        binding.recyclerInstrucciones.setAdapter(instruccionesAdapter);
-                        binding.recyclerInstrucciones.setLayoutManager(new LinearLayoutManager(this));
-                        if (listaIngredientes != null) {
-                            // Crear el adaptador con los ingredientes procesados
-                            IngredientesAdapter ingredientesAdapter = new IngredientesAdapter(listaIngredientes);
-                            // Inicializar el RecyclerView
-                            binding.recyclerIngredientes.setAdapter(ingredientesAdapter);
-                            binding.recyclerIngredientes.setLayoutManager(new LinearLayoutManager(this));
+        if (listaEquipo != null) {
+            EquipoAdapter equipoAdapter = new EquipoAdapter(listaEquipo);
+            binding.recyclerEquipo.setAdapter(equipoAdapter);
+            binding.recyclerEquipo.setLayoutManager(new LinearLayoutManager(this));
+        }
+    }
 
-                        }
-                        if (listaEquipo != null) {
-                            // Crear el adaptador con los ingredientes
-                            EquipoAdapter equipoAdapter = new EquipoAdapter(listaEquipo);
-                            // Inicializar el RecyclerView
-                            binding.recyclerEquipo.setAdapter(equipoAdapter);
-                            binding.recyclerEquipo.setLayoutManager(new LinearLayoutManager(this));
-                        }
+    // Comprobar si la receta está en favoritos y ejecutar el callback
+    private void comprobarFavorito(Callback callback) {
+        String userId = FirebaseAuth.getInstance().getUid();
+        String email = getFormattedEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+
+        DatabaseReference referenciaFavoritos = FirebaseDatabase.getInstance().getReference("favoritos");
+        DatabaseReference usuarioFavoritos = referenciaFavoritos.child(email + " - " + userId);
+
+        usuarioFavoritos.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DataSnapshot dataSnapshot = task.getResult();
+                boolean isFavorite = checkIfRecipeIsFavorite(dataSnapshot);
+                callback.onFavoritoComprobado(isFavorite);
+            } else {
+                Log.e("RecetaActivity", "Error al leer los datos de favoritos", task.getException());
+            }
+        });
+    }
+
+    // Comprobar si la receta está en los favoritos
+    private boolean checkIfRecipeIsFavorite(DataSnapshot dataSnapshot) {
+        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+            String idReceta = snapshot.child("ID").getValue(String.class);
+            if (idReceta != null && Integer.parseInt(idReceta) == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Formatear el email para eliminar puntos (necesario para Firebase)
+    private String getFormattedEmail(String email) {
+        if (email.contains(".")) {
+            return email.replace(".", "·");
+        }
+        return email;
+    }
+
+    // Actualizar el botón de favoritos según si la receta está o no en favoritos
+    private void actualizarBotonFavorito(boolean isFavorite) {
+        binding.botonFav.setText(isFavorite ? "Eliminar de favoritos" : "Añadir a favoritos");
+    }
+
+    // Configurar la acción del botón de favoritos
+    private void setupFavoritoButton() {
+        binding.botonFav.setOnClickListener(view -> {
+            boolean isFavorite = binding.botonFav.getText().toString().equals("Eliminar de favoritos");
+
+            // Cambiar el texto del botón inmediatamente
+            binding.botonFav.setText(isFavorite ? "Añadir a favoritos" : "Eliminar de favoritos");
+
+            // Operar en Firebase para añadir o eliminar el favorito
+            String email = getFormattedEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+            String userId = FirebaseAuth.getInstance().getUid();
+            DatabaseReference referencia = FirebaseDatabase.getInstance().getReference("favoritos");
+
+            if (isFavorite) {
+                removeFromFavorites(referencia, email, userId);
+            } else {
+                addToFavorites(referencia, email, userId);
+            }
+        });
+    }
+
+    // Eliminar receta de favoritos
+    private void removeFromFavorites(DatabaseReference referencia, String email, String userId) {
+        // Obtener la referencia de los favoritos del usuario
+        DatabaseReference usuarioFavoritosRef = referencia.child(email + " - " + userId);
+
+        // Consultar las recetas favoritas del usuario
+        usuarioFavoritosRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DataSnapshot dataSnapshot = task.getResult();
+                // Recorrer las recetas en los favoritos
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    // Verificar si el ID de la receta en el snapshot coincide con el ID de la receta actual
+                    String idReceta = snapshot.child("ID").getValue(String.class);
+                    if (idReceta != null && Integer.parseInt(idReceta) == id) {
+                        // Eliminar el nodo usando la clave única de Firebase (key)
+                        snapshot.getRef().removeValue();
+                        Log.d("RecetaActivity", "Receta eliminada de favoritos: " + snapshot.getKey());
+                        Toast.makeText(RecetaActivity.this, "Receta eliminada de favoritos", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            } else {
+                Log.e("RecetaActivity", "Error al leer los datos de favoritos", task.getException());
+            }
+        });
+    }
+
+    // Añadir receta a favoritos
+    private void addToFavorites(DatabaseReference referencia, String email, String userId) {
+        // Crear el mapa con los datos de la receta
+        Map<String, String> datos = new HashMap<>();
+        datos.put("ID", String.valueOf(id));
+
+        // Referencia a los favoritos del usuario
+        DatabaseReference usuarioFavoritosRef = referencia.child(email + " - " + userId);
+
+        // Añadir la receta a favoritos usando push() para generar una clave única
+        usuarioFavoritosRef.push().setValue(datos)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("RecetaActivity", "Receta añadida a favoritos");
+                        Toast.makeText(RecetaActivity.this, "Receta añadida a favoritos", Toast.LENGTH_SHORT).show();
                     } else {
-                        Log.e("Receta", "La lista de pasos está vacía");
+                        Log.e("RecetaActivity", "Error al añadir la receta a favoritos", task.getException());
                     }
                 });
-            } else {
-                Log.e("Receta", "No se han encontrado instrucciones");
-            }
-        });
-
-
-        binding.botonFav.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                List<RecetaBusqueda> recetasCompletas = getIntent().getParcelableArrayListExtra("RecetasCompletas");
-
-                FirebaseAuth auth = FirebaseAuth.getInstance();
-
-                String userId = auth.getCurrentUser().getUid();
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference referencia = database.getReference("favoritos");
-
-                Map<String, String> datos = new HashMap<>();
-                datos.put("ID", String.valueOf(id));
-
-                String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-                //Eliminar el punto
-                if (email.contains(".")){
-                    email = email.replace(".","·");
-                }
-
-                referencia.child(email + " - " +userId).push().setValue(datos);
-            }
-        });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        // Identificar el elemento de menú seleccionado
-        if (item.getItemId() == R.id.action_carta) {
-            executor.execute(() -> {
-                // Generar la carta
-                String carta = apiResponse.generarCarta(getIntent().getIntExtra("ID", -1)); // ID de la receta
-                String regex = "\"url\":\\s*\"([^\"]*)\".*?\"status\":\\s*\"([^\"]*)\"";
-                Pattern pattern = Pattern.compile(regex);
-                Matcher matcher = pattern.matcher(carta);
-
-                String url = "";
-                String status = "";
-
-                if (matcher.find()) {
-                    url = matcher.group(1);  // Extraer la URL
-                    status = matcher.group(2);  // Extraer el estado
-                }
-
-                if (!status.equals("success")) {
-                    runOnUiThread(() ->
-                            Toast.makeText(RecetaActivity.this, "Error al generar la carta", Toast.LENGTH_SHORT).show()
-                    );
-                    return;
-                }
-
-                // Abrir una nueva actividad para mostrar la carta
-                Intent intent = new Intent(RecetaActivity.this, CardActivity.class);
-                intent.putExtra("Carta", url);
-                startActivity(intent);
-            });
-        }
-        return true;
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflar el menú; esto agrega elementos a la barra de acción si está presente
-        getMenuInflater().inflate(R.menu.main_receta, menu);
-        return true;
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // Liberar el binding cuando la actividad se destruye
-        binding = null;
-    }
-
-    // Método que parsea las instrucciones
-    public void parsearInstrucciones(List<Instruction> instrucciones) {
-        listaPasos = new ArrayList<>(); // Creamos la lista de pasos
-        listaIngredientes = new ArrayList<>(); // Creamos la lista de ingredientes
-        listaEquipo = new ArrayList<>(); // Creamos la lista de equipo
+    // Parsear instrucciones de la receta
+    private void parsearInstrucciones(List<Instruction> instrucciones) {
+        listaPasos = new ArrayList<>();
+        listaIngredientes = new ArrayList<>();
+        listaEquipo = new ArrayList<>();
 
         for (Instruction instruccion : instrucciones) {
             for (Step paso : instruccion.getSteps()) {
-                // Añadimos cada paso de forma segura a la lista
                 listaPasos.add("Paso " + paso.getNumber() + ": " + paso.getStep());
-                // Ingredientes
 
-                if (!paso.getIngredients().isEmpty()) {
-                    for (Ingredient ingrediente : paso.getIngredients()) {
-                        if (!listaIngredientes.contains(paso.getIngredients())) {
-                            listaIngredientes.add(ingrediente.getName());
-                        }
+                for (Ingredient ingrediente : paso.getIngredients()) {
+                    if (!listaIngredientes.contains(ingrediente.getName())) {
+                        listaIngredientes.add(ingrediente.getName());
                     }
                 }
 
-                // Equipo
-                if (!paso.getEquipment().isEmpty()) {
-                    for (Equipment equipo : paso.getEquipment()) {
-                        if (!listaEquipo.contains(equipo.getName())) {
-                            listaEquipo.add(equipo.getName());
-                        }
-
+                for (Equipment equipo : paso.getEquipment()) {
+                    if (!listaEquipo.contains(equipo.getName())) {
+                        listaEquipo.add(equipo.getName());
                     }
                 }
             }
         }
     }
 
-    public String formatearInstrucciones(List<Instruction> instrucciones) {
-        StringBuilder sb = new StringBuilder();
-
-        for (Instruction instruccion : instrucciones) {
-            sb.append("Receta: ").append(instruccion.getName().isEmpty() ? "Sin título" : instruccion.getName()).append("\n");
-
-            for (Step paso : instruccion.getSteps()) {
-                sb.append("Paso ").append(paso.getNumber()).append(": ").append(paso.getStep()).append("\n");
-
-                // Ingredientes
-                if (!paso.getIngredients().isEmpty()) {
-                    sb.append("   Ingredientes: ");
-                    for (Ingredient ingrediente : paso.getIngredients()) {
-                        sb.append(ingrediente.getName()).append(", ");
-                    }
-                    // Elimina la última coma
-                    sb.setLength(sb.length() - 2);
-                    sb.append("\n");
-                }
-
-                // Equipo
-                if (!paso.getEquipment().isEmpty()) {
-                    sb.append("   Equipo: ");
-                    for (Equipment equipo : paso.getEquipment()) {
-                        sb.append(equipo.getName()).append(", ");
-                    }
-                    // Elimina la última coma
-                    sb.setLength(sb.length() - 2);
-                    sb.append("\n");
-                }
-            }
-            sb.append("\n"); // Separador entre diferentes conjuntos de instrucciones
-        }
-
-        return sb.toString();
+    public interface Callback {
+        void onFavoritoComprobado(boolean isFavorite);
     }
 }
