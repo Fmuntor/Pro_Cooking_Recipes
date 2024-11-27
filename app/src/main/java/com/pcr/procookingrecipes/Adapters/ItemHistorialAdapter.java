@@ -4,6 +4,7 @@ import static androidx.core.content.ContextCompat.startActivity;
 
 import android.content.Intent;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -100,15 +101,19 @@ public class ItemHistorialAdapter extends RecyclerView.Adapter<ItemHistorialAdap
                 // Pasar de listaIDS a objetos tipo RecetaBusqueda
                 List<RecetaBusqueda> recetasBusqueda = new ArrayList<>();
                 APIResponse apiResponse = new APIResponse();
-                for (RecetaHistorial historial : dataList) {
-                    executor.execute(() -> {
-                        recetasBusqueda.add(apiResponse.getInformacionReceta(Integer.parseInt(historial.getRecetas().get(0))));
 
-                    });
-                }
-                Intent intent = new Intent(v.getContext(), BusquedaActivity.class);
-                intent.putParcelableArrayListExtra("recetasCompletas", (ArrayList<? extends Parcelable>) recetasBusqueda);
-                holder.itemView.getContext().startActivity(intent);
+                executor.execute(() -> {
+                    for (int i = 0; i < item.getRecetas().size(); i++) {
+                        recetasBusqueda.add(apiResponse.getInformacionReceta(Integer.parseInt(item.getRecetas().get(i))));
+                    }
+                    Intent intent = new Intent(v.getContext(), BusquedaActivity.class);
+                    Log.d("historial", recetasBusqueda.toString());
+                    intent.putParcelableArrayListExtra("recetasCompletas", (ArrayList<? extends Parcelable>) recetasBusqueda);
+                    holder.itemView.getContext().startActivity(intent);
+                });
+
+
+
             });
         }
     }

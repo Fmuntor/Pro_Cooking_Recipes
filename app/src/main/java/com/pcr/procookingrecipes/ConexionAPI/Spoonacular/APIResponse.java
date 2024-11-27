@@ -27,7 +27,7 @@ public class APIResponse {
     private static final String URL_INFORMACION = "https://api.spoonacular.com/recipes/";
 
     // Variable para almacenar la API_KEY cargada
-    private String API_KEY = "1a79f68654af4838913104e6027c8668";
+    private String API_KEY = "2d4bff60f9ab44aaa8b90f9b7293a23b";
 
     // Método para verificar si el ingrediente es correcto
     public String esIngredienteCorrecto(String ingrediente) {

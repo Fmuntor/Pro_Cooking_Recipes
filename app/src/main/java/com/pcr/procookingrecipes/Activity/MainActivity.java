@@ -34,8 +34,6 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        SecurePreferences.guardarApiKey(this, "2d4bff60f9ab44aaa8b90f9b7293a23b");
-
         setSupportActionBar(binding.appBarMain.toolbar);
 
         DrawerLayout drawer = binding.drawerLayout;
