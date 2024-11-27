@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.pcr.procookingrecipes.Adapters.ReciclerViewBusqueda.ItemBusquedaAdapter;
 import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.APIResponse;
+import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.Receta.RecetaBusqueda;
 import com.pcr.procookingrecipes.databinding.FragmentoFavoritosBinding;
 
@@ -55,8 +57,16 @@ public class FavoritosFragmento extends Fragment {
         database = FirebaseDatabase.getInstance();
         referenciaFavoritos = database.getReference("favoritos");
 
+        TextView tvRecyclerSinDatos = root.findViewById(R.id.sinFavoritos);
+
         // Cargar favoritos
         cargarFavoritos();
+
+        if(listaFavoritos.isEmpty()){
+            tvRecyclerSinDatos.setVisibility(View.VISIBLE);
+        }else{
+            tvRecyclerSinDatos.setVisibility(View.GONE);
+        }
 
         return root;
     }

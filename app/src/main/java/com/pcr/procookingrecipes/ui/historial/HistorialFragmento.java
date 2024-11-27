@@ -22,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.pcr.procookingrecipes.Adapters.ItemHistorialAdapter;
 import com.pcr.procookingrecipes.Adapters.ReciclerViewBusqueda.ItemBusquedaAdapter;
 import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.APIResponse;
+import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.Receta.RecetaBusqueda;
 import com.pcr.procookingrecipes.Receta.RecetaHistorial;
 import com.pcr.procookingrecipes.databinding.FragmentoFavoritosBinding;
@@ -58,7 +59,15 @@ public class HistorialFragmento extends Fragment {
         database = FirebaseDatabase.getInstance();
         referenciaHistorial = database.getReference("historial");
 
+        TextView tvRecyclerSinDatos = root.findViewById(R.id.sinHistorial);
+
         cargarHistorial();
+
+        if(listaHistorial.isEmpty()){
+            tvRecyclerSinDatos.setVisibility(View.VISIBLE);
+        }else{
+            tvRecyclerSinDatos.setVisibility(View.GONE);
+        }
 
         return root;
     }

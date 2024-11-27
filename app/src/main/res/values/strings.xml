@@ -32,6 +32,8 @@
     <string name="telefono">Teléfono</string>
     <string name="correo_electronico">Correo Electrónico</string>
     <string name="nombre">Nombre</string>
+    <string name="historial_vacio">El historial está vacío.</string>
+    <string name="no_recetas">No se han encontrado recetas favoritas.</string>
 
 
     <string-array name="menu_busqueda">

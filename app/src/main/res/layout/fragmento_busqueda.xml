@@ -186,14 +186,16 @@
         android:id="@+id/numeroRecetas"
         android:layout_width="42dp"
         android:layout_height="36dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="27dp"
         android:layout_marginEnd="124dp"
         android:gravity="center"
         android:inputType="number"
         android:maxLength="2"
-        android:text="12"
+        android:text="1"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textViewNuevoCampo"
         app:layout_constraintTop_toBottomOf="@+id/seekBarCalorias" />
 
     <androidx.recyclerview.widget.RecyclerView

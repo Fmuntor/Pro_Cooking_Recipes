@@ -7,6 +7,15 @@
     tools:context=".ui.historial.HistorialFragmento"
     android:id="@+id/historial_fragmento">
 
+    <TextView
+        android:id="@+id/sinHistorial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/historial_vacio"
+        android:textSize="40sp"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="315dp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewHistorial"

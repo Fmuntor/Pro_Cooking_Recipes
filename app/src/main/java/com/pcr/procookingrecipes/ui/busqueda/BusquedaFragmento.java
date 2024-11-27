@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -118,99 +119,131 @@ public class BusquedaFragmento extends Fragment {
         // Configuración del botón flotante para buscar
         botonBuscar = requireActivity().findViewById(R.id.botonBuscar);
         botonBuscar.setOnClickListener(v -> {
-            executor.execute(() -> {
-                apiResponse = new APIResponse();
-                int errores = 0;
-                recetasCompletas = new ArrayList<>();
-
-                // Realizar validación de los ingredientes y actualizar el adaptador
-                for (int i = 0; i < itemList.size(); i++) {
-                    //Comprobar si el ingrediente está vacío
-                    if (itemList.get(i).getEditText().equals("")) {
-                        errores++;
-                        int finalI = i;
-                        requireActivity().runOnUiThread(() -> {
-                            adapter.setErrorAtPosition(finalI, true, 3); // Marcar error
-                        });
-                    }
-                    //Comprobar si ya existe el ingrediente en la lista
-                    for (int j = 0; j < i; j++) {
-                        if (itemList.get(i).getEditText().equals(itemList.get(j).getEditText())) {
-                            errores++;
-                            int finalI = i;
-                            requireActivity().runOnUiThread(() -> {
-                                adapter.setErrorAtPosition(finalI, true, 2); // Marcar error
-                            });
-                        }
-                    }
-                    IngredienteDataModel item = itemList.get(i);
-                    String respuesta = apiResponse.esIngredienteCorrecto(traducir(item.getEditText(), "ingles"));
-                    if (respuesta != null) {
-                        if (respuesta.equals("Error")) {
-                            errores++;
-                            int finalI = i;
-                            requireActivity().runOnUiThread(() -> {
-                                adapter.setErrorAtPosition(finalI, true, 1); // Marcar error
-                            });
-                        }
-                    }
-                }
-
-                if (errores == 0) {
-                    // Validación para el número de recetas
-                    numeroRecetas = requireActivity().findViewById(R.id.numeroRecetas);
-                    String numRecetasText = numeroRecetas.getText().toString();
-
-                    try {
-                        int numRecetas = Integer.parseInt(numRecetasText);
-                        if (numRecetas < 1 || numRecetas > 12) {
-                            requireActivity().runOnUiThread(() -> {
-                                numeroRecetas.setError("El número de recetas debe estar entre 1 y 12");
-                            });
-                            return;
-                        }
-
-                        // Si la validación pasa, realizar la búsqueda
-                        List<Receta> idRecetas = apiResponse.busquedaCompleta(escribirConsultaFinal(), numRecetas);
-
-                        for (Receta receta : idRecetas) {
-                            recetasCompletas.add(apiResponse.getInformacionReceta(receta.getId()));
-                        }
-
-                        List<String> listaID = new ArrayList<>();
-                        for (Receta receta : idRecetas) {
-                            listaID.add(String.valueOf(receta.getId()));
-                        }
-
-                        // Guardar en la base de datos
-                        FirebaseDatabase database = FirebaseDatabase.getInstance();
-                        DatabaseReference referenciaHistorial = database.getReference("historial");
-
-                        Map<String, Object> historialData = new HashMap<>();
-                        historialData.put("fecha", new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date()));
-                        historialData.put("parametros", new ArrayList<>(Arrays.asList(listaParametros)));
-                        historialData.put("recetas", listaID);
-
-                        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-                        //Eliminar el punto
-                        if (email.contains(".")) {
-                            email = email.replace(".", "·");
-                        }
-                        String etiquetaCompleta = email + " - " + FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-                        referenciaHistorial.child(etiquetaCompleta).push().setValue(historialData);
-
-                        abrirBusquedaActivity();
-
-                    } catch (NumberFormatException e) {
-                        // Manejo de error si el valor no es un número válido
-                        numeroRecetas.setError("Por favor ingresa un número válido");
-                    }
-                }
-            });
+            new android.app.AlertDialog.Builder(requireContext())
+                    .setTitle("Realizar búsqueda")
+                    .setMessage("¿Seguro que quieres realizar la búsqueda?.")
+                    .setPositiveButton("Aceptar", (dialog, which) -> {
+                        executor.execute(this::realizarBusqueda);
+                        dialog.dismiss();
+                    })
+                    .setNegativeButton("Cancelar", (dialog, which) -> {
+                        dialog.dismiss();
+                    })
+                    .setCancelable(false)
+                    .show();
         });
+    }
 
+    private void realizarBusqueda() {
+        apiResponse = new APIResponse();
+        int errores = 0;
+        recetasCompletas = new ArrayList<>();
 
+        // Realizar validación de los ingredientes y actualizar el adaptador
+        for (int i = 0; i < itemList.size(); i++) {
+            //Comprobar si el ingrediente está vacío
+            if (itemList.get(i).getEditText().equals("")) {
+                errores++;
+                int finalI = i;
+                requireActivity().runOnUiThread(() -> {
+                    adapter.setErrorAtPosition(finalI, true, 3); // Marcar error
+                });
+            }
+            //Comprobar si ya existe el ingrediente en la lista
+            for (int j = 0; j < i; j++) {
+                if (itemList.get(i).getEditText().equals(itemList.get(j).getEditText())) {
+                    errores++;
+                    int finalI = i;
+                    requireActivity().runOnUiThread(() -> {
+                        adapter.setErrorAtPosition(finalI, true, 2); // Marcar error
+                    });
+                }
+            }
+            IngredienteDataModel item = itemList.get(i);
+            String respuesta = apiResponse.esIngredienteCorrecto(traducir(item.getEditText(), "ingles"));
+            if (respuesta != null) {
+                if (respuesta.equals("Error")) {
+                    errores++;
+                    int finalI = i;
+                    requireActivity().runOnUiThread(() -> {
+                        adapter.setErrorAtPosition(finalI, true, 1); // Marcar error
+                    });
+                }
+            }
+        }
+
+        if (errores == 0) {
+            requireActivity().runOnUiThread(() -> {
+                Toast.makeText(getContext(), "Buscando recetas...", Toast.LENGTH_SHORT).show();
+
+            });
+
+            // Validación para el número de recetas
+            numeroRecetas = requireActivity().findViewById(R.id.numeroRecetas);
+            String numRecetasText = numeroRecetas.getText().toString();
+
+            try {
+                int numRecetas = Integer.parseInt(numRecetasText);
+                if (numRecetas < 1 || numRecetas > 12) {
+                    requireActivity().runOnUiThread(() -> {
+                        numeroRecetas.setError("El número de recetas debe estar entre 1 y 12");
+                    });
+                    return;
+                }
+
+                // Si la validación pasa, realizar la búsqueda
+                List<Receta> idRecetas = apiResponse.busquedaCompleta(escribirConsultaFinal(), numRecetas);
+
+                for (Receta receta : idRecetas) {
+                    recetasCompletas.add(apiResponse.getInformacionReceta(receta.getId()));
+                }
+
+                List<String> listaID = new ArrayList<>();
+                for (Receta receta : idRecetas) {
+                    listaID.add(String.valueOf(receta.getId()));
+                }
+
+                // Guardar en la base de datos
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference referenciaHistorial = database.getReference("historial");
+
+                Map<String, Object> historialData = new HashMap<>();
+                historialData.put("fecha", new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date()));
+                historialData.put("parametros", new ArrayList<>(Arrays.asList(listaParametros)));
+                historialData.put("recetas", listaID);
+
+                String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                //Eliminar el punto
+                if (email.contains(".")) {
+                    email = email.replace(".", "·");
+                }
+                String etiquetaCompleta = email + " - " + FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                referenciaHistorial.child(etiquetaCompleta).push().setValue(historialData);
+
+                if (recetasCompletas.isEmpty()) {
+                    // Mostrar una ventana de confirmación (AlertDialog)
+                    requireActivity().runOnUiThread(() -> {
+                        new android.app.AlertDialog.Builder(requireContext())
+                                .setTitle("No se encontraron recetas")
+                                .setMessage("Lo siento, no hemos encontrado recetas que coincidan con tu búsqueda.")
+                                .setPositiveButton("Aceptar", (dialog, which) -> {
+                                    // Acción al presionar "Aceptar", puedes cerrar el diálogo o realizar otra acción
+                                    dialog.dismiss();
+                                })
+                                .setCancelable(false)
+                                .show();
+                    });
+
+                }else{
+                    abrirBusquedaActivity();
+                }
+
+            } catch (NumberFormatException e) {
+                // Manejo de error si el valor no es un número válido
+                numeroRecetas.setError("Por favor ingresa un número válido");
+            }
+        }
     }
 
     private String escribirConsultaFinal() {

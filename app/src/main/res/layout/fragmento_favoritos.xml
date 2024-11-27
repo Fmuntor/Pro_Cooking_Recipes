@@ -7,6 +7,16 @@
     tools:context=".ui.favoritos.FavoritosFragmento"
     android:id="@+id/favoritos_fragmento">
 
+    <TextView
+        android:id="@+id/sinFavoritos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/no_recetas"
+        android:textSize="40sp"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="315dp" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewFavoritos"
         android:layout_width="409dp"
