@@ -17,6 +17,8 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.pcr.procookingrecipes.ConexionAPI.SecurePreferences;
+import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.APIResponse;
 import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.databinding.ActivityMainBinding;
 
@@ -31,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        SecurePreferences.guardarApiKey(this, "2d4bff60f9ab44aaa8b90f9b7293a23b");
 
         setSupportActionBar(binding.appBarMain.toolbar);
 
@@ -50,8 +54,10 @@ public class MainActivity extends AppCompatActivity {
         View headerView = navigationView.getHeaderView(0);
 
         ImageView imageView = headerView.findViewById(R.id.IVCabecera);
+        TextView mailCabecera = headerView.findViewById(R.id.mailCabecera);
 
         imageView.setImageResource(R.drawable.icono_pcr_negro_transparente);
+        mailCabecera.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
 
         // Intentar obtener el fragmento adecuado de la jerarquía de navegación
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()

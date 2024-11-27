@@ -30,6 +30,7 @@ photoview = "2.3.0"
 picasso = "2.8"
 playServicesAuth = "21.2.0"
 playServicesBase = "18.5.0"
+securityCrypto = "1.0.0"
 volley = "1.2.1"
 
 [libraries]
@@ -65,6 +66,7 @@ picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 play-services-base = { module = "com.google.android.gms:play-services-base", version.ref = "playServicesBase" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "converterGson" }
+security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
 volley = { group = "com.android.volley", name = "volley", version.ref = "volley" }
 
 [plugins]

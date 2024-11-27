@@ -83,7 +83,6 @@ public class BusquedaFragmento extends Fragment {
         itemList = new ArrayList<>();
         itemList.add(new IngredienteDataModel("uva"));
 
-
         adapter = new ItemIngredienteAdapter(itemList);
         binding.recyclerView.setAdapter(adapter);
 
@@ -95,6 +94,8 @@ public class BusquedaFragmento extends Fragment {
         }
 
         configurarCheckBoxes();
+
+
 
         return root;
     }
@@ -132,6 +133,11 @@ public class BusquedaFragmento extends Fragment {
                     .setCancelable(false)
                     .show();
         });
+        // Activar los botones flotantes
+        FloatingActionButton botonIntroducirItem = requireActivity().findViewById(R.id.botonIntroducirItem);
+        botonIntroducirItem.setVisibility(View.VISIBLE);
+        FloatingActionButton botonBuscar = requireActivity().findViewById(R.id.botonBuscar);
+        botonBuscar.setVisibility(View.VISIBLE);
     }
 
     private void realizarBusqueda() {

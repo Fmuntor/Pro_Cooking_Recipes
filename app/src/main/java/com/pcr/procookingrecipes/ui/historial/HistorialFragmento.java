@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -44,11 +45,19 @@ public class HistorialFragmento extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        // Inicialización del ViewModel
         HistorialViewModel slideshowViewModel =
                 new ViewModelProvider(this).get(HistorialViewModel.class);
 
+        // Inflar el layout
         binding = FragmentoHistorialBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        // Desactivar los botones flotantes
+        FloatingActionButton botonIntroducirItem = requireActivity().findViewById(R.id.botonIntroducirItem);
+        botonIntroducirItem.setVisibility(View.GONE);
+        FloatingActionButton botonBuscar = requireActivity().findViewById(R.id.botonBuscar);
+        botonBuscar.setVisibility(View.GONE);
 
         // Configurar RecyclerView
         adapter = new ItemHistorialAdapter(listaHistorial);
@@ -59,60 +68,62 @@ public class HistorialFragmento extends Fragment {
         database = FirebaseDatabase.getInstance();
         referenciaHistorial = database.getReference("historial");
 
+        // Referencia al TextView para mostrar el mensaje sin historial
         TextView tvRecyclerSinDatos = root.findViewById(R.id.sinHistorial);
+        tvRecyclerSinDatos.setVisibility(View.GONE);  // Ocultar el mensaje "sin favoritos"
 
-        cargarHistorial();
-
-        if(listaHistorial.isEmpty()){
-            tvRecyclerSinDatos.setVisibility(View.VISIBLE);
-        }else{
-            tvRecyclerSinDatos.setVisibility(View.GONE);
-        }
+        // Llamada para cargar el historial
+        cargarHistorial(tvRecyclerSinDatos);
 
         return root;
     }
 
-    private void cargarHistorial() {
+    private void cargarHistorial(TextView tvRecyclerSinDatos) {
         // Obtener el UID del usuario actual
         String userId = FirebaseAuth.getInstance().getUid();
         if (userId == null) {
             Toast.makeText(getContext(), "No estás autenticado", Toast.LENGTH_SHORT).show();
             return;
         }
+
         String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-        //Eliminar el punto
+        // Eliminar el punto (para evitar problemas con Firebase)
         if (email.contains(".")) {
             email = email.replace(".", "·");
         }
-        // Referencia al nodo del usuario
+
+        // Referencia al nodo del usuario en Firebase
         DatabaseReference usuarioHistorial = referenciaHistorial.child(email + " - " + userId);
 
         usuarioHistorial.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                listaHistorial.clear();
-                int totalBusquedas = (int) dataSnapshot.getChildrenCount();
-                if (totalBusquedas == 0) {
-                    Log.d("Firebase", "No hay historial.");
-                    return;
-                }
+                listaHistorial.clear();  // Limpiar la lista antes de cargar nuevos datos
 
-                for (DataSnapshot busquedaSnapshot : dataSnapshot.getChildren()) {
-                    String fecha = busquedaSnapshot.child("fecha").getValue(String.class);
-
-                    List<String> parametros = new ArrayList<>();
-                    for (DataSnapshot parametroSnapshot : busquedaSnapshot.child("parametros").getChildren()) {
-                        String parametro = parametroSnapshot.getValue(String.class);
-                        parametros.add(parametro);
+                if (dataSnapshot.exists()) {
+                    int totalBusquedas = (int) dataSnapshot.getChildrenCount();
+                    if (totalBusquedas == 0) {
+                        Log.d("Firebase", "No hay historial.");
+                        tvRecyclerSinDatos.setVisibility(View.VISIBLE);  // Mostrar mensaje sin historial
+                        return;
                     }
 
-                    List<String> recetas = new ArrayList<>();
-                    for (DataSnapshot recetaSnapshot : busquedaSnapshot.child("recetas").getChildren()) {
-                        String receta = recetaSnapshot.getValue(String.class);
-                        recetas.add(receta);
-                    }
+                    for (DataSnapshot busquedaSnapshot : dataSnapshot.getChildren()) {
+                        String fecha = busquedaSnapshot.child("fecha").getValue(String.class);
 
-                    executor.execute(() -> {
+                        List<String> parametros = new ArrayList<>();
+                        for (DataSnapshot parametroSnapshot : busquedaSnapshot.child("parametros").getChildren()) {
+                            String parametro = parametroSnapshot.getValue(String.class);
+                            parametros.add(parametro);
+                        }
+
+                        List<String> recetas = new ArrayList<>();
+                        for (DataSnapshot recetaSnapshot : busquedaSnapshot.child("recetas").getChildren()) {
+                            String receta = recetaSnapshot.getValue(String.class);
+                            recetas.add(receta);
+                        }
+
+                        // Crear objeto RecetaHistorial y agregarlo a la lista
                         RecetaHistorial recetaHistorial = new RecetaHistorial();
                         recetaHistorial.setFecha(fecha);
                         recetaHistorial.setParametros(parametros);
@@ -120,18 +131,23 @@ public class HistorialFragmento extends Fragment {
                         recetaHistorial.setPushKey(busquedaSnapshot.getKey());
 
                         listaHistorial.add(recetaHistorial);
+                    }
 
-                        requireActivity().runOnUiThread(() -> {
-                            adapter.notifyDataSetChanged();
-                        });
+                    // Notificar que los datos han sido cargados
+                    requireActivity().runOnUiThread(() -> {
+                        adapter.notifyDataSetChanged();  // Actualizar el RecyclerView
+                        tvRecyclerSinDatos.setVisibility(View.GONE);  // Ocultar el mensaje "sin historial"
                     });
-
+                } else {
+                    Log.d("Firebase", "No hay historial.");
+                    tvRecyclerSinDatos.setVisibility(View.VISIBLE);  // Mostrar mensaje sin historial
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("Firebase", "Error al leer favoritos: " + databaseError.getMessage());
+                Log.e("Firebase", "Error al leer historial: " + databaseError.getMessage());
+                tvRecyclerSinDatos.setVisibility(View.VISIBLE);  // Mostrar mensaje si ocurre un error
             }
         });
     }

@@ -75,4 +75,5 @@ dependencies {
     }
 
     implementation(libs.picasso)
+    implementation(libs.security.crypto)
 }

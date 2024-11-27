@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,6 +43,7 @@ public class FavoritosFragmento extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        // Inflar el layout
         binding = FragmentoFavoritosBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
@@ -57,69 +59,83 @@ public class FavoritosFragmento extends Fragment {
         database = FirebaseDatabase.getInstance();
         referenciaFavoritos = database.getReference("favoritos");
 
+        // Referencia al TextView para mostrar el mensaje sin favoritos
         TextView tvRecyclerSinDatos = root.findViewById(R.id.sinFavoritos);
+        tvRecyclerSinDatos.setVisibility(View.GONE);  // Ocultar el mensaje "sin favoritos"
+
+        // Desactivar los botones flotantes
+        FloatingActionButton botonIntroducirItem = requireActivity().findViewById(R.id.botonIntroducirItem);
+        botonIntroducirItem.setVisibility(View.GONE);
+        FloatingActionButton botonBuscar = requireActivity().findViewById(R.id.botonBuscar);
+        botonBuscar.setVisibility(View.GONE);
 
         // Cargar favoritos
-        cargarFavoritos();
-
-        if(listaFavoritos.isEmpty()){
-            tvRecyclerSinDatos.setVisibility(View.VISIBLE);
-        }else{
-            tvRecyclerSinDatos.setVisibility(View.GONE);
-        }
+        cargarFavoritos(tvRecyclerSinDatos);
 
         return root;
     }
 
-    private void cargarFavoritos() {
+    private void cargarFavoritos(TextView tvRecyclerSinDatos) {
         // Obtener el UID del usuario actual
         String userId = FirebaseAuth.getInstance().getUid();
         if (userId == null) {
             Toast.makeText(getContext(), "No estás autenticado", Toast.LENGTH_SHORT).show();
             return;
         }
+
         String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-        //Eliminar el punto
-        if (email.contains(".")){
-            email = email.replace(".","·");
+        // Eliminar el punto (para evitar problemas con Firebase)
+        if (email.contains(".")) {
+            email = email.replace(".", "·");
         }
-        // Referencia al nodo del usuario
-        DatabaseReference usuarioFavoritos = referenciaFavoritos.child(email+" - "+userId);
+
+        // Referencia al nodo del usuario en Firebase
+        DatabaseReference usuarioFavoritos = referenciaFavoritos.child(email + " - " + userId);
 
         usuarioFavoritos.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                listaFavoritos.clear();
-                int totalBusquedas = (int) dataSnapshot.getChildrenCount();
-                if (totalBusquedas == 0) {
-                    Log.d("Firebase", "No hay favoritos.");
-                    return;
-                }
+                listaFavoritos.clear();  // Limpiar la lista antes de cargar nuevos datos
 
-                for (DataSnapshot busquedaSnapshot : dataSnapshot.getChildren()) {
-                    String idReceta = busquedaSnapshot.child("ID").getValue(String.class);
-                    if (idReceta != null) {
-                        int id = Integer.parseInt(idReceta);
-                        executor.execute(() -> {
-                            RecetaBusqueda receta = apiResponse.getInformacionReceta(id);
-                            if (receta != null) {
-                                listaFavoritos.add(receta);
-                            }
-                            if (listaFavoritos.size() == totalBusquedas) {
-                                // Actualiza el adaptador en el hilo principal
-                                requireActivity().runOnUiThread(() -> {
-                                    adapter.notifyDataSetChanged();
-                                    Log.d("Firebase", "Favoritos cargados: " + listaFavoritos.size());
-                                });
-                            }
-                        });
+                if (dataSnapshot.exists()) {
+                    int totalBusquedas = (int) dataSnapshot.getChildrenCount();
+                    if (totalBusquedas == 0) {
+                        Log.d("Firebase", "No hay favoritos.");
+                        tvRecyclerSinDatos.setVisibility(View.VISIBLE);  // Mostrar mensaje sin favoritos
+                        return;
                     }
+
+                    for (DataSnapshot busquedaSnapshot : dataSnapshot.getChildren()) {
+                        String idReceta = busquedaSnapshot.child("ID").getValue(String.class);
+                        if (idReceta != null) {
+                            int id = Integer.parseInt(idReceta);
+                            executor.execute(() -> {
+                                RecetaBusqueda receta = apiResponse.getInformacionReceta(id);
+                                if (receta != null) {
+                                    listaFavoritos.add(receta);
+                                }
+
+                                // Actualizar el adaptador solo después de cargar todos los datos
+                                if (listaFavoritos.size() == totalBusquedas) {
+                                    requireActivity().runOnUiThread(() -> {
+                                        adapter.notifyDataSetChanged();  // Actualizar el RecyclerView
+                                        Log.d("Firebase", "Favoritos cargados: " + listaFavoritos.size());
+                                        tvRecyclerSinDatos.setVisibility(View.GONE);  // Ocultar el mensaje "sin favoritos"
+                                    });
+                                }
+                            });
+                        }
+                    }
+                } else {
+                    Log.d("Firebase", "No hay favoritos.");
+                    tvRecyclerSinDatos.setVisibility(View.VISIBLE);  // Mostrar mensaje sin favoritos
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.e("Firebase", "Error al leer favoritos: " + databaseError.getMessage());
+                tvRecyclerSinDatos.setVisibility(View.VISIBLE);  // Mostrar mensaje si ocurre un error
             }
         });
     }
