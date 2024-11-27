@@ -38,6 +38,9 @@
     <string name="correo_no_encontrado">No se ha encontrado el correo electrónico de la cuenta.</string>
     <string name="tlfn">628645881</string>
     <string name="pro_cooking_recipes">PRO COOKING RECIPES</string>
+    <string name="pass_olvidado">¿Olvidaste tu contraseña?</string>
+    <string name="registrar">Registrar</string>
+    <string name="iniciar_sesion">Iniciar sesión</string>
 
 
     <string-array name="menu_busqueda">

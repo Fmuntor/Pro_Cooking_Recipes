@@ -154,6 +154,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             } catch (Exception e) {
                 Toast.makeText(this, "Inicio de sesión con Google fallido", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Error al iniciar sesión con Google", e);
             }
         }
     }
