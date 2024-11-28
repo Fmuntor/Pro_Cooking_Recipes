@@ -1,5 +1,6 @@
 package com.pcr.procookingrecipes.Activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Menu;
@@ -21,6 +22,7 @@ import com.pcr.procookingrecipes.ConexionAPI.SecurePreferences;
 import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.APIResponse;
 import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.databinding.ActivityMainBinding;
+import com.pcr.procookingrecipes.ui.cuenta.CuentaFragmento;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,7 +37,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarMain.toolbar);
+        //Mostrar un mensaje al dar click al item del toolbar
+        binding.appBarMain.toolbar.setOnMenuItemClickListener(item -> {
+            Intent intent = new Intent(MainActivity.this, CuentaFragmento.class);
+            startActivity(intent);
+            return true;
 
+                });
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
 
