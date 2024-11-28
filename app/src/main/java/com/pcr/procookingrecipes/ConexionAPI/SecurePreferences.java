@@ -12,14 +12,14 @@ public class SecurePreferences {
     // Método para guardar la clave API en EncryptedSharedPreferences
     public static void guardarApiKey(Context context, String apiKey) {
         try {
-            // Crear o recuperar la clave maestra para cifrado
+            // Crear la clave maestra para cifrado
             String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
 
             // Crear un EncryptedSharedPreferences para guardar la clave de forma segura
             EncryptedSharedPreferences encryptedSharedPreferences = (EncryptedSharedPreferences) EncryptedSharedPreferences.create(
                     PREFS_NAME,
                     masterKeyAlias,
-                    context,  // El contexto de la aplicación
+                    context,
                     EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );
@@ -41,7 +41,7 @@ public class SecurePreferences {
             EncryptedSharedPreferences encryptedSharedPreferences = (EncryptedSharedPreferences) EncryptedSharedPreferences.create(
                     PREFS_NAME,
                     masterKeyAlias,
-                    context,  // El contexto de la aplicación
+                    context,
                     EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );

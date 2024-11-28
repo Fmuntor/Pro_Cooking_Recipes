@@ -52,7 +52,7 @@ public class RecetaActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         // Inicialización de datos
-        apiResponse = new APIResponse();
+        apiResponse = new APIResponse(this);
         id = getIntent().getIntExtra("ID", -1);
         RecetaBusqueda receta = getIntent().getParcelableExtra("Receta");
 

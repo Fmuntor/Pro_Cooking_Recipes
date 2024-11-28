@@ -1,6 +1,7 @@
 package com.pcr.procookingrecipes.Activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -23,6 +24,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.pcr.procookingrecipes.ConexionAPI.SecurePreferences;
 import com.pcr.procookingrecipes.R;
 
 public class LoginActivity extends AppCompatActivity {
@@ -98,8 +100,6 @@ public class LoginActivity extends AppCompatActivity {
         botonRegistrar.setOnClickListener(view -> registrarUsuario());
         botonGoogle.setOnClickListener(view -> iniciarSesionConGoogle());
         olvideContrasenaTextView.setOnClickListener(view -> recuperarContrasena());
-
-        Log.d(TAG, "onCreate: Activity created.");
     }
 
     private void iniciarSesion() {

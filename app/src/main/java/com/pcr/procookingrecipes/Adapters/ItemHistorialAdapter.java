@@ -100,7 +100,7 @@ public class ItemHistorialAdapter extends RecyclerView.Adapter<ItemHistorialAdap
             holder.botonHistorialVer.setOnClickListener(v -> {
                 // Pasar de listaIDS a objetos tipo RecetaBusqueda
                 List<RecetaBusqueda> recetasBusqueda = new ArrayList<>();
-                APIResponse apiResponse = new APIResponse();
+                APIResponse apiResponse = new APIResponse(v.getContext());
 
                 executor.execute(() -> {
                     for (int i = 0; i < item.getRecetas().size(); i++) {

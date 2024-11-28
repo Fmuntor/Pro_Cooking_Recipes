@@ -1,5 +1,6 @@
 package com.pcr.procookingrecipes.ui.busqueda;
 
+import static android.content.ContentValues.TAG;
 import static com.pcr.procookingrecipes.ConexionAPI.Traductor.Traductor.traducir;
 
 import android.content.Intent;
@@ -34,6 +35,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.pcr.procookingrecipes.Activity.Busqueda.BusquedaActivity;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewIngrediente.IngredienteDataModel;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewIngrediente.ItemIngredienteAdapter;
+import com.pcr.procookingrecipes.ConexionAPI.SecurePreferences;
 import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.APIResponse;
 import com.pcr.procookingrecipes.InstruccionesReceta.Equipment;
 import com.pcr.procookingrecipes.InstruccionesReceta.Ingredient;
@@ -104,6 +106,8 @@ public class BusquedaFragmento extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        apiResponse = new APIResponse(getContext());
+
         // Configuración del botón flotante para añadir nuevos ítems al RecyclerView
         botonIntroducirItem = requireActivity().findViewById(R.id.botonIntroducirItem);
         botonIntroducirItem.setImageResource(R.drawable.ic_plus);
@@ -141,7 +145,8 @@ public class BusquedaFragmento extends Fragment {
     }
 
     private void realizarBusqueda() {
-        apiResponse = new APIResponse();
+
+
         int errores = 0;
         recetasCompletas = new ArrayList<>();
 

@@ -48,7 +48,7 @@ public class FavoritosFragmento extends Fragment {
         View root = binding.getRoot();
 
         // Instanciar APIResponse
-        apiResponse = new APIResponse();
+        apiResponse = new APIResponse(getContext());
 
         // Configurar RecyclerView
         adapter = new ItemBusquedaAdapter(listaFavoritos);
