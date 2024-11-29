@@ -55,7 +55,11 @@ public class ItemHistorialAdapter extends RecyclerView.Adapter<ItemHistorialAdap
 
             // Asignar los datos al ViewHolder
             holder.TextViewFecha.setText(item.getFecha());
-            holder.TextViewNumBusquedas.setText("Hay " + item.getRecetas().size() + " recetas.");
+            if(item.getRecetas().size() == 1){
+                holder.TextViewNumBusquedas.setText("Hay " + item.getRecetas().size() + " receta.");
+            }else{
+                holder.TextViewNumBusquedas.setText("Hay " + item.getRecetas().size() + " recetas.");
+            }
             // Mostrar parámetros en el TextView
             holder.TextViewParametros.setText(getParametrosTexto(item));
 
@@ -120,29 +124,10 @@ public class ItemHistorialAdapter extends RecyclerView.Adapter<ItemHistorialAdap
 
     private String getParametrosTexto(RecetaHistorial item) {
         StringBuilder parametrosTexto = new StringBuilder();
-        if (!item.getParametros().get(0).equals("")) {
-            parametrosTexto.append("Tipo de cocina: ").append(item.getParametros().get(0)).append(".");
-        }
-        if (!item.getParametros().get(1).equals("")) {
-            parametrosTexto.append(" Nacionalidad: ").append(item.getParametros().get(1)).append(".");
-        }
-        if (!item.getParametros().get(2).equals("")) {
-            parametrosTexto.append(" Tipo de dieta: ").append(item.getParametros().get(2)).append(".");
-        }
-        if (!item.getParametros().get(3).equals("")) {
-            parametrosTexto.append(" Intolerancias: ").append(item.getParametros().get(3)).append(".");
-        }
-        if (!item.getParametros().get(4).equals("")) {
-            parametrosTexto.append(" Carbohidratos: ").append(item.getParametros().get(4)).append("g/plato.");
-        }
-        if (!item.getParametros().get(5).equals("")) {
-            parametrosTexto.append(" Proteínas: ").append(item.getParametros().get(5)).append("g/plato.");
-        }
-        if (!item.getParametros().get(6).equals("")) {
-            parametrosTexto.append(" Calorías: ").append(item.getParametros().get(6)).append("kcal/plato.");
-        }
-        if (!item.getParametros().get(7).equals("")) {
-            parametrosTexto.append(" Ingredientes: ").append(item.getParametros().get(7)).append(".");
+        if (!item.getParametros().get(7).isEmpty()) {
+            parametrosTexto.append("Ingredientes: ").append(item.getParametros().get(7)).append(".");
+        }else{
+            parametrosTexto.append("No se han seleccionado ingredientes.");
         }
         return parametrosTexto.toString();
     }

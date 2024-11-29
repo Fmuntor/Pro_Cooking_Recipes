@@ -27,10 +27,10 @@ public class APIResponse {
     private static final String URL_INFORMACION = "https://api.spoonacular.com/recipes/";
 
     // Variable para almacenar la API_KEY cargada
-    private String API_KEY;
+    private String API_KEY="83a0e0c5b56948ca83dd4e3ffbaecdf4";
 
     public APIResponse(Context context) {
-        setApiKey(context);
+        //setApiKey(context);
     }
 
     public void setApiKey(Context context) {

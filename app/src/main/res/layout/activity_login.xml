@@ -34,7 +34,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="@string/contrasena"
+        android:hint="@string/contrasena"
         android:inputType="textPassword"
         android:textColorHint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
