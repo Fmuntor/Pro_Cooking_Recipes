@@ -89,13 +89,14 @@
 
         </LinearLayout>
 
-        <!-- Nuevo botón a la derecha -->
+        <!-- Botón Favoritos -->
         <Button
             android:id="@+id/boton_fav"
-            android:layout_width="wrap_content"
+            android:layout_width="95dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
-            android:text="Favorito" />
+            android:insetTop="0dp"
+            android:textSize="10dp" />
     </LinearLayout>
 
     <!-- Sección de Ingredientes y Equipo (Horizontal) -->
@@ -180,10 +181,11 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerInstrucciones"
-        android:layout_width="381dp"
-        android:layout_height="235dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/instruccionesReceta" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
