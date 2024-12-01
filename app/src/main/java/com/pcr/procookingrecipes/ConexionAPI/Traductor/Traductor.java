@@ -1,19 +1,22 @@
 package com.pcr.procookingrecipes.ConexionAPI.Traductor;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.cloud.translate.Translate;
 import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;
+import com.pcr.procookingrecipes.ConexionAPI.SecurePreferences;
 
 import java.util.Objects;
 
 // Clase para traducir texto
 public class Traductor {
     // Método estático para traducir texto
-    public static String traducir(String texto, String idioma) {
+    public static String traducir(Context context, String texto, String idioma) {
         // Crear una instancia de Translate
-        Translate translate = TranslateOptions.newBuilder().setApiKey("AIzaSyAlF4NerB2lB0-SWaSSwnjzO7XEB8nSVCw").build().getService();
+        SecurePreferences.cargarClavesDesdeArchivo(context);
+        Translate translate = TranslateOptions.newBuilder().setApiKey(SecurePreferences.leerApiKey(context, "API_KEY_TRADUCTOR")).build().getService();
 
         Translation translation;
         // Traducir el texto según el idioma especificado

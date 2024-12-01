@@ -1,7 +1,6 @@
 package com.pcr.procookingrecipes.Activity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -76,6 +75,15 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        // Guardar API Keys desde el archivo JSON
+        SecurePreferences.cargarClavesDesdeArchivo(this);
+
+        // Mostrar por LOG las 2 API Keys
+        Log.d("API_KEY_SPOONACULAR", SecurePreferences.leerApiKey(this, "API_KEY_SPOONACULAR"));
+
+        Log.d("API_KEY_TRADUCTOR", SecurePreferences.leerApiKey(this, "API_KEY_TRADUCTOR"));
+
 
         // Inicializar Firebase Auth
         auth = FirebaseAuth.getInstance();

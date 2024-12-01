@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.pcr.procookingrecipes.Activity.BusquedaActivity;
+import com.pcr.procookingrecipes.ConexionAPI.SecurePreferences;
 import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.APIResponse;
 import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.Receta.RecetaBusqueda;
@@ -104,6 +105,8 @@ public class ItemHistorialAdapter extends RecyclerView.Adapter<ItemHistorialAdap
             holder.botonHistorialVer.setOnClickListener(v -> {
                 // Pasar de listaIDS a objetos tipo RecetaBusqueda
                 List<RecetaBusqueda> recetasBusqueda = new ArrayList<>();
+
+                SecurePreferences.cargarClavesDesdeArchivo(v.getContext());
                 APIResponse apiResponse = new APIResponse(v.getContext());
 
                 // Ejecutar en un hilo separado para evitar bloquear la UI

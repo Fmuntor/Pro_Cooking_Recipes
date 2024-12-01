@@ -30,6 +30,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.pcr.procookingrecipes.Activity.BusquedaActivity;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewIngrediente.IngredienteDataModel;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewIngrediente.ItemIngredienteAdapter;
+import com.pcr.procookingrecipes.ConexionAPI.SecurePreferences;
 import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.APIResponse;
 import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.Receta.Receta;
@@ -95,6 +96,7 @@ public class BusquedaFragmento extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        SecurePreferences.cargarClavesDesdeArchivo(getContext());
         apiResponse = new APIResponse(getContext());
 
         // Configuración del botón flotante para añadir nuevos ítems al RecyclerView
@@ -161,7 +163,7 @@ public class BusquedaFragmento extends Fragment {
             }
             //Comprobar si el ingrediente es correcto
             IngredienteDataModel item = itemList.get(i);
-            String respuesta = apiResponse.esIngredienteCorrecto(traducir(item.getEditText(), "ingles"));
+            String respuesta = apiResponse.esIngredienteCorrecto(traducir(getContext(),item.getEditText(), "ingles"));
             if (respuesta != null) {
                 if (respuesta.equals("Error")) {
                     errores++;
@@ -267,7 +269,7 @@ public class BusquedaFragmento extends Fragment {
             for (int i = 0; i < itemList.size(); i++) {
                 String ingrediente = itemList.get(i).getEditText();  // Obtener el ingrediente
                 ingredientesFinal.append(ingrediente).append(",");  // Agregar el ingrediente a ingredientesFinal
-                consultaFinal.append(traducir(ingrediente, "ingles")).append(",");  // Traducir y agregar a consultaFinal
+                consultaFinal.append(traducir(getContext(),ingrediente, "ingles")).append(",");  // Traducir y agregar a consultaFinal
 
             }
             //eliminar la ultima coma
@@ -288,7 +290,7 @@ public class BusquedaFragmento extends Fragment {
 
             String opcionSeleccionada = binding.spinnerCocina.getSelectedItem().toString();
             listaParametros[0] = opcionSeleccionada;
-            consultaFinal.append(traducir(opcionSeleccionada, "ingles"));
+            consultaFinal.append(traducir(getContext(),opcionSeleccionada, "ingles"));
         } else {
             listaParametros[0] = "";
         }
@@ -300,7 +302,7 @@ public class BusquedaFragmento extends Fragment {
             String opcionSeleccionada = binding.spinnerNacionalidad.getSelectedItem().toString();
             listaParametros[1] = opcionSeleccionada;
 
-            consultaFinal.append(traducir(opcionSeleccionada, "ingles"));
+            consultaFinal.append(traducir(getContext(),opcionSeleccionada, "ingles"));
         } else {
             listaParametros[1] = "";
         }
@@ -312,7 +314,7 @@ public class BusquedaFragmento extends Fragment {
             String opcionSeleccionada = binding.spinnerDieta.getSelectedItem().toString();
             listaParametros[2] = opcionSeleccionada;
 
-            consultaFinal.append(traducir(opcionSeleccionada, "ingles"));
+            consultaFinal.append(traducir(getContext(),opcionSeleccionada, "ingles"));
         } else {
             listaParametros[2] = "";
         }
@@ -323,7 +325,7 @@ public class BusquedaFragmento extends Fragment {
             String opcionSeleccionada = binding.spinnerIntolerancias.getSelectedItem().toString();
             listaParametros[3] = opcionSeleccionada;
 
-            consultaFinal.append(traducir(opcionSeleccionada, "ingles"));
+            consultaFinal.append(traducir(getContext(),opcionSeleccionada, "ingles"));
         } else {
             listaParametros[3] = "";
         }

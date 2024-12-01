@@ -20,6 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.pcr.procookingrecipes.Adapters.ReciclerViewBusqueda.ItemBusquedaAdapter;
+import com.pcr.procookingrecipes.ConexionAPI.SecurePreferences;
 import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.APIResponse;
 import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.Receta.RecetaBusqueda;
@@ -48,6 +49,7 @@ public class FavoritosFragmento extends Fragment {
         View root = binding.getRoot();
 
         // Instanciar APIResponse
+        SecurePreferences.cargarClavesDesdeArchivo(getContext());
         apiResponse = new APIResponse(getContext());
 
         // Configurar RecyclerView

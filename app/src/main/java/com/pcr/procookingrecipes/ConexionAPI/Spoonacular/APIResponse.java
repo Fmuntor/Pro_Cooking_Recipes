@@ -8,6 +8,7 @@ import androidx.security.crypto.MasterKeys;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import com.pcr.procookingrecipes.Activity.LoginActivity;
 import com.pcr.procookingrecipes.ConexionAPI.SecurePreferences;
 import com.pcr.procookingrecipes.InstruccionesReceta.Instruction;
 import com.pcr.procookingrecipes.Receta.Receta;
@@ -35,7 +36,7 @@ public class APIResponse {
     }
 
     public void setApiKey(Context context) {
-        API_KEY = SecurePreferences.leerApiKey(context);
+        API_KEY = SecurePreferences.leerApiKey(context, "API_KEY_SPOONACULAR");
     }
 
     // Método para verificar si el ingrediente es correcto

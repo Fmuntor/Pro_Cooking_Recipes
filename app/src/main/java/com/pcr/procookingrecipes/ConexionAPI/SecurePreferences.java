@@ -4,18 +4,19 @@ import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
 import android.content.Context;
 
+import org.json.JSONObject;
+
+import java.io.InputStream;
+
 public class SecurePreferences {
 
     private static final String PREFS_NAME = "encrypted_prefs";
-    private static final String API_KEY_KEY = "api_key";
 
-    // Método para guardar la clave API en EncryptedSharedPreferences
-    public static void guardarApiKey(Context context, String apiKey) {
+    // Método para guardar una clave API identificada por un nombre
+    public static void guardarApiKey(Context context, String keyName, String apiKey) {
         try {
-            // Crear la clave maestra para cifrado
             String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
 
-            // Crear un EncryptedSharedPreferences para guardar la clave de forma segura
             EncryptedSharedPreferences encryptedSharedPreferences = (EncryptedSharedPreferences) EncryptedSharedPreferences.create(
                     PREFS_NAME,
                     masterKeyAlias,
@@ -24,20 +25,18 @@ public class SecurePreferences {
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );
 
-            // Guardar la clave API de manera segura
-            encryptedSharedPreferences.edit().putString(API_KEY_KEY, apiKey).apply();
+            encryptedSharedPreferences.edit().putString(keyName, apiKey).apply();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static String leerApiKey(Context context) {
+    // Método para leer una clave API identificada por un nombre
+    public static String leerApiKey(Context context, String keyName) {
         try {
-            // Crear o recuperar la clave maestra para cifrado
             String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
 
-            // Crear un EncryptedSharedPreferences para leer la clave de manera segura
             EncryptedSharedPreferences encryptedSharedPreferences = (EncryptedSharedPreferences) EncryptedSharedPreferences.create(
                     PREFS_NAME,
                     masterKeyAlias,
@@ -46,12 +45,34 @@ public class SecurePreferences {
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );
 
-            // Leer y retornar la clave API
-            return encryptedSharedPreferences.getString(API_KEY_KEY, null);
+            return encryptedSharedPreferences.getString(keyName, null);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
+
+    public static void cargarClavesDesdeArchivo(Context context) {
+        try {
+            // Lee el archivo JSON de assets
+            InputStream is = context.getAssets().open("API_KEYS.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            String json = new String(buffer, "UTF-8");
+
+            // Parsear el JSON
+            JSONObject jsonObject = new JSONObject(json);
+
+            // Guardar las claves encriptadas
+            SecurePreferences.guardarApiKey(context, "API_KEY_SPOONACULAR", jsonObject.getString("API_KEY_SPOONACULAR"));
+            SecurePreferences.guardarApiKey(context, "API_KEY_TRADUCTOR", jsonObject.getString("API_KEY_TRADUCTOR"));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
+

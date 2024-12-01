@@ -16,6 +16,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewReceta.RecetaEquipo.EquipoAdapter;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewReceta.RecetaIngredientes.IngredientesAdapter;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewReceta.RecetaInstrucciones.InstruccionesAdapter;
+import com.pcr.procookingrecipes.ConexionAPI.SecurePreferences;
 import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.APIResponse;
 import com.pcr.procookingrecipes.InstruccionesReceta.Equipment;
 import com.pcr.procookingrecipes.InstruccionesReceta.Ingredient;
@@ -54,6 +55,7 @@ public class RecetaActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         // Inicialización de datos
+        SecurePreferences.cargarClavesDesdeArchivo(this);
         apiResponse = new APIResponse(this);
         id = getIntent().getIntExtra("ID", -1);
         RecetaBusqueda receta = getIntent().getParcelableExtra("Receta");
