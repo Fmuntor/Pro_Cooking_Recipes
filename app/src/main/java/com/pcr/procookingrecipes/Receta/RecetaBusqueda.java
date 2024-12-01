@@ -13,25 +13,14 @@ public class RecetaBusqueda implements Parcelable {
     private double spoonacularScore;
     private double pricePerServing;
 
+    // Constructor
     public double getSpoonacularScore() {
         return spoonacularScore;
     }
 
+    // Getters y setters
     public String getGlutenFree() {
         return glutenFree;
-    }
-
-    // Getters y setters para los campos de la receta
-    public RecetaBusqueda(int id, String titulo, String imagen, int servings, int readyInMinutes, String glutenFree, double spoonacularScore, double pricePerServing) {
-        this.id = id;
-        this.title = titulo;
-        this.image = imagen;
-        this.servings = servings;
-        this.readyInMinutes = readyInMinutes;
-        this.glutenFree = glutenFree;
-        this.spoonacularScore = spoonacularScore;
-        this.pricePerServing = pricePerServing;
-
     }
 
     public int getId() {
@@ -50,20 +39,12 @@ public class RecetaBusqueda implements Parcelable {
         return image;
     }
 
-    public void setImage(String image) {
-        this.image = image;
-    }
-
     public int getServings() {
         return servings;
     }
 
     public double getPricePerServing() {
         return pricePerServing;
-    }
-
-    public void setReadyInMinutes(int readyInMinutes) {
-        this.readyInMinutes = readyInMinutes;
     }
 
     public int getReadyInMinutes() {

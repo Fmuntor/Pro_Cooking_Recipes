@@ -1,13 +1,12 @@
 package com.pcr.procookingrecipes.Adapters.RecyclerViewIngrediente;
 
+// Clase para el modelo de datos de los ingredientes
 public class IngredienteDataModel {
     private String editText, mensajeError;
     private boolean hasError; // Indica si hay error
 
     public IngredienteDataModel(String editText) {
-
         this.editText = editText;
-
     }
 
     public String getEditText() {

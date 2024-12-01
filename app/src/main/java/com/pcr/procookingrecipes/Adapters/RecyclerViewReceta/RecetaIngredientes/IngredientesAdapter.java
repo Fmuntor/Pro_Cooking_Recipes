@@ -15,24 +15,27 @@ public class IngredientesAdapter extends RecyclerView.Adapter<IngredientesAdapte
     private ArrayList<String> ingredientes;
 
     public IngredientesAdapter(ArrayList<String> ingredientes) {
+        // Si los ingredientes son nulos o tienen menos de 2 elementos, lo llenamos con los mismos ítems.
         if (ingredientes == null) {
             this.ingredientes = new ArrayList<>();
         } else {
             // Añadir dos elementos iguales al final si solo hay uno
             this.ingredientes = new ArrayList<>(ingredientes);
             if (ingredientes.size() < 2) {
-                this.ingredientes.add(ingredientes.get(0));  // Duplicamos el primer ítem
+                this.ingredientes.add(ingredientes.get(0));  // Duplicar el primer item
             }
         }    }
 
     @Override
     public IngredientesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // Inflar el layout del item
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_receta_ingredientes, parent, false);
         return new IngredientesViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(IngredientesViewHolder holder, int position) {
+        // Asignar el texto del ingrediente a cada item
         String ingredienteItem = ingredientes.get(position);
         holder.ingredienteTextView.setText(ingredienteItem);
     }

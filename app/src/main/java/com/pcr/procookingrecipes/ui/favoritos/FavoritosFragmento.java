@@ -83,6 +83,7 @@ public class FavoritosFragmento extends Fragment {
             return;
         }
 
+        // Obtener el correo electrónico del usuario
         String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         // Eliminar el punto (para evitar problemas con Firebase)
         if (email.contains(".")) {
@@ -92,6 +93,7 @@ public class FavoritosFragmento extends Fragment {
         // Referencia al nodo del usuario en Firebase
         DatabaseReference usuarioFavoritos = referenciaFavoritos.child(email + " - " + userId);
 
+        // Escuchar cambios en la referencia
         usuarioFavoritos.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -105,21 +107,26 @@ public class FavoritosFragmento extends Fragment {
                         return;
                     }
 
+                    // Recorrer los datos de favoritos
                     for (DataSnapshot busquedaSnapshot : dataSnapshot.getChildren()) {
+                        // Obtener el ID de la receta
                         String idReceta = busquedaSnapshot.child("ID").getValue(String.class);
                         if (idReceta != null) {
                             int id = Integer.parseInt(idReceta);
+                            // Realizar la llamada a la API en un hilo separado
                             executor.execute(() -> {
+                                // Obtener la información de la receta desde la API
                                 RecetaBusqueda receta = apiResponse.getInformacionReceta(id);
                                 if (receta != null) {
+                                    // Agregar la receta a la lista si no está duplicada o ya existe
                                     listaFavoritos.add(receta);
                                 }
 
                                 // Actualizar el adaptador solo después de cargar todos los datos
                                 if (listaFavoritos.size() == totalBusquedas) {
+                                    // Actualizar el adaptador en el hilo principal
                                     requireActivity().runOnUiThread(() -> {
                                         adapter.notifyDataSetChanged();  // Actualizar el RecyclerView
-                                        Log.d("Firebase", "Favoritos cargados: " + listaFavoritos.size());
                                         tvRecyclerSinDatos.setVisibility(View.GONE);  // Ocultar el mensaje "sin favoritos"
                                     });
                                 }
@@ -127,14 +134,12 @@ public class FavoritosFragmento extends Fragment {
                         }
                     }
                 } else {
-                    Log.d("Firebase", "No hay favoritos.");
                     tvRecyclerSinDatos.setVisibility(View.VISIBLE);  // Mostrar mensaje sin favoritos
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("Firebase", "Error al leer favoritos: " + databaseError.getMessage());
                 tvRecyclerSinDatos.setVisibility(View.VISIBLE);  // Mostrar mensaje si ocurre un error
             }
         });

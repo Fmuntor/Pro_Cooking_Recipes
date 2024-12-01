@@ -9,6 +9,7 @@ public class CuentaViewModel extends ViewModel {
     private final MutableLiveData<String> mText;
 
     public CuentaViewModel() {
+        // Inicializa el MutableLiveData con el texto
         mText = new MutableLiveData<>();
         mText.setValue("Texto del fragmento Cuenta");
     }

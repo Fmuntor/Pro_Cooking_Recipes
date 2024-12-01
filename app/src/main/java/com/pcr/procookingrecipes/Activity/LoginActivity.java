@@ -40,18 +40,19 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private GoogleSignInClient googleSignInClient;
 
-    // Declarar el ActivityResultLauncher
+    // Declarar el ActivityResultLauncher para Google Sign-In y Firebase Authentication
     private final ActivityResultLauncher<Intent> googleSignInResultLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+                // Manejar el resultado del ActivityResult
                 @Override
                 public void onActivityResult(ActivityResult result) {
-                    Log.d(TAG, "onActivityResult: Result received.");
+                    // Verificar si el resultado es OK
                     if (result.getResultCode() == RESULT_OK) {
+                        // Obtener la cuenta de Google
                         Intent data = result.getData();
                         GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(data).getResult();
                         if (account != null) {
                             // Usar el token de Google para autenticar al usuario en Firebase
-                            Log.d(TAG, "onActivityResult: Google Sign-In success.");
                             AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
                             auth.signInWithCredential(credential)
                                     .addOnCompleteListener(LoginActivity.this, authTask -> {
@@ -81,10 +82,11 @@ public class LoginActivity extends AppCompatActivity {
 
         // Configurar Google Sign-In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id)) // Asegúrate de configurar esto en tu Firebase Console
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
 
+        // Crear el cliente de Google Sign-In
         googleSignInClient = GoogleSignIn.getClient(this, gso);
 
         // Referencias a vistas
@@ -103,15 +105,17 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void iniciarSesion() {
-        Log.d(TAG, "iniciarSesion: Iniciando sesión con correo y contraseña.");
+        // Obtener datos de usuario y contraseña
         String email = usuarioEditText.getText().toString().trim();
         String password = passEditText.getText().toString().trim();
 
+        // Verificar si los campos están vacíos
         if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
             Toast.makeText(this, "Por favor completa todos los campos", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        // Iniciar sesión con Firebase Auth usando el email y la contraseña
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -124,15 +128,17 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void registrarUsuario() {
-        Log.d(TAG, "registrarUsuario: Registrando nuevo usuario.");
+        // Obtener datos de usuario y contraseña
         String email = usuarioEditText.getText().toString().trim();
         String password = passEditText.getText().toString().trim();
 
+        // Verificar si los campos están vacíos
         if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
             Toast.makeText(this, "Por favor completa todos los campos", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        // Registrar usuario con Firebase Auth
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -145,14 +151,16 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void recuperarContrasena() {
-        Log.d(TAG, "recuperarContrasena: Recuperando contraseña.");
+        // Obtener el email del usuario
         String email = usuarioEditText.getText().toString().trim();
 
+        // Verificar si el campo está vacío
         if (TextUtils.isEmpty(email)) {
             Toast.makeText(this, "Ingresa tu correo para recuperar la contraseña", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        // Enviar correo de recuperación
         auth.sendPasswordResetEmail(email)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -165,13 +173,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void iniciarSesionConGoogle() {
-        Log.d(TAG, "iniciarSesionConGoogle: Iniciando sesión con Google.");
+        // Iniciar sesión con Google
         Intent signInIntent = googleSignInClient.getSignInIntent();
-        googleSignInResultLauncher.launch(signInIntent); // Usa el launcher para lanzar la actividad
+        googleSignInResultLauncher.launch(signInIntent); // Usar el launcher para lanzar la actividad
     }
 
     private void abrirMainActivity() {
-        Log.d(TAG, "abrirMainActivity: Navegando a MainActivity.");
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(intent);
         finish();

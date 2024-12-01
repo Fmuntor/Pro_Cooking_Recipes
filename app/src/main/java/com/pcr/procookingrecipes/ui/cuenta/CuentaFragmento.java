@@ -27,14 +27,17 @@ public class CuentaFragmento extends Fragment {
 
     private FragmentoCuentaBinding binding;
 
+    // Constructor vacío requerido por Fragment
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         CuentaViewModel slideshowViewModel =
                 new ViewModelProvider(this).get(CuentaViewModel.class);
 
+        // Inflar el layout del fragmento
         binding = FragmentoCuentaBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        // Obtener las referencias a los elementos de la interfaz de usuario
         final TextView nombreCuenta = binding.nombreCuenta;
         final TextView mailCuenta = binding.mailCuenta;
         final TextView tlfnCuenta = binding.tlfnCuenta;
@@ -54,19 +57,21 @@ public class CuentaFragmento extends Fragment {
             String email = currentUser.getEmail();
             String telefono = currentUser.getPhoneNumber();
 
-            // Mostrar los datos en los TextViews
+            // Mostrar el nombre de usuario o un mensaje de error
             if(Objects.equals(nombre, "") || nombre == null){
                 nombreCuenta.setText(R.string.fernando_munoz_torres);
             }else{
                 nombreCuenta.setText(nombre);
             }
 
+            // Mostrar el correo electrónico o un mensaje de error
             if(Objects.equals(email, "") || email == null){
                 mailCuenta.setText(R.string.correo_no_encontrado);
             }else{
                 mailCuenta.setText(email);
             }
 
+            // Mostrar el teléfono de contacto o un mensaje de error
             if(Objects.equals(telefono, "") || telefono == null){
                 tlfnCuenta.setText(R.string.tlfn);
             }else{

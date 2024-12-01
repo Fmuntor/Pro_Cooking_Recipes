@@ -1,6 +1,5 @@
 package com.pcr.procookingrecipes.ui.busqueda;
 
-import static android.content.ContentValues.TAG;
 import static com.pcr.procookingrecipes.ConexionAPI.Traductor.Traductor.traducir;
 
 import android.content.Intent;
@@ -11,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.SeekBar;
@@ -26,21 +24,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.cloud.translate.Translate;
-import com.google.cloud.translate.TranslateOptions;
-import com.google.cloud.translate.Translation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.pcr.procookingrecipes.Activity.Busqueda.BusquedaActivity;
+import com.pcr.procookingrecipes.Activity.BusquedaActivity;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewIngrediente.IngredienteDataModel;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewIngrediente.ItemIngredienteAdapter;
-import com.pcr.procookingrecipes.ConexionAPI.SecurePreferences;
 import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.APIResponse;
-import com.pcr.procookingrecipes.InstruccionesReceta.Equipment;
-import com.pcr.procookingrecipes.InstruccionesReceta.Ingredient;
-import com.pcr.procookingrecipes.InstruccionesReceta.Instruction;
-import com.pcr.procookingrecipes.InstruccionesReceta.Step;
 import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.Receta.Receta;
 import com.pcr.procookingrecipes.Receta.RecetaBusqueda;
@@ -54,7 +44,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -170,6 +159,7 @@ public class BusquedaFragmento extends Fragment {
                     });
                 }
             }
+            //Comprobar si el ingrediente es correcto
             IngredienteDataModel item = itemList.get(i);
             String respuesta = apiResponse.esIngredienteCorrecto(traducir(item.getEditText(), "ingles"));
             if (respuesta != null) {
@@ -183,6 +173,7 @@ public class BusquedaFragmento extends Fragment {
             }
         }
 
+        // Validación de errores
         if (errores == 0) {
             requireActivity().runOnUiThread(() -> {
                 Toast.makeText(getContext(), "Buscando recetas...", Toast.LENGTH_SHORT).show();
@@ -193,6 +184,7 @@ public class BusquedaFragmento extends Fragment {
             numeroRecetas = requireActivity().findViewById(R.id.numeroRecetas);
             String numRecetasText = numeroRecetas.getText().toString();
 
+            // Validar el número de recetas
             try {
                 int numRecetas = Integer.parseInt(numRecetasText);
                 if (numRecetas < 1 || numRecetas > 12) {
@@ -205,10 +197,12 @@ public class BusquedaFragmento extends Fragment {
                 // Si la validación pasa, realizar la búsqueda
                 List<Receta> idRecetas = apiResponse.busquedaCompleta(escribirConsultaFinal(), numRecetas);
 
+                // Obtener las recetas completas
                 for (Receta receta : idRecetas) {
                     recetasCompletas.add(apiResponse.getInformacionReceta(receta.getId()));
                 }
 
+                // Crear una lista de IDs
                 List<String> listaID = new ArrayList<>();
                 for (Receta receta : idRecetas) {
                     listaID.add(String.valueOf(receta.getId()));
@@ -218,23 +212,29 @@ public class BusquedaFragmento extends Fragment {
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference referenciaHistorial = database.getReference("historial");
 
+                // Crear un mapa con los datos del historial
                 Map<String, Object> historialData = new HashMap<>();
                 historialData.put("fecha", new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date()));
                 historialData.put("parametros", new ArrayList<>(Arrays.asList(listaParametros)));
                 historialData.put("recetas", listaID);
 
+                // Obtener el correo electrónico del usuario
                 String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
                 //Eliminar el punto
                 if (email.contains(".")) {
                     email = email.replace(".", "·");
                 }
+                // Crear una etiqueta compuesta
                 String etiquetaCompleta = email + " - " + FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+                // Guardar en la base de datos
                 referenciaHistorial.child(etiquetaCompleta).push().setValue(historialData);
 
+                // Mostrar un mensaje de éxito
                 if (recetasCompletas.isEmpty()) {
                     // Mostrar una ventana de confirmación (AlertDialog)
                     requireActivity().runOnUiThread(() -> {
+                        // Mostrar una ventana de confirmación (AlertDialog)
                         new android.app.AlertDialog.Builder(requireContext())
                                 .setTitle("No se encontraron recetas")
                                 .setMessage("Lo siento, no hemos encontrado recetas que coincidan con tu búsqueda.")

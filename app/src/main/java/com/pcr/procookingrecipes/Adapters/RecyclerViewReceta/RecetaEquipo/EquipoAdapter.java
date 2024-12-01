@@ -29,21 +29,21 @@ public class EquipoAdapter extends RecyclerView.Adapter<EquipoAdapter.EquipoView
 
     @Override
     public EquipoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // Inflamos el layout del item
+        // Inflar el layout del item
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_receta_equipo, parent, false);
         return new EquipoViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(EquipoViewHolder holder, int position) {
-        // Asignamos el texto del equipo a cada item
+        // Asignar el texto del equipo a cada item
         String equipoItem = equipo.get(position);
         holder.ingredienteTextView.setText(equipoItem);
     }
 
     @Override
     public int getItemCount() {
-        // Devolvemos el tamaño de la lista (2 si estamos duplicando elementos)
+        // Devolver el tamaño de la lista (2 si estamos duplicando elementos)
         return equipo.size();
     }
 

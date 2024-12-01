@@ -1,7 +1,5 @@
 package com.pcr.procookingrecipes.Adapters;
 
-import static androidx.core.content.ContextCompat.startActivity;
-
 import android.content.Intent;
 import android.os.Parcelable;
 import android.util.Log;
@@ -18,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.pcr.procookingrecipes.Activity.Busqueda.BusquedaActivity;
+import com.pcr.procookingrecipes.Activity.BusquedaActivity;
 import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.APIResponse;
 import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.Receta.RecetaBusqueda;
@@ -42,6 +40,7 @@ public class ItemHistorialAdapter extends RecyclerView.Adapter<ItemHistorialAdap
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // Inflar la vista del item
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_historial, parent, false);
         return new MyViewHolder(view);
@@ -77,6 +76,7 @@ public class ItemHistorialAdapter extends RecyclerView.Adapter<ItemHistorialAdap
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference referenciaHistorial = database.getReference("historial");
 
+                // Obtener el email del usuario
                 String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
                 if (email.contains(".")) {
                     email = email.replace(".", "·");
@@ -106,24 +106,28 @@ public class ItemHistorialAdapter extends RecyclerView.Adapter<ItemHistorialAdap
                 List<RecetaBusqueda> recetasBusqueda = new ArrayList<>();
                 APIResponse apiResponse = new APIResponse(v.getContext());
 
+                // Ejecutar en un hilo separado para evitar bloquear la UI
                 executor.execute(() -> {
+                    // Obtener los objetos RecetaBusqueda de la API
                     for (int i = 0; i < item.getRecetas().size(); i++) {
+                        // Obtener el objeto RecetaBusqueda de la API y agregarlo a la lista
                         recetasBusqueda.add(apiResponse.getInformacionReceta(Integer.parseInt(item.getRecetas().get(i))));
                     }
+
+                    // Actualizar la UI en el hilo principal
                     Intent intent = new Intent(v.getContext(), BusquedaActivity.class);
                     Log.d("historial", recetasBusqueda.toString());
                     intent.putParcelableArrayListExtra("recetasCompletas", (ArrayList<? extends Parcelable>) recetasBusqueda);
                     holder.itemView.getContext().startActivity(intent);
                 });
-
-
-
             });
         }
     }
 
     private String getParametrosTexto(RecetaHistorial item) {
+        // Construir el texto de los parámetros
         StringBuilder parametrosTexto = new StringBuilder();
+        // Verificar si hay ingredientes
         if (!item.getParametros().get(7).isEmpty()) {
             parametrosTexto.append("Ingredientes: ").append(item.getParametros().get(7)).append(".");
         }else{
@@ -139,11 +143,13 @@ public class ItemHistorialAdapter extends RecyclerView.Adapter<ItemHistorialAdap
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
+        // Declarar las vistas
         public Button botonHistorialVer, botonHistorialBorrar;
         TextView TextViewFecha, TextViewNumBusquedas, TextViewParametros;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
+            // Inicializar las vistas
             TextViewFecha = itemView.findViewById(R.id.fechaTextView);
             TextViewNumBusquedas = itemView.findViewById(R.id.numBusquedasTextView);
             TextViewParametros = itemView.findViewById(R.id.parametrosTextView);

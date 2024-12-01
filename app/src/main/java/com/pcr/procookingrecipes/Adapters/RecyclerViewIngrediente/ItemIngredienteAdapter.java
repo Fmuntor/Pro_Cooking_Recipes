@@ -26,17 +26,21 @@ public class ItemIngredienteAdapter extends RecyclerView.Adapter<ItemIngrediente
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // Inflar la vista del item
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_ingrediente, parent, false);
 
         MyViewHolder holder = new MyViewHolder(view);
 
+        // Configurar el TextWatcher para el EditText para cada elemento
         holder.textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
+            // Actualizar el valor del EditText en el modelo de datos cuando cambie
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Obtener la posición del elemento en la lista
                 int position = holder.getAdapterPosition();
                 if (position != RecyclerView.NO_POSITION) {
                     dataList.get(position).setEditText(s.toString());
@@ -46,6 +50,7 @@ public class ItemIngredienteAdapter extends RecyclerView.Adapter<ItemIngrediente
             @Override
             public void afterTextChanged(Editable s) {}
         };
+        // Asignar el TextWatcher al EditText
         holder.editText.addTextChangedListener(holder.textWatcher);
 
         return holder;
@@ -63,24 +68,23 @@ public class ItemIngredienteAdapter extends RecyclerView.Adapter<ItemIngrediente
         }
 
         // Establecer el texto en el EditText solo cuando se recarga
-        holder.editText.setText(item.getEditText()); // No sobreescribir valores anteriores
-
-
+        holder.editText.setText(item.getEditText());
 
         // Configura el botón "borrar" para eliminar el elemento
         holder.borrar.setOnClickListener(v -> {
             int currentPosition = holder.getAdapterPosition();
+
+            // Eliminar el elemento de la lista y notificar el cambio
             if (currentPosition != RecyclerView.NO_POSITION) {
                 dataList.remove(currentPosition);
                 notifyItemRemoved(currentPosition);
             }
+            // Mostrar el TextView si la lista está vacía
             if (dataList.isEmpty()) {
-                // Mostrar el TextView si la lista está vacía
-                // Puedes acceder a tu TextView desde el Fragment y actualizar su visibilidad
                 TextView tvRecyclerSinDatos = holder.itemView.getRootView().findViewById(R.id.tvRecyclerSinDatos);
                 tvRecyclerSinDatos.setVisibility(View.VISIBLE);
+            // Ocultar el TextView si la lista no está vacía
             } else {
-                // Ocultar el TextView si la lista no está vacía
                 TextView tvRecyclerSinDatos = holder.itemView.getRootView().findViewById(R.id.tvRecyclerSinDatos);
                 tvRecyclerSinDatos.setVisibility(View.GONE);
             }
@@ -93,20 +97,9 @@ public class ItemIngredienteAdapter extends RecyclerView.Adapter<ItemIngrediente
         return dataList.size();
     }
 
-    // Método para agregar un nuevo elemento a la lista y actualizar el RecyclerView
-    public void addItem(IngredienteDataModel newItem) {
-        dataList.add(newItem);
-        notifyItemInserted(dataList.size() - 1); // Notifica que se agregó un nuevo elemento al final
-    }
-
-    // Método para actualizar la lista de datos después de una nueva búsqueda
-    public void updateDataList(List<IngredienteDataModel> newDataList) {
-        this.dataList.clear(); // Limpiar la lista actual
-        this.dataList.addAll(newDataList); // Agregar los nuevos elementos
-        notifyDataSetChanged(); // Notificar que se ha actualizado la lista
-    }
-
+    // Actualizar la lista de datos
     public void setErrorAtPosition(int position, boolean hasError, int tipoError) {
+        // Verificar el tipo de error
         if(tipoError==1){
             dataList.get(position).setMensajeError("Ingrediente no válido.");
         }else if(tipoError==2){
@@ -114,16 +107,21 @@ public class ItemIngredienteAdapter extends RecyclerView.Adapter<ItemIngrediente
         }else if(tipoError==3){
             dataList.get(position).setMensajeError("Ingrediente vacío.");
         }
+        // Establecer el error en el modelo de datos
         dataList.get(position).setError(hasError);
-        notifyItemChanged(position); // Actualizar el ítem en el RecyclerView
+        // Actualizar el ítem en el RecyclerView
+        notifyItemChanged(position);
     }
 
+    // Actualizar la lista de datos
     public static class MyViewHolder extends RecyclerView.ViewHolder {
+        // Declarar las vistas
         Button borrar;
         EditText editText;
         TextWatcher textWatcher; // Definir el TextWatcher aquí para evitar duplicación
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
+            // Inicializar las vistas
             borrar = itemView.findViewById(R.id.botonEliminar);
             editText = itemView.findViewById(R.id.ETDatos);
         }

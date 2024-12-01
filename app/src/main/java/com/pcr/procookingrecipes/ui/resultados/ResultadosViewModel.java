@@ -9,6 +9,7 @@ public class ResultadosViewModel extends ViewModel {
     private final MutableLiveData<String> mText;
 
     public ResultadosViewModel() {
+        // Inicializa el MutableLiveData con el texto
         mText = new MutableLiveData<>();
         mText.setValue("Texto del fragmento Resultafos");
     }

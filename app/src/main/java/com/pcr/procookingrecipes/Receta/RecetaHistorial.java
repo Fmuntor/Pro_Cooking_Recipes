@@ -8,18 +8,6 @@ public class RecetaHistorial {
     private List<String> parametros;
     private String pushKey;  // Campo añadido para almacenar la clave generada por push()
 
-    // Constructor
-    public RecetaHistorial(String fecha, List<String> recetas, List<String> parametros, String pushKey) {
-        this.fecha = fecha;
-        this.recetas = recetas;
-        this.parametros = parametros;
-        this.pushKey = pushKey;
-    }
-
-    public RecetaHistorial() {
-
-    }
-
     // Getters y setters
     public String getFecha() {
         return fecha;

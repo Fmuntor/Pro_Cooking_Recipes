@@ -17,15 +17,16 @@ public class ResultadosFragmento extends Fragment {
 
     private FragmentoResultadosBinding binding;
 
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         ResultadosViewModel homeViewModel =
                 new ViewModelProvider(this).get(ResultadosViewModel.class);
 
+        // Inflar el layout
         binding = FragmentoResultadosBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        // Observar el LiveData del ViewModel y actualizar la UI
         final TextView textView = binding.textResultados;
         homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;

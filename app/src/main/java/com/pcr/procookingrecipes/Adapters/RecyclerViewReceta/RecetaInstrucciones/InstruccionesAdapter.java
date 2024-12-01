@@ -25,20 +25,20 @@ public class InstruccionesAdapter extends RecyclerView.Adapter<InstruccionesAdap
             this.instrucciones = new ArrayList<>(instrucciones);
             if (instrucciones.size() < 2) {
                 this.instrucciones.add(instrucciones.get(0));
-                // Duplicamos el primer ítem
             }
         }
     }
 
     @Override
     public InstruccionesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // Inflar el layout del item
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_receta_instrucciones, parent, false);
-
         return new InstruccionesViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(InstruccionesViewHolder holder, int position) {
+        // Asignar el texto de la instrucción a cada item
         String instruccionesItem = instrucciones.get(position);
         holder.ingredienteTextView.setText(instruccionesItem);
     }

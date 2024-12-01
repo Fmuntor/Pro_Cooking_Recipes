@@ -8,6 +8,7 @@ public class HistorialViewModel extends ViewModel {
     private final MutableLiveData<String> mText;
 
     public HistorialViewModel() {
+        // Inicializa el MutableLiveData con el texto
         mText = new MutableLiveData<>();
         mText.setValue("Texto del fragmento Historial");
     }

@@ -86,6 +86,7 @@ public class HistorialFragmento extends Fragment {
             return;
         }
 
+        // Obtener el correo electrónico del usuario
         String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         // Eliminar el punto (para evitar problemas con Firebase)
         if (email.contains(".")) {
@@ -95,11 +96,13 @@ public class HistorialFragmento extends Fragment {
         // Referencia al nodo del usuario en Firebase
         DatabaseReference usuarioHistorial = referenciaHistorial.child(email + " - " + userId);
 
+        // Escuchar cambios en la referencia
         usuarioHistorial.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 listaHistorial.clear();  // Limpiar la lista antes de cargar nuevos datos
 
+                // Recorrer los datos del historial
                 if (dataSnapshot.exists()) {
                     int totalBusquedas = (int) dataSnapshot.getChildrenCount();
                     if (totalBusquedas == 0) {
@@ -108,15 +111,19 @@ public class HistorialFragmento extends Fragment {
                         return;
                     }
 
+                    // Recorrer los datos del historial
                     for (DataSnapshot busquedaSnapshot : dataSnapshot.getChildren()) {
                         String fecha = busquedaSnapshot.child("fecha").getValue(String.class);
 
                         List<String> parametros = new ArrayList<>();
+
+                        // Obtener los parámetros de la receta
                         for (DataSnapshot parametroSnapshot : busquedaSnapshot.child("parametros").getChildren()) {
                             String parametro = parametroSnapshot.getValue(String.class);
                             parametros.add(parametro);
                         }
 
+                        // Obtener las recetas de la receta
                         List<String> recetas = new ArrayList<>();
                         for (DataSnapshot recetaSnapshot : busquedaSnapshot.child("recetas").getChildren()) {
                             String receta = recetaSnapshot.getValue(String.class);
@@ -130,6 +137,7 @@ public class HistorialFragmento extends Fragment {
                         recetaHistorial.setRecetas(recetas);
                         recetaHistorial.setPushKey(busquedaSnapshot.getKey());
 
+                        // Agregar el objeto RecetaHistorial a la lista
                         listaHistorial.add(recetaHistorial);
                     }
 
@@ -139,14 +147,12 @@ public class HistorialFragmento extends Fragment {
                         tvRecyclerSinDatos.setVisibility(View.GONE);  // Ocultar el mensaje "sin historial"
                     });
                 } else {
-                    Log.d("Firebase", "No hay historial.");
                     tvRecyclerSinDatos.setVisibility(View.VISIBLE);  // Mostrar mensaje sin historial
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("Firebase", "Error al leer historial: " + databaseError.getMessage());
                 tvRecyclerSinDatos.setVisibility(View.VISIBLE);  // Mostrar mensaje si ocurre un error
             }
         });

@@ -30,18 +30,13 @@
             android:theme="@style/Theme.ProCookingRecipes.NoActionBar">
         </activity>
         <activity
-            android:name=".Activity.Busqueda.BusquedaActivity"
+            android:name=".Activity.BusquedaActivity"
             android:exported="true"
             android:theme="@style/Theme.ProCookingRecipes.NoActionBar">
         </activity>
         <activity
             android:name=".Activity.RecetaActivity"
             android:exported="true">
-        </activity>
-        <activity
-            android:name=".Activity.CardActivity"
-            android:exported="true"
-            android:theme="@style/Theme.ProCookingRecipes.NoActionBar">
         </activity>
     </application>
 </manifest>

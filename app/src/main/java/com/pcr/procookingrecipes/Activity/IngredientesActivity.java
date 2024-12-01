@@ -14,7 +14,6 @@ import com.pcr.procookingrecipes.databinding.ActivityIngredientesBinding;
 public class IngredientesActivity extends AppCompatActivity {
 
     private ActivityIngredientesBinding binding;
-    private FloatingActionButton botonVolver;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -29,13 +28,13 @@ public class IngredientesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Obtener el estado de los checkboxes
-                boolean option1Selected = binding.checkboxOption1.isChecked();
-                boolean option2Selected = binding.checkboxOption2.isChecked();
+                boolean opcion1 = binding.checkboxOption1.isChecked();
+                boolean opcion2 = binding.checkboxOption2.isChecked();
 
                 // Crear un intent para devolver los datos
                 Intent data = new Intent();
-                data.putExtra("option1", option1Selected);
-                data.putExtra("option2", option2Selected);
+                data.putExtra("option1", opcion1);
+                data.putExtra("option2", opcion2);
 
                 // Configurar el resultado y cerrar la Activity
                 setResult(Activity.RESULT_OK, data);

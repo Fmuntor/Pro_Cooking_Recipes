@@ -27,10 +27,11 @@ public class APIResponse {
     private static final String URL_INFORMACION = "https://api.spoonacular.com/recipes/";
 
     // Variable para almacenar la API_KEY cargada
-    private String API_KEY="83a0e0c5b56948ca83dd4e3ffbaecdf4";
+    private String API_KEY;
 
     public APIResponse(Context context) {
-        //setApiKey(context);
+        // Cargar la API_KEY
+        setApiKey(context);
     }
 
     public void setApiKey(Context context) {
@@ -124,28 +125,36 @@ public class APIResponse {
 
     // Método para obtener información de una receta
     public RecetaBusqueda getInformacionReceta(int id) {
+        // Construir la URL
         String urlString = URL_INFORMACION + id + "/information?includeNutrition=false&apiKey=" + API_KEY;
         HttpURLConnection urlConnection = null;
-        StringBuilder response = new StringBuilder();
-        try {
-            URL url = new URL(urlString);
-            urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("GET");
-            urlConnection.connect();
+        StringBuilder response = new StringBuilder(); // Usar StringBuilder para construir la respuesta
 
-            // Leer la respuesta
+        // Realizar la conexión
+        try {
+            // Construir la URL
+            URL url = new URL(urlString);
+            urlConnection = (HttpURLConnection) url.openConnection(); // Usar HttpURLConnection en lugar de URLConnection
+            urlConnection.setRequestMethod("GET"); // Usar GET
+            urlConnection.connect(); // Conectar a la URL
+
             int statusCode = urlConnection.getResponseCode();
             if (statusCode == HttpURLConnection.HTTP_OK) {
+                // Leer la respuesta
                 Scanner scanner = new Scanner(urlConnection.getInputStream(), "UTF-8");
+                // Construir la respuesta
                 while (scanner.hasNext()) {
+                    // Concatenar cada línea de la respuesta
                     response.append(scanner.nextLine());
                 }
-
+                // Cerrar el scanner
                 scanner.close();
+
             } else {
                 Log.e("APIResponse", "Error en la conexión. Código de respuesta: " + statusCode);
             }
 
+            // Convertir la respuesta a un objeto RecetaBusqueda
             Gson gson = new Gson();
             return gson.fromJson(response.toString(), RecetaBusqueda.class);
 
