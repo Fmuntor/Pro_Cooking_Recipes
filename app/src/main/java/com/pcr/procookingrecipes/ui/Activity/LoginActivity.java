@@ -96,9 +96,6 @@ public class LoginActivity extends AppCompatActivity {
         botonGoogle = findViewById(R.id.botonGoogle);
         olvideContrasenaTextView = findViewById(R.id.olvideContrasenaTextView);
 
-        usuarioEditText.setText("pepe@gmail.com");
-        passEditText.setText("pepepepe");
-
         // Manejo de botones
         botonEntrar.setOnClickListener(view -> iniciarSesion());
         botonRegistrar.setOnClickListener(view -> registrarUsuario());

@@ -24,11 +24,11 @@ public class Spoonacular_API_Response {
     private static final String URL_INFORMACION = "https://api.spoonacular.com/recipes/";
 
     // Variable para almacenar la API_KEY cargada
-    private String API_KEY="1a79f68654af4838913104e6027c8668";
+    private String API_KEY;
 
     public Spoonacular_API_Response(Context context) {
         // Cargar la API_KEY
-        //setApiKey(context);
+        setApiKey(context);
     }
 
     public void setApiKey(Context context) {

@@ -181,8 +181,8 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerInstrucciones"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="378dp"
+        android:layout_height="184dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/instruccionesReceta" />
