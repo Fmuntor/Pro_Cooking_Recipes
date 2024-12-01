@@ -1,4 +1,4 @@
-package com.pcr.procookingrecipes.ui.favoritos;
+package com.pcr.procookingrecipes.ui.Fragment.favoritos;
 
 import android.os.Bundle;
 import android.util.Log;

@@ -11,7 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.pcr.procookingrecipes.Activity.RecetaActivity;
+import com.pcr.procookingrecipes.ui.Activity.RecetaActivity;
 import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.Receta.RecetaBusqueda;
 import com.squareup.picasso.Picasso;

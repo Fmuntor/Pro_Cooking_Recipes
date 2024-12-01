@@ -1,4 +1,4 @@
-package com.pcr.procookingrecipes.ui.cuenta;
+package com.pcr.procookingrecipes.ui.Fragment.cuenta;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,8 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.pcr.procookingrecipes.Activity.LoginActivity;
-import com.pcr.procookingrecipes.Activity.RecetaActivity;
+import com.pcr.procookingrecipes.ui.Activity.LoginActivity;
 import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.databinding.FragmentoCuentaBinding;
 

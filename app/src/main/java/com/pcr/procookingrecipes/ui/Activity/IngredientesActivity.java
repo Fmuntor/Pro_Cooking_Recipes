@@ -1,4 +1,4 @@
-package com.pcr.procookingrecipes.Activity;
+package com.pcr.procookingrecipes.ui.Activity;
 
 import android.app.Activity;
 import android.content.Intent;

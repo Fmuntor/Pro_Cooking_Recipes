@@ -1,4 +1,4 @@
-package com.pcr.procookingrecipes.Activity;
+package com.pcr.procookingrecipes.ui.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,7 +19,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.databinding.ActivityMainBinding;
-import com.pcr.procookingrecipes.ui.cuenta.CuentaFragmento;
+import com.pcr.procookingrecipes.ui.Fragment.cuenta.CuentaFragmento;
 
 public class MainActivity extends AppCompatActivity {
 

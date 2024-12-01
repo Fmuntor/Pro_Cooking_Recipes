@@ -1,20 +1,20 @@
-package com.pcr.procookingrecipes.ui.favoritos;
+package com.pcr.procookingrecipes.ui.Fragment.historial;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class FavoritosViewModel extends ViewModel {
-
+public class HistorialViewModel extends ViewModel {
     private final MutableLiveData<String> mText;
 
-    public FavoritosViewModel() {
+    public HistorialViewModel() {
         // Inicializa el MutableLiveData con el texto
         mText = new MutableLiveData<>();
-        mText.setValue("Texto del fragmento Favoritos");
+        mText.setValue("Texto del fragmento Historial");
     }
 
     public LiveData<String> getText() {
         return mText;
     }
 }
+

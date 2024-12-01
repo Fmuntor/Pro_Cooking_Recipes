@@ -1,4 +1,4 @@
-package com.pcr.procookingrecipes.ui.cuenta;
+package com.pcr.procookingrecipes.ui.Fragment.cuenta;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

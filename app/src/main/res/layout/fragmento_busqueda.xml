@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.busqueda.BusquedaFragmento"
+    tools:context=".ui.Fragment.busqueda.BusquedaFragmento"
     android:id="@+id/busqueda_fragmento">
 
     <!-- CheckBox para Tipo de Cocina -->

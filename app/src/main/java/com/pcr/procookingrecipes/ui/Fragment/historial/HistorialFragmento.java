@@ -1,4 +1,4 @@
-package com.pcr.procookingrecipes.ui.historial;
+package com.pcr.procookingrecipes.ui.Fragment.historial;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -126,6 +126,7 @@ public class HistorialFragmento extends Fragment {
                             recetas.add(receta);
                         }
 
+
                         // Crear objeto RecetaHistorial y agregarlo a la lista
                         RecetaHistorial recetaHistorial = new RecetaHistorial();
                         recetaHistorial.setFecha(fecha);
@@ -133,7 +134,7 @@ public class HistorialFragmento extends Fragment {
                         recetaHistorial.setRecetas(recetas);
                         recetaHistorial.setPushKey(busquedaSnapshot.getKey());
 
-                        // Agregar el objeto RecetaHistorial a la lista
+                        // Agregar el objeto RecetaHistorial a la lista si
                         listaHistorial.add(recetaHistorial);
                     }
 

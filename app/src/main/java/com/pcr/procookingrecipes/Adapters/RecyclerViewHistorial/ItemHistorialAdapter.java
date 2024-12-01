@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.pcr.procookingrecipes.Activity.BusquedaActivity;
+import com.pcr.procookingrecipes.ui.Activity.BusquedaActivity;
 import com.pcr.procookingrecipes.ConexionAPI.SecurePreferences;
 import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.Spoonacular_API_Response;
 import com.pcr.procookingrecipes.R;

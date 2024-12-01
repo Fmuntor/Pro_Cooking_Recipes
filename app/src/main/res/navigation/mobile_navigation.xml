@@ -7,24 +7,24 @@
 
     <fragment
         android:id="@+id/cabecera_busqueda"
-        android:name="com.pcr.procookingrecipes.ui.busqueda.BusquedaFragmento"
+        android:name="com.pcr.procookingrecipes.ui.Fragment.busqueda.BusquedaFragmento"
         android:label="@string/busqueda"
         tools:layout="@layout/fragmento_busqueda" />
 
     <fragment
         android:id="@+id/cabecera_favoritos"
-        android:name="com.pcr.procookingrecipes.ui.favoritos.FavoritosFragmento"
+        android:name="com.pcr.procookingrecipes.ui.Fragment.favoritos.FavoritosFragmento"
         android:label="@string/favoritos"
         tools:layout="@layout/fragmento_favoritos" />
     <fragment
         android:id="@+id/cabecera_historial"
-        android:name="com.pcr.procookingrecipes.ui.historial.HistorialFragmento"
+        android:name="com.pcr.procookingrecipes.ui.Fragment.historial.HistorialFragmento"
         android:label="@string/historial"
         tools:layout="@layout/fragmento_historial" />
 
     <fragment
         android:id="@+id/cabecera_cuenta"
-        android:name="com.pcr.procookingrecipes.ui.cuenta.CuentaFragmento"
+        android:name="com.pcr.procookingrecipes.ui.Fragment.cuenta.CuentaFragmento"
         android:label="@string/cuenta"
         tools:layout="@layout/fragmento_cuenta" />
 </navigation>

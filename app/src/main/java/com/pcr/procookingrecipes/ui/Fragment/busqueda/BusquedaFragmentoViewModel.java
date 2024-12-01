@@ -1,4 +1,4 @@
-package com.pcr.procookingrecipes.ui.busqueda;
+package com.pcr.procookingrecipes.ui.Fragment.busqueda;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

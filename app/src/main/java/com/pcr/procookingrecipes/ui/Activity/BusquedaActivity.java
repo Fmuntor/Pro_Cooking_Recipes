@@ -1,4 +1,4 @@
-package com.pcr.procookingrecipes.Activity;
+package com.pcr.procookingrecipes.ui.Activity;
 
 import android.os.Bundle;
 import android.view.Menu;

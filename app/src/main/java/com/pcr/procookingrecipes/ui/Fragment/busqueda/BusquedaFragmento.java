@@ -1,4 +1,4 @@
-package com.pcr.procookingrecipes.ui.busqueda;
+package com.pcr.procookingrecipes.ui.Fragment.busqueda;
 
 import static com.pcr.procookingrecipes.ConexionAPI.Traductor.Traductor_API_Response.traducir;
 
@@ -27,7 +27,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.pcr.procookingrecipes.Activity.BusquedaActivity;
+import com.pcr.procookingrecipes.ui.Activity.BusquedaActivity;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewIngrediente.IngredienteDataModel;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewIngrediente.ItemIngredienteAdapter;
 import com.pcr.procookingrecipes.ConexionAPI.SecurePreferences;
@@ -73,7 +73,7 @@ public class BusquedaFragmento extends Fragment {
         inicializarSeekBars();
 
         itemList = new ArrayList<>();
-        itemList.add(new IngredienteDataModel("uva"));
+        itemList.add(new IngredienteDataModel(""));
 
         adapter = new ItemIngredienteAdapter(itemList);
         binding.recyclerView.setAdapter(adapter);
@@ -209,30 +209,36 @@ public class BusquedaFragmento extends Fragment {
                 for (Receta receta : idRecetas) {
                     listaID.add(String.valueOf(receta.getId()));
                 }
+                // Si hay recetas, se guarada en la base de datos
 
-                // Guardar en la base de datos
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference referenciaHistorial = database.getReference("historial");
+                if(!listaID.isEmpty()){
+                    // Guardar en la base de datos
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference referenciaHistorial = database.getReference("historial");
 
-                // Crear un mapa con los datos del historial
-                Map<String, Object> historialData = new HashMap<>();
-                historialData.put("fecha", new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date()));
-                historialData.put("parametros", new ArrayList<>(Arrays.asList(listaParametros)));
-                historialData.put("recetas", listaID);
+                    // Crear un mapa con los datos del historial
+                    Map<String, Object> historialData = new HashMap<>();
+                    historialData.put("fecha", new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date()));
+                    historialData.put("parametros", new ArrayList<>(Arrays.asList(listaParametros)));
+                    historialData.put("recetas", listaID);
 
-                // Obtener el correo electrónico del usuario
-                String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-                //Eliminar el punto
-                if (email.contains(".")) {
-                    email = email.replace(".", "·");
+                    // Obtener el correo electrónico del usuario
+                    String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                    //Eliminar el punto
+                    if (email.contains(".")) {
+                        email = email.replace(".", "·");
+                    }
+                    // Crear una etiqueta compuesta
+                    String etiquetaCompleta = email + " - " + FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                    // Guardar en la base de datos
+
+                    referenciaHistorial.child(etiquetaCompleta).push().setValue(historialData);
                 }
-                // Crear una etiqueta compuesta
-                String etiquetaCompleta = email + " - " + FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-                // Guardar en la base de datos
-                referenciaHistorial.child(etiquetaCompleta).push().setValue(historialData);
 
-                // Mostrar un mensaje de éxito
+
+                // Mostrar un mensaje
                 if (recetasCompletas.isEmpty()) {
                     // Mostrar una ventana de confirmación (AlertDialog)
                     requireActivity().runOnUiThread(() -> {
