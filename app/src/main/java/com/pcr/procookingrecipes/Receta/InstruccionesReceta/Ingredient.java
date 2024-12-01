@@ -1,4 +1,4 @@
-package com.pcr.procookingrecipes.InstruccionesReceta;
+package com.pcr.procookingrecipes.Receta.InstruccionesReceta;
 
 public class Ingredient {
     private String name;

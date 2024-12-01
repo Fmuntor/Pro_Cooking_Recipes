@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pcr.procookingrecipes.Adapters.ReciclerViewBusqueda.ItemBusquedaAdapter;
-import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.APIResponse;
+import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.Spoonacular_API_Response;
 import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.Receta.RecetaBusqueda;
 import com.pcr.procookingrecipes.databinding.ActivityBusquedaBinding;
@@ -19,7 +19,7 @@ public class BusquedaActivity extends AppCompatActivity {
 
     private ActivityBusquedaBinding binding;
     private RecyclerView recyclerView;
-    private APIResponse apiResponse;
+    private Spoonacular_API_Response apiResponse;
     private ItemBusquedaAdapter adapter;
     private List<RecetaBusqueda> recetasCompletas;
 

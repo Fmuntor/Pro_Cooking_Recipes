@@ -21,7 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.pcr.procookingrecipes.Adapters.ReciclerViewBusqueda.ItemBusquedaAdapter;
 import com.pcr.procookingrecipes.ConexionAPI.SecurePreferences;
-import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.APIResponse;
+import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.Spoonacular_API_Response;
 import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.Receta.RecetaBusqueda;
 import com.pcr.procookingrecipes.databinding.FragmentoFavoritosBinding;
@@ -39,7 +39,7 @@ public class FavoritosFragmento extends Fragment {
     private FirebaseDatabase database;
     private DatabaseReference referenciaFavoritos;
     private final Executor executor = Executors.newSingleThreadExecutor();
-    private APIResponse apiResponse;
+    private Spoonacular_API_Response apiResponse;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -50,7 +50,7 @@ public class FavoritosFragmento extends Fragment {
 
         // Instanciar APIResponse
         SecurePreferences.cargarClavesDesdeArchivo(getContext());
-        apiResponse = new APIResponse(getContext());
+        apiResponse = new Spoonacular_API_Response(getContext());
 
         // Configurar RecyclerView
         adapter = new ItemBusquedaAdapter(listaFavoritos);

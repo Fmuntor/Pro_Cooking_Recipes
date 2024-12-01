@@ -1,7 +1,5 @@
 package com.pcr.procookingrecipes.Adapters.RecyclerViewReceta.RecetaInstrucciones;
 
-import static com.pcr.procookingrecipes.ConexionAPI.Traductor.Traductor.traducir;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

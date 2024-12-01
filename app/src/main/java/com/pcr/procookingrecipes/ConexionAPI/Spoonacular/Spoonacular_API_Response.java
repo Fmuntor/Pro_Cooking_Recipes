@@ -3,14 +3,10 @@ package com.pcr.procookingrecipes.ConexionAPI.Spoonacular;
 import android.content.Context;
 import android.util.Log;
 
-import androidx.security.crypto.EncryptedSharedPreferences;
-import androidx.security.crypto.MasterKeys;
-
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import com.pcr.procookingrecipes.Activity.LoginActivity;
 import com.pcr.procookingrecipes.ConexionAPI.SecurePreferences;
-import com.pcr.procookingrecipes.InstruccionesReceta.Instruction;
+import com.pcr.procookingrecipes.Receta.InstruccionesReceta.Instruction;
 import com.pcr.procookingrecipes.Receta.Receta;
 import com.pcr.procookingrecipes.Receta.RecetaBusqueda;
 
@@ -22,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class APIResponse {
+public class Spoonacular_API_Response {
 
     private static final String COMPLEX_SEARCH_URL = "https://api.spoonacular.com/recipes/complexSearch";
     private static final String URL_INFORMACION = "https://api.spoonacular.com/recipes/";
@@ -30,7 +26,7 @@ public class APIResponse {
     // Variable para almacenar la API_KEY cargada
     private String API_KEY;
 
-    public APIResponse(Context context) {
+    public Spoonacular_API_Response(Context context) {
         // Cargar la API_KEY
         setApiKey(context);
     }

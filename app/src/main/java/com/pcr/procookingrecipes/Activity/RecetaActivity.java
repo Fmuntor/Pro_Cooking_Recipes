@@ -17,11 +17,11 @@ import com.pcr.procookingrecipes.Adapters.RecyclerViewReceta.RecetaEquipo.Equipo
 import com.pcr.procookingrecipes.Adapters.RecyclerViewReceta.RecetaIngredientes.IngredientesAdapter;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewReceta.RecetaInstrucciones.InstruccionesAdapter;
 import com.pcr.procookingrecipes.ConexionAPI.SecurePreferences;
-import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.APIResponse;
-import com.pcr.procookingrecipes.InstruccionesReceta.Equipment;
-import com.pcr.procookingrecipes.InstruccionesReceta.Ingredient;
-import com.pcr.procookingrecipes.InstruccionesReceta.Instruction;
-import com.pcr.procookingrecipes.InstruccionesReceta.Step;
+import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.Spoonacular_API_Response;
+import com.pcr.procookingrecipes.Receta.InstruccionesReceta.Equipment;
+import com.pcr.procookingrecipes.Receta.InstruccionesReceta.Ingredient;
+import com.pcr.procookingrecipes.Receta.InstruccionesReceta.Instruction;
+import com.pcr.procookingrecipes.Receta.InstruccionesReceta.Step;
 import com.pcr.procookingrecipes.Receta.RecetaBusqueda;
 import com.pcr.procookingrecipes.databinding.ActivityRecetaBinding;
 import com.squareup.picasso.Picasso;
@@ -37,7 +37,7 @@ import java.util.concurrent.Executors;
 public class RecetaActivity extends AppCompatActivity {
 
     private ActivityRecetaBinding binding;
-    private APIResponse apiResponse;
+    private Spoonacular_API_Response apiResponse;
     private final Executor executor = Executors.newSingleThreadExecutor();
     private List<Instruction> instruccionesCompletas;
     private ArrayList<String> listaPasos, listaIngredientes, listaEquipo;
@@ -56,7 +56,7 @@ public class RecetaActivity extends AppCompatActivity {
 
         // Inicialización de datos
         SecurePreferences.cargarClavesDesdeArchivo(this);
-        apiResponse = new APIResponse(this);
+        apiResponse = new Spoonacular_API_Response(this);
         id = getIntent().getIntExtra("ID", -1);
         RecetaBusqueda receta = getIntent().getParcelableExtra("Receta");
 

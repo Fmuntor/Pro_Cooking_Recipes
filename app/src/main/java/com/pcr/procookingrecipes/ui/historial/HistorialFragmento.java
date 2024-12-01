@@ -20,13 +20,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.pcr.procookingrecipes.Adapters.ItemHistorialAdapter;
-import com.pcr.procookingrecipes.Adapters.ReciclerViewBusqueda.ItemBusquedaAdapter;
-import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.APIResponse;
+import com.pcr.procookingrecipes.Adapters.RecyclerViewHistorial.ItemHistorialAdapter;
 import com.pcr.procookingrecipes.R;
-import com.pcr.procookingrecipes.Receta.RecetaBusqueda;
 import com.pcr.procookingrecipes.Receta.RecetaHistorial;
-import com.pcr.procookingrecipes.databinding.FragmentoFavoritosBinding;
 import com.pcr.procookingrecipes.databinding.FragmentoHistorialBinding;
 
 import java.util.ArrayList;

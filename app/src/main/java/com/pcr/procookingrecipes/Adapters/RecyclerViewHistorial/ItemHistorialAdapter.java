@@ -1,4 +1,4 @@
-package com.pcr.procookingrecipes.Adapters;
+package com.pcr.procookingrecipes.Adapters.RecyclerViewHistorial;
 
 import android.content.Intent;
 import android.os.Parcelable;
@@ -18,7 +18,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.pcr.procookingrecipes.Activity.BusquedaActivity;
 import com.pcr.procookingrecipes.ConexionAPI.SecurePreferences;
-import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.APIResponse;
+import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.Spoonacular_API_Response;
 import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.Receta.RecetaBusqueda;
 import com.pcr.procookingrecipes.Receta.RecetaHistorial;
@@ -107,7 +107,7 @@ public class ItemHistorialAdapter extends RecyclerView.Adapter<ItemHistorialAdap
                 List<RecetaBusqueda> recetasBusqueda = new ArrayList<>();
 
                 SecurePreferences.cargarClavesDesdeArchivo(v.getContext());
-                APIResponse apiResponse = new APIResponse(v.getContext());
+                Spoonacular_API_Response apiResponse = new Spoonacular_API_Response(v.getContext());
 
                 // Ejecutar en un hilo separado para evitar bloquear la UI
                 executor.execute(() -> {

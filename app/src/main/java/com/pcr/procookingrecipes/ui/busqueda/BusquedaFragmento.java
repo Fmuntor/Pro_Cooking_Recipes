@@ -1,6 +1,6 @@
 package com.pcr.procookingrecipes.ui.busqueda;
 
-import static com.pcr.procookingrecipes.ConexionAPI.Traductor.Traductor.traducir;
+import static com.pcr.procookingrecipes.ConexionAPI.Traductor.Traductor_API_Response.traducir;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,7 +31,7 @@ import com.pcr.procookingrecipes.Activity.BusquedaActivity;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewIngrediente.IngredienteDataModel;
 import com.pcr.procookingrecipes.Adapters.RecyclerViewIngrediente.ItemIngredienteAdapter;
 import com.pcr.procookingrecipes.ConexionAPI.SecurePreferences;
-import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.APIResponse;
+import com.pcr.procookingrecipes.ConexionAPI.Spoonacular.Spoonacular_API_Response;
 import com.pcr.procookingrecipes.R;
 import com.pcr.procookingrecipes.Receta.Receta;
 import com.pcr.procookingrecipes.Receta.RecetaBusqueda;
@@ -55,7 +55,7 @@ public class BusquedaFragmento extends Fragment {
     private ItemIngredienteAdapter adapter;
     private List<IngredienteDataModel> itemList;
     private FloatingActionButton botonIntroducirItem, botonBuscar;
-    private APIResponse apiResponse;
+    private Spoonacular_API_Response apiResponse;
     private final Executor executor = Executors.newSingleThreadExecutor();
     private List<RecetaBusqueda> recetasCompletas;
     private String[] listaParametros;
@@ -97,7 +97,7 @@ public class BusquedaFragmento extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         SecurePreferences.cargarClavesDesdeArchivo(getContext());
-        apiResponse = new APIResponse(getContext());
+        apiResponse = new Spoonacular_API_Response(getContext());
 
         // Configuración del botón flotante para añadir nuevos ítems al RecyclerView
         botonIntroducirItem = requireActivity().findViewById(R.id.botonIntroducirItem);

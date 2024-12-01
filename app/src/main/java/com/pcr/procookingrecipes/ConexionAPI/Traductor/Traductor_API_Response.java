@@ -11,7 +11,7 @@ import com.pcr.procookingrecipes.ConexionAPI.SecurePreferences;
 import java.util.Objects;
 
 // Clase para traducir texto
-public class Traductor {
+public class Traductor_API_Response {
     // Método estático para traducir texto
     public static String traducir(Context context, String texto, String idioma) {
         // Crear una instancia de Translate
