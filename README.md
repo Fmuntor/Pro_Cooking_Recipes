@@ -1,11 +1,58 @@
-Proyecto realizado por: Fernando Muñoz Torres
+# Pro Cooking Recipes
 
-Instituto: I.E.S Al-Andalus
+!Pro Cooking Recipes Logo
 
-Curso: 2º Desarrollo de Aplicaciones Multiplataforma
+## Descripción
+**Pro Cooking Recipes** es un proyecto desarrollado para facilitar la creación y gestión de recetas de cocina. Este proyecto está diseñado para ser intuitivo y fácil de usar, proporcionando una experiencia agradable para los usuarios.
 
-Nombre del proyecto: Pro Cooking Recipes
+## Proyecto realizado por
+**Fernando Muñoz Torres**
 
-Contacto y soporte técnico: ProCookingRecipesSupport@gmail.com
+## Instituto
+**I.E.S Al-Andalus**
 
-Enlace a la carpeta de Google Drive: https://drive.google.com/drive/folders/1dqe7UCtbi9T2SW1uUecc32ELcmpizYii
+## Curso
+**2º Desarrollo de Aplicaciones Multiplataforma**
+
+## Año
+**2023-2024**
+
+## Contacto y soporte técnico
+Para cualquier consulta o soporte técnico, puedes contactarnos en:  
+📧 **ProCookingRecipesSupport@gmail.com**
+
+## Enlace a la carpeta de Google Drive
+Puedes acceder a todos los recursos del proyecto en la siguiente carpeta de Google Drive:  
+Google Drive - Pro Cooking Recipes
+
+## Instalación
+1. Clonar el repositorio:
+    ```bash
+    git clone https://github.com/tu-usuario/ProCookingRecipes.git
+    ```
+2. Navegar al directorio del proyecto:
+    ```bash
+    cd ProCookingRecipes
+    ```
+3. Instalar las dependencias:
+    ```bash
+    npm install
+    ```
+
+## Uso
+1. Inicia la aplicación:
+    ```bash
+    npm start
+    ```
+2. Abre tu navegador y navega a `http://localhost:3000`
+
+## Contribuciones
+¡Las contribuciones son bienvenidas! Por favor, sigue los siguientes pasos para contribuir:
+1. Haz un fork del repositorio.
+2. Crea una nueva rama (`git checkout -b feature/nueva-funcionalidad`).
+3. Realiza tus cambios y haz commit (`git commit -m 'Añadir nueva funcionalidad'`).
+4. Sube tus cambios (`git push origin feature/nueva-funcionalidad`).
+5. Abre un Pull Request.
+
+## Licencia
+Este proyecto está licenciado bajo la Licencia MIT. Consulta el archivo LICENSE para más detalles.
