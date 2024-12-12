@@ -1,6 +1,7 @@
 # Pro Cooking Recipes
-
-!Pro Cooking Recipes Logo
+<div align="center">
+    <img src="https://github.com/user-attachments/assets/51003ca3-ad32-4460-b5d5-bbd15b8e1516" alt="Pro Cooking Recipes Logo" />
+</div>
 
 ## Descripción
 **Pro Cooking Recipes** es un proyecto desarrollado para facilitar la creación y gestión de recetas de cocina. Este proyecto está diseñado para ser intuitivo y fácil de usar, proporcionando una experiencia agradable para los usuarios.
