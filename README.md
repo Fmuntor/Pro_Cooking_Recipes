@@ -24,7 +24,7 @@ Para cualquier consulta o soporte técnico, puedes contactarnos en:
 
 ## Enlace a la carpeta de Google Drive
 Puedes acceder a todos los recursos del proyecto en la siguiente carpeta de Google Drive:  
-Google Drive - Pro Cooking Recipes
+[Google Drive - Pro Cooking Recipes](https://drive.google.com/drive/folders/1dqe7UCtbi9T2SW1uUecc32ELcmpizYii)
 
 ## Instalación
 1. Clonar el repositorio:
